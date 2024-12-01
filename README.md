@@ -38,3 +38,8 @@ go install github.com/strowk/mcp-k8s-go
 }
 ```
 
+Now you should be able to run Claude Desktop and:
+- see K8S contexts available to attach to conversation as a resource
+- ask Claude to list contexts
+- ask Claude to list pods in a given context and namespace
+- ask Claude to list events in a given context and namespace
