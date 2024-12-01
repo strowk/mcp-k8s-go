@@ -21,10 +21,6 @@ jobs:
       - name: Install goreleaser
         run: |
           go install github.com/goreleaser/goreleaser/v2@latest
-
-      - name: Run goreleaser build
-        run: |
-          goreleaser build --clean
           which goreleaser
 
       - name: Cache installed binary
@@ -32,6 +28,10 @@ jobs:
         with:
           path: /home/runner/go/bin
           key: ${{ runner.os }}-goreleaser
+
+      - name: Run goreleaser build
+        run: |
+          goreleaser build --clean
 
       - name: Publish to npm
         run: |
