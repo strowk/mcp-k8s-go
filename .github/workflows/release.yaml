@@ -28,6 +28,7 @@ jobs:
 
       - name: Publish to npm
         run: |
+          chmod +x ./packages/publish_npm.sh
           ./packages/publish_npm.sh
 
 
