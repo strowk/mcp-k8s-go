@@ -1,4 +1,4 @@
-module mcp-k8s-go
+module github.com/strowk/mcp-k8s-go
 
 go 1.23.3
 

@@ -2,8 +2,9 @@ package tools
 
 import (
 	"context"
-	"mcp-k8s-go/internal/k8s"
-	"mcp-k8s-go/internal/utils"
+
+	"github.com/strowk/mcp-k8s-go/internal/k8s"
+	"github.com/strowk/mcp-k8s-go/internal/utils"
 
 	"github.com/strowk/foxy-contexts/pkg/fxctx"
 	"github.com/strowk/foxy-contexts/pkg/mcp"
