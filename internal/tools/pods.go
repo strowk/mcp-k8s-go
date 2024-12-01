@@ -77,9 +77,12 @@ type PodInList struct {
 func errResponse(err error) fxctx.ToolResponse {
 	return fxctx.ToolResponse{
 		IsError: utils.Ptr(true),
-		Meta: map[string]interface{}{
-			"error": err.Error(),
+		Meta:    map[string]interface{}{},
+		Content: []interface{}{
+			mcp.TextContent{
+				Type: "text",
+				Text: err.Error(),
+			},
 		},
-		Content: []interface{}{},
 	}
 }

@@ -6,20 +6,20 @@ import (
 )
 
 type ClientPool interface {
-	GetClientset(k8sContext string) (*kubernetes.Clientset, error)
+	GetClientset(k8sContext string) (kubernetes.Interface, error)
 }
 
 type pool struct {
-	clients map[string]*kubernetes.Clientset
+	clients map[string]kubernetes.Interface
 }
 
 func NewClientPool() ClientPool {
 	return &pool{
-		clients: make(map[string]*kubernetes.Clientset),
+		clients: make(map[string]kubernetes.Interface),
 	}
 }
 
-func (p *pool) GetClientset(k8sContext string) (*kubernetes.Clientset, error) {
+func (p *pool) GetClientset(k8sContext string) (kubernetes.Interface, error) {
 	key := k8sContext
 	if client, ok := p.clients[key]; ok {
 		return client, nil
@@ -34,7 +34,7 @@ func (p *pool) GetClientset(k8sContext string) (*kubernetes.Clientset, error) {
 	return client, nil
 }
 
-func getClientset(k8sContext string) (*kubernetes.Clientset, error) {
+func getClientset(k8sContext string) (kubernetes.Interface, error) {
 	loadingRules := clientcmd.NewDefaultClientConfigLoadingRules()
 	configOverrides := &clientcmd.ConfigOverrides{}
 
