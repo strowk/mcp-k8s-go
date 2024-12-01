@@ -5,10 +5,11 @@ name: Install mcp-k8s
 on:
   push:
     branches:
-      - master
+      - main
   pull_request:
     branches:
-      - master
+      - main
+  workflow_dispatch:
 
 jobs:
   install:
