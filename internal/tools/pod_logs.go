@@ -38,11 +38,11 @@ func NewPodLogsTool(pool k8s.ClientPool) fxctx.Tool {
 				},
 				"sinceDuration": {
 					"type":        "string",
-					"description": "Only return logs newer than a relative duration like 5s, 2m, or 3h, only one of sinceTime or sinceSeconds may be set.",
+					"description": "Only return logs newer than a relative duration like 5s, 2m, or 3h, only one of sinceTime or sinceDuration may be set.",
 				},
 				"sinceTime": {
 					"type":        "string",
-					"description": "Only return logs after a specific date (RFC3339), only one of sinceTime or sinceSeconds may be set.",
+					"description": "Only return logs after a specific date (RFC3339), only one of sinceTime or sinceDuration may be set.",
 				},
 				"previousContainer": {
 					"type":        "boolean",
