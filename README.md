@@ -7,6 +7,7 @@ Currently available:
 - tool: list-k8s-contexts
 - tool: list-k8s-pods in a given context and namespace
 - tool: list-k8s-events in a given context and namespace
+- tool: get-k8s-pod-logs in a given context and namespace
 
 ## Example usage with Inspector
 
