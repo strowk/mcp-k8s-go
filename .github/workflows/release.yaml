@@ -18,12 +18,6 @@ jobs:
         with:
           go-version: '1.23.3'
 
-      - name: Cache installed binaries
-        uses: actions/cache@v4
-        with:
-          path: /home/runner/go/bin
-          key: ${{ runner.os }}-goreleaser
-
       - name: Install goreleaser
         run: |
           go install github.com/goreleaser/goreleaser/v2@latest
