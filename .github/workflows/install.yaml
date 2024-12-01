@@ -3,9 +3,9 @@
 name: Install mcp-k8s
 
 on:
-  push:
-    branches:
-      - main
+  schedule:
+    # check that the install works periodically 
+    - cron: '0 0 * * 5'
   workflow_dispatch:
 
 jobs:
