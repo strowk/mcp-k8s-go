@@ -11,5 +11,8 @@ func NewJsonContent(v interface{}) (mcp.TextContent, error) {
 	if err != nil {
 		return mcp.TextContent{}, err
 	}
-	return mcp.TextContent{Text: string(contents)}, nil
+	return mcp.TextContent{
+		Type: "text",
+		Text: string(contents),
+	}, nil
 }
