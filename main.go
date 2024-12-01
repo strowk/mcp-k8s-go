@@ -67,6 +67,7 @@ func main() {
 		fx.Provide(fxctx.AsTool(tools.NewListContextsTool)),
 		fx.Provide(fxctx.AsTool(tools.NewListPodsTool)),
 		fx.Provide(fxctx.AsTool(tools.NewListEventsTool)),
+		fx.Provide(fxctx.AsTool(tools.NewPodLogsTool)),
 		fxctx.ProvideResourceMux(),
 		fx.Provide(fxctx.AsResourceProvider(resources.NewContextsResourceProvider)),
 		fx.Invoke(func(
