@@ -19,7 +19,7 @@ jobs:
 
       - name: Install mcp-k8s
         run: |
-          npm install -g mcp-k8s
+          npm install -g @strowk/mcp-k8s
 
       - name: Test mcp-k8s
         run: |
