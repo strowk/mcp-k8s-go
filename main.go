@@ -2,6 +2,7 @@ package main
 
 import (
 	"context"
+	"os"
 
 	"github.com/strowk/mcp-k8s-go/internal/k8s"
 	"github.com/strowk/mcp-k8s-go/internal/resources"
@@ -36,7 +37,25 @@ func getImplementation() mcp.Implementation {
 	}
 }
 
+var (
+	version = "dev"
+	commit  = "none"
+	date    = "unknown"
+)
+
 func main() {
+	if len(os.Args) > 1 {
+		if os.Args[1] == "--version" {
+			println(version)
+		}
+		if os.Args[1] == "version" {
+			println("Version: ", version)
+			println("Commit: ", commit)
+			println("Date: ", date)
+		}
+		return
+	}
+
 	tp := stdio.NewTransport()
 
 	app := fx.New(
