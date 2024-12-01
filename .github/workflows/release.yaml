@@ -1,0 +1,31 @@
+name: Release mcp-k8s to npm
+
+on:
+  workflow_dispatch:
+
+jobs:
+  release:
+    runs-on:  ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Set up Go
+        uses: actions/setup-go@v5
+        with:
+          go-version: '1.23.3'
+
+      - name: Install goreleaser
+        run: |
+          go install github.com/goreleaser/goreleaser/v2@latest
+
+      - name: Run goreleaser build
+        run: |
+          goreleaser build --clean
+
+      - name: Publish to npm
+        run: |
+          ./packages/publish_npm.sh
+
+
+
