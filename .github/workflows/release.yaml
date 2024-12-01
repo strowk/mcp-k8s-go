@@ -40,5 +40,29 @@ jobs:
           chmod +x ./packages/publish_npm.sh
           ./packages/publish_npm.sh
 
+  install:
+    strategy:
+      matrix:
+        os: 
+          - windows-latest
+          - ubuntu-latest
+          - macos-latest
+        arch: 
+          - x64
+          - arm64
+    runs-on: ${{ matrix.os }}
+    needs: release
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Install mcp-k8s
+        run: |
+          npm install -g @strowk/mcp-k8s
+
+      - name: Test mcp-k8s
+        run: |
+          mcp-k8s version
+
 
 
