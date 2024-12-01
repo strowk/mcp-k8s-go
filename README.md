@@ -47,7 +47,8 @@ Now you should be able to run Claude Desktop and:
 
 ### Demo usage with Claude Desktop
 
-Following chat with Claude Desktop demonstrates how it looks when selected particular context as a resource and then asked to check pod logs in kube-system namespace:
+Following chat with Claude Desktop demonstrates how it looks when selected particular context as a resource and then asked to check pod logs for errors in kube-system namespace:
+
 ![Claude Desktop](docs/images/claude-desktop-logs.png)
 
 
