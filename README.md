@@ -43,3 +43,11 @@ Now you should be able to run Claude Desktop and:
 - ask Claude to list contexts
 - ask Claude to list pods in a given context and namespace
 - ask Claude to list events in a given context and namespace
+- ask Claude to read logs of a given pod in a given context and namespace
+
+### Demo usage with Claude Desktop
+
+Following chat with Claude Desktop demonstrates how it looks when selected particular context as a resource and then asked to check pod logs in kube-system namespace:
+![Claude Desktop](docs/images/claude-desktop-logs.png)
+
+
