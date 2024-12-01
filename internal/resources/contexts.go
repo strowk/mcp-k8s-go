@@ -2,7 +2,6 @@ package resources
 
 import (
 	"fmt"
-	"log"
 	"strings"
 
 	"github.com/strowk/mcp-k8s-go/internal/k8s"
@@ -29,19 +28,19 @@ func NewContextsResourceProvider() fxctx.ResourceProvider {
 		},
 
 		func(uri string) (*mcp.ReadResourceResult, error) {
+			cfg, err := k8s.GetKubeConfig().RawConfig()
+			if err != nil {
+				return nil, fmt.Errorf("failed to get kubeconfig: %w", err)
+			}
+
 			if uri == "contexts" {
-				contents := getContextsContent(uri)
+				contents := getContextsContent(uri, cfg)
 				return &mcp.ReadResourceResult{
 					Contents: contents,
 				}, nil
 			}
 
 			if strings.HasPrefix(uri, "contexts/") {
-				cfg, err := k8s.GetKubeConfig().RawConfig()
-				if err != nil {
-					return nil, fmt.Errorf("failed to get kubeconfig: %w", err)
-				}
-
 				name := strings.TrimPrefix(uri, "contexts/")
 				c, ok := cfg.Contexts[name]
 				if !ok {
@@ -75,12 +74,7 @@ func toMcpResourcse(contextName string) mcp.Resource {
 	}
 }
 
-func getContextsContent(uri string) []interface{} {
-	cfg, err := k8s.GetKubeConfig().RawConfig()
-	if err != nil {
-		// TODO: return protocol error...
-		log.Printf("failed to get kubeconfig: %v", err)
-	}
+func getContextsContent(uri string, cfg api.Config) []interface{} {
 	var contents []interface{} = make([]interface{}, len(cfg.Contexts))
 	i := 0
 
