@@ -2,8 +2,9 @@ name: Release mcp-k8s to npm
 
 on:
   workflow_dispatch:
-  tags:
-    - '*'
+  push:
+    tags:
+      - '*'
 
 jobs:
   release:
