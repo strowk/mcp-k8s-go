@@ -1,0 +1,24 @@
+{
+  "name": "@strowk/mcp-k8s-linux-x64",
+  "version": "0.0.9",
+  "os": [
+    "linux",
+    "freebsd"
+  ],
+  "cpu": [
+    "x64"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/strowk/mcp-k8s-go.git"
+  },
+  "keywords": [
+    "MCP"
+  ],
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/strowk/mcp-k8s-go/issues"
+  },
+  "homepage": "https://github.com/strowk/mcp-k8s-go#readme",
+  "description": "MCP Kubernetes Server - Linux x64 build"
+}
