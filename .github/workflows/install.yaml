@@ -1,0 +1,29 @@
+# This is Github workflow that installs mcp-k8s from npm to various platforms and tests if it was installed
+
+name: Install mcp-k8s
+
+on:
+  push:
+    branches:
+      - master
+  pull_request:
+    branches:
+      - master
+
+jobs:
+  install:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Install mcp-k8s
+        run: |
+          npm install -g mcp-k8s
+
+      - name: Test mcp-k8s
+        run: |
+          mcp-k8s version
+
+
+
