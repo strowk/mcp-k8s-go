@@ -1,17 +1,17 @@
 {
   "name": "@strowk/mcp-k8s",
-  "version": "0.0.13",
+  "version": "0.0.14",
   "main": "./index.js",
   "bin": {
     "mcp-k8s": "bin/cli"
   },
   "optionalDependencies": {
-    "@strowk/mcp-k8s-darwin-x64": "0.0.13",
-    "@strowk/mcp-k8s-darwin-arm64": "0.0.13",
-    "@strowk/mcp-k8s-linux-x64": "0.0.13",
-    "@strowk/mcp-k8s-linux-arm64": "0.0.13",
-    "@strowk/mcp-k8s-win32-x64": "0.0.13",
-    "@strowk/mcp-k8s-win32-arm64": "0.0.13"
+    "@strowk/mcp-k8s-darwin-x64": "0.0.14",
+    "@strowk/mcp-k8s-darwin-arm64": "0.0.14",
+    "@strowk/mcp-k8s-linux-x64": "0.0.14",
+    "@strowk/mcp-k8s-linux-arm64": "0.0.14",
+    "@strowk/mcp-k8s-win32-x64": "0.0.14",
+    "@strowk/mcp-k8s-win32-arm64": "0.0.14"
   },
   "repository": {
     "type": "git",
