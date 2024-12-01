@@ -2,6 +2,19 @@
 
 This project is intended as a both MCP server connecting to Kubernetes and a library to build more servers for any custom resources in Kubernetes.
 
+Currently available:
+- resource: K8S contexts as read from kubeconfig configurations
+- tool: list-k8s-contexts
+- tool: list-k8s-pods in a given context and namespace
+- tool: list-k8s-events in a given context and namespace
+
+## Example usage with Inspector
+
+To use this MCP server with Inspector you can run it from root folder of this project:
+
+```bash
+tools/inspector/run.sh
+```
 
 ## Example usage with Claude Desktop
 
