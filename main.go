@@ -75,11 +75,9 @@ func main() {
 			toolMux fxctx.ToolMux,
 			resourceMux fxctx.ResourceMux,
 		) {
-			shut := make(chan struct{})
 			lc.Append(fx.Hook{
 				OnStart: func(ctx context.Context) error {
 					go func() {
-						// TODO: figure out how to stop this gracefully
 						tp.Run(
 							getCapabilities(),
 							getImplementation(),
@@ -94,8 +92,7 @@ func main() {
 					return nil
 				},
 				OnStop: func(ctx context.Context) error {
-					close(shut)
-					return nil
+					return tp.Shutdown(ctx)
 				},
 			})
 		}),
