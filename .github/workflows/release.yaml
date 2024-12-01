@@ -25,6 +25,13 @@ jobs:
       - name: Run goreleaser build
         run: |
           goreleaser build --clean
+          which goreleaser
+
+      - name: Cache installed binary
+        uses: actions/cache@v2
+        with:
+          path: /home/runner/go/bin
+          key: ${{ runner.os }}-goreleaser
 
       - name: Publish to npm
         run: |
