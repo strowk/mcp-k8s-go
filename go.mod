@@ -12,7 +12,7 @@ require (
 
 require (
 	github.com/stretchr/testify v1.9.0
-	github.com/strowk/foxy-contexts v0.0.4-0.20241208041506-9496aae569c8
+	github.com/strowk/foxy-contexts v0.0.4-0.20241208042141-60f71025f96e
 	go.uber.org/mock v0.5.0
 	k8s.io/api v0.31.3
 )
