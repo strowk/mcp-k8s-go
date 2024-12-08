@@ -70,8 +70,11 @@ func withK3dCluster(t *testing.T, name string, fn func()) {
 	cmd.Run() // precleanup if cluster has leaked from previous test
 
 	defer deleteK3dCluster(t, name)
+
+	t.Log("creating k3d cluster", name)
 	createK3dCluster(t, name)
 	saveKubeconfig(t, name)
+	t.Log("waiting till k3d cluster is ready")
 	waitForClusterReady(t)
 	fn()
 }
@@ -166,6 +169,7 @@ waiting:
 
 func deleteK3dCluster(t *testing.T, name string) {
 	t.Helper()
+	t.Log("deleting k3d cluster", name)
 	cmd := exec.Command("k3d", "cluster", "delete", name)
 	cmd.Stderr = os.Stderr
 	err := cmd.Run()
@@ -173,6 +177,7 @@ func deleteK3dCluster(t *testing.T, name string) {
 		t.Error(err)
 	}
 
+	t.Log("removing kubeconfig file")
 	// remove kubeconfig file
 	err = os.Remove(kubeconfigPath)
 	if err != nil {
