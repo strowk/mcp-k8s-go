@@ -2,6 +2,7 @@ package tools
 
 import (
 	"context"
+	"sort"
 
 	"github.com/strowk/mcp-k8s-go/internal/k8s"
 	"github.com/strowk/mcp-k8s-go/internal/utils"
@@ -47,6 +48,10 @@ func NewListPodsTool(pool k8s.ClientPool) fxctx.Tool {
 			if err != nil {
 				return errResponse(err)
 			}
+
+			sort.Slice(pods.Items, func(i, j int) bool {
+				return pods.Items[i].Name < pods.Items[j].Name
+			})
 
 			var contents []interface{} = make([]interface{}, len(pods.Items))
 			for i, pod := range pods.Items {
