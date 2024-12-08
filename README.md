@@ -25,6 +25,8 @@ You have two options at the moment - use pre-built binaries published in npm or 
 
 ### Using pre-built binaries
 
+#### From npm
+
 Use this if you have npm installed and want to use pre-built binaries:
 
 ```bash
@@ -43,6 +45,24 @@ Then check version by running `mcp-k8s --version` and if this printed installed 
     }
 }
 ```
+
+#### From GitHub releases
+
+Head to [GitHub releases](https://github.com/strowk/mcp-k8s-go/releases) and download the latest release for your platform.
+
+Unpack the archive, which would contain binary named `mcp-k8s-go`, put that binary somewhere in your PATH and then add the following configuration to the `claude-desktop.json` file:
+
+```json
+{
+    "mcpServers": {
+        "mcp_k8s": {
+            "command": "mcp-k8s-go",
+            "args": []
+        }
+    }
+}
+```
+
 
 ### Building from source
 
