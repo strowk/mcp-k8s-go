@@ -1,0 +1,23 @@
+in:
+  {
+    "jsonrpc": "2.0",
+    "method": "tools/call",
+    "id": 2,
+    "params": { "name": "list-k8s-contexts" },
+  }
+out:
+  {
+    "jsonrpc": "2.0",
+    "id": 2,
+    "result":
+      {
+        "content":
+          [
+            {
+              "type": "text",
+              "text": '{"context":{"cluster":"test-cluster","user":"test-user"},"name":"test-cluster"}',
+            },
+          ],
+        "isError": false,
+      },
+  }

@@ -1,0 +1,87 @@
+in: { "jsonrpc": "2.0", "method": "tools/list", "id": 1, "params": {} }
+out:
+  {
+    "id": 1,
+    "jsonrpc": "2.0",
+    "result":
+      {
+        "tools":
+          [
+            {
+              "name": "get-k8s-pod-logs",
+              "description": "Get logs for a Kubernetes pod using specific context in a specified namespace",
+              "inputSchema":
+                {
+                  "type": "object",
+                  "properties":
+                    {
+                      "context":
+                        {
+                          "description": "Name of the Kubernetes context to use",
+                          "type": "string",
+                        },
+                      "namespace":
+                        {
+                          "description": "Name of the namespace where the pod is located",
+                          "type": "string",
+                        },
+                      "pod":
+                        {
+                          "description": "Name of the pod to get logs from",
+                          "type": "string",
+                        },
+                      "previousContainer":
+                        {
+                          "description": "Return previous terminated container logs, defaults to false.",
+                          "type": "boolean",
+                        },
+                      "sinceDuration":
+                        {
+                          "description": "Only return logs newer than a relative duration like 5s, 2m, or 3h. Only one of sinceTime or sinceDuration may be set.",
+                          "type": "string",
+                        },
+                      "sinceTime":
+                        {
+                          "description": "Only return logs after a specific date (RFC3339). Only one of sinceTime or sinceDuration may be set.",
+                          "type": "string",
+                        },
+                    },
+                  "required": ["context", "namespace", "pod"],
+                },
+            },
+            {
+              "name": "list-k8s-contexts",
+              "description": "List Kubernetes contexts from configuration files such as kubeconfig",
+              "inputSchema": { "type": "object" },
+            },
+            {
+              "name": "list-k8s-events",
+              "description": "List Kubernetes events using specific context in a specified namespace",
+              "inputSchema":
+                {
+                  "type": "object",
+                  "properties":
+                    {
+                      "context": { "type": "string" },
+                      "namespace": { "type": "string" },
+                    },
+                  "required": ["context", "namespace"],
+                },
+            },
+            {
+              "name": "list-k8s-pods",
+              "description": "List Kubernetes pods using specific context in a specified namespace",
+              "inputSchema":
+                {
+                  "type": "object",
+                  "properties":
+                    {
+                      "context": { "type": "string" },
+                      "namespace": { "type": "string" },
+                    },
+                  "required": ["context", "namespace"],
+                },
+            },
+          ],
+      },
+  }

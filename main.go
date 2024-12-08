@@ -21,8 +21,8 @@ import (
 	"k8s.io/client-go/tools/clientcmd"
 )
 
-func getCapabilities() mcp.ServerCapabilities {
-	return mcp.ServerCapabilities{
+func getCapabilities() *mcp.ServerCapabilities {
+	return &mcp.ServerCapabilities{
 		Resources: &mcp.ServerCapabilitiesResources{
 			ListChanged: utils.Ptr(false),
 			Subscribe:   utils.Ptr(false),
@@ -30,8 +30,8 @@ func getCapabilities() mcp.ServerCapabilities {
 	}
 }
 
-func getImplementation() mcp.Implementation {
-	return mcp.Implementation{
+func getImplementation() *mcp.Implementation {
+	return &mcp.Implementation{
 		Name:    "mcp-k8s-go",
 		Version: "0.0.1",
 	}
@@ -56,21 +56,24 @@ func main() {
 		return
 	}
 
-	tp := stdio.NewTransport()
-
 	app := fx.New(
-		fx.Provide(func() k8s.ClientPool {
-			return k8s.NewClientPool()
-		}),
+		// k8s client
 		fx.Provide(func() clientcmd.ClientConfig {
 			return k8s.GetKubeConfig()
 		}),
 		fx.Provide(func() (*kubernetes.Clientset, error) {
 			return k8s.GetKubeClientset()
 		}),
-		fx.Provide(func() server.Transport {
-			return tp
+		fx.Provide(func() k8s.ClientPool {
+			return k8s.NewClientPool()
 		}),
+
+		// transport
+		fx.Provide(func() server.Transport {
+			return stdio.NewTransport()
+		}),
+
+		// logging configuration
 		fx.Provide(func() *zap.Logger {
 			cfg := zap.NewDevelopmentConfig()
 			cfg.Level.SetLevel(zap.ErrorLevel)
@@ -82,16 +85,23 @@ func main() {
 				return &fxevent.ZapLogger{Logger: logger}
 			},
 		)),
+
+		// tools
 		fxctx.ProvideToolMux(),
 		fx.Provide(fxctx.AsTool(tools.NewListContextsTool)),
 		fx.Provide(fxctx.AsTool(tools.NewListPodsTool)),
 		fx.Provide(fxctx.AsTool(tools.NewListEventsTool)),
 		fx.Provide(fxctx.AsTool(tools.NewPodLogsTool)),
+
+		// resources
 		fxctx.ProvideResourceMux(),
 		fx.Provide(fxctx.AsResourceProvider(resources.NewContextsResourceProvider)),
+
+		// server
 		fx.Invoke(func(
 			lc fx.Lifecycle,
 			tp server.Transport,
+			shutdowner fx.Shutdowner,
 			toolMux fxctx.ToolMux,
 			resourceMux fxctx.ResourceMux,
 		) {
@@ -108,6 +118,10 @@ func main() {
 								},
 							},
 						)
+
+						// if transport is stopped, this means that standard
+						// input was closed, so we should shutdown the application
+						shutdowner.Shutdown()
 					}()
 					return nil
 				},
@@ -118,5 +132,8 @@ func main() {
 		}),
 	)
 
+	// fx would handle the lifecycle of the application
+	// including starting and stopping the server, handling
+	// termination signals and so on
 	app.Run()
 }

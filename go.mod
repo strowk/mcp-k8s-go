@@ -12,12 +12,12 @@ require (
 
 require (
 	github.com/stretchr/testify v1.9.0
-	github.com/strowk/foxy-contexts v0.0.0-20241201064713-643133781253
+	github.com/strowk/foxy-contexts v0.0.1
 	go.uber.org/mock v0.5.0
 	k8s.io/api v0.31.3
 )
 
-// Can use this to develop a bit faster:
+// Can use this to develop a bit faster when changing the library:
 // replace github.com/strowk/foxy-contexts => ../foxy-contexts
 
 require (

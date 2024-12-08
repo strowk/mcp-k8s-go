@@ -1,0 +1,4 @@
+{
+    // Go tests would start Kubernetes cluster in k3d and that takes time
+    "go.testTimeout": "10m",
+}

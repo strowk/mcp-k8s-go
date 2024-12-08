@@ -1,0 +1,114 @@
+case: Read logs from a single busybox pod
+
+in:
+  {
+    "jsonrpc": "2.0",
+    "method": "tools/call",
+    "id": 2,
+    "params":
+      {
+        "name": "get-k8s-pod-logs",
+        "arguments":
+          {
+            "context": "k3d-mcp-k8s-integration-test",
+            "namespace": "default",
+            "pod": "busybox",
+          },
+      },
+  }
+out:
+  {
+    "jsonrpc": "2.0",
+    "id": 2,
+    "result":
+      { "content": [{ "type": "text", "text": "HELLO\n" }], "isError": false },
+  }
+
+---
+case: Fail reading logs from a non-existing pod
+
+in:
+  {
+    "jsonrpc": "2.0",
+    "method": "tools/call",
+    "id": 2,
+    "params":
+      {
+        "name": "get-k8s-pod-logs",
+        "arguments":
+          {
+            "context": "k3d-mcp-k8s-integration-test",
+            "namespace": "default",
+            "pod": "nonexistingpod",
+          },
+      },
+  }
+out:
+  {
+    "jsonrpc": "2.0",
+    "id": 2,
+    "result":
+      {
+        "content":
+          [{ "type": "text", "text": 'pods "nonexistingpod" not found' }],
+        "isError": true,
+      },
+  }
+
+---
+case: Read logs with sinceDuration filter from a single busybox pod
+
+in:
+  {
+    "jsonrpc": "2.0",
+    "method": "tools/call",
+    "id": 2,
+    "params":
+      {
+        "name": "get-k8s-pod-logs",
+        "arguments":
+          {
+            "context": "k3d-mcp-k8s-integration-test",
+            "namespace": "default",
+            "pod": "busybox",
+            "sinceDuration": "1s",
+          },
+      },
+  }
+out:
+  # expectation is that the logs are empty, since the pod was created before the sinceDuration
+  # , however, k8s does not allow for filter to be 0s, so there is still chance
+  # that this would fail... but it is very unlikely
+  {
+    "jsonrpc": "2.0",
+    "id": 2,
+    "result": { "content": [{ "type": "text", "text": "" }], "isError": false },
+  }
+
+---
+case: Read logs with sinceTime filter from a single busybox pod
+
+in:
+  {
+    "jsonrpc": "2.0",
+    "method": "tools/call",
+    "id": 2,
+    "params":
+      {
+        "name": "get-k8s-pod-logs",
+        "arguments":
+          {
+            "context": "k3d-mcp-k8s-integration-test",
+            "namespace": "default",
+            "pod": "busybox",
+            "sinceTime": "2021-01-01T00:00:00Z",
+          },
+      },
+  }
+out:
+  {
+    "jsonrpc": "2.0",
+    "id": 2,
+    "result":
+      { "content": [{ "type": "text", "text": "HELLO\n" }], "isError": false },
+  }
