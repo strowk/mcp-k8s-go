@@ -40,6 +40,9 @@ func TestListTools(t *testing.T) {
 const k3dClusterName = "mcp-k8s-integration-test"
 
 func TestInK3dCluster(t *testing.T) {
+	// if os.Getenv("CI") != "" {
+	// 	t.Skip("Skipping k3d tests in CI for now")
+	// }
 	ts, err := foxytest.Read("testdata/with_k3d")
 	if err != nil {
 		t.Fatal(err)
@@ -50,6 +53,7 @@ func TestInK3dCluster(t *testing.T) {
 		preloadImage(t, "busybox:latest", k3dClusterName)
 		createPod(t, "nginx", "nginx:latest")
 		createPod(t, "busybox", "busybox:latest", "--", "sh", "-c", "echo HELLO ; tail -f /dev/null")
+		ts.WithLogging()
 		ts.WithExecutable("go", []string{"run", "main.go"})
 		cntrl := foxytest.NewTestRunner(t)
 		ts.Run(cntrl)
