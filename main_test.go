@@ -14,9 +14,6 @@ import (
 )
 
 func TestListContexts(t *testing.T) {
-	if os.Getenv("CI") != "" {
-		t.Skip("Skipping k3d tests in CI for now")
-	}
 	ts, err := foxytest.Read("testdata/k8s_contexts")
 	if err != nil {
 		t.Fatal(err)
