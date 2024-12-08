@@ -15,24 +15,26 @@ import (
 
 func NewListPodsTool(pool k8s.ClientPool) fxctx.Tool {
 	return fxctx.NewTool(
-		"list-k8s-pods",
-		"List Kubernetes pods using specific context in a specified namespace",
-		mcp.ToolInputSchema{
-			Type: "object",
-			Properties: map[string]map[string]interface{}{
-				"context": {
-					"type": "string",
+		&mcp.Tool{
+			Name:        "list-k8s-pods",
+			Description: utils.Ptr("List Kubernetes pods using specific context in a specified namespace"),
+			InputSchema: mcp.ToolInputSchema{
+				Type: "object",
+				Properties: map[string]map[string]interface{}{
+					"context": {
+						"type": "string",
+					},
+					"namespace": {
+						"type": "string",
+					},
 				},
-				"namespace": {
-					"type": "string",
+				Required: []string{
+					"context",
+					"namespace",
 				},
-			},
-			Required: []string{
-				"context",
-				"namespace",
 			},
 		},
-		func(args map[string]interface{}) fxctx.ToolResponse {
+		func(args map[string]interface{}) *mcp.CallToolResult {
 			// TODO: figure out how to bind args reflectively
 			k8sCtx := args["context"].(string)
 			k8sNamespace := args["namespace"].(string)
@@ -65,7 +67,7 @@ func NewListPodsTool(pool k8s.ClientPool) fxctx.Tool {
 				contents[i] = content
 			}
 
-			return fxctx.ToolResponse{
+			return &mcp.CallToolResult{
 				Meta:    map[string]interface{}{},
 				Content: contents,
 				IsError: utils.Ptr(false),
@@ -79,8 +81,8 @@ type PodInList struct {
 	Namespace string `json:"namespace"`
 }
 
-func errResponse(err error) fxctx.ToolResponse {
-	return fxctx.ToolResponse{
+func errResponse(err error) *mcp.CallToolResult {
+	return &mcp.CallToolResult{
 		IsError: utils.Ptr(true),
 		Meta:    map[string]interface{}{},
 		Content: []interface{}{

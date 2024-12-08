@@ -27,10 +27,12 @@ func NewPodLogsTool(pool k8s.ClientPool) fxctx.Tool {
 		toolinput.WithBoolean("previousContainer", "Return previous terminated container logs, defaults to false."),
 	)
 	return fxctx.NewTool(
-		"get-k8s-pod-logs",
-		"Get logs for a Kubernetes pod using specific context in a specified namespace",
-		schema.GetMcpToolInputSchema(),
-		func(args map[string]interface{}) fxctx.ToolResponse {
+		&mcp.Tool{
+			Name:        "get-k8s-pod-logs",
+			Description: utils.Ptr("Get logs for a Kubernetes pod using specific context in a specified namespace"),
+			InputSchema: schema.GetMcpToolInputSchema(),
+		},
+		func(args map[string]interface{}) *mcp.CallToolResult {
 			input, err := schema.Validate(args)
 			if err != nil {
 				return errResponse(fmt.Errorf("invalid input: %w", err))
@@ -109,7 +111,7 @@ func NewPodLogsTool(pool k8s.ClientPool) fxctx.Tool {
 				Text: string(data),
 			}
 
-			return fxctx.ToolResponse{
+			return &mcp.CallToolResult{
 				Content: []interface{}{content},
 				IsError: utils.Ptr(false),
 			}

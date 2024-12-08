@@ -14,24 +14,26 @@ import (
 
 func NewListEventsTool(pool k8s.ClientPool) fxctx.Tool {
 	return fxctx.NewTool(
-		"list-k8s-events",
-		"List Kubernetes events using specific context in a specified namespace",
-		mcp.ToolInputSchema{
-			Type: "object",
-			Properties: map[string]map[string]interface{}{
-				"context": {
-					"type": "string",
+		&mcp.Tool{
+			Name:        "list-k8s-events",
+			Description: utils.Ptr("List Kubernetes events using specific context in a specified namespace"),
+			InputSchema: mcp.ToolInputSchema{
+				Type: "object",
+				Properties: map[string]map[string]interface{}{
+					"context": {
+						"type": "string",
+					},
+					"namespace": {
+						"type": "string",
+					},
 				},
-				"namespace": {
-					"type": "string",
+				Required: []string{
+					"context",
+					"namespace",
 				},
-			},
-			Required: []string{
-				"context",
-				"namespace",
 			},
 		},
-		func(args map[string]interface{}) fxctx.ToolResponse {
+		func(args map[string]interface{}) *mcp.CallToolResult {
 			k8sCtx := args["context"].(string)
 			k8sNamespace := args["namespace"].(string)
 
@@ -57,7 +59,7 @@ func NewListEventsTool(pool k8s.ClientPool) fxctx.Tool {
 				contents[i] = content
 			}
 
-			return fxctx.ToolResponse{
+			return &mcp.CallToolResult{
 				Meta:    map[string]interface{}{},
 				Content: contents,
 				IsError: utils.Ptr(false),

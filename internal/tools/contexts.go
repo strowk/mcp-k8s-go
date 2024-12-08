@@ -15,19 +15,21 @@ import (
 
 func NewListContextsTool() fxctx.Tool {
 	return fxctx.NewTool(
-		"list-k8s-contexts",
-		"List Kubernetes contexts from configuration files such as kubeconfig",
-		mcp.ToolInputSchema{
-			Type:       "object",
-			Properties: map[string]map[string]interface{}{},
-			Required:   []string{},
+		&mcp.Tool{
+			Name:        "list-k8s-contexts",
+			Description: utils.Ptr("List Kubernetes contexts from configuration files such as kubeconfig"),
+			InputSchema: mcp.ToolInputSchema{
+				Type:       "object",
+				Properties: map[string]map[string]interface{}{},
+				Required:   []string{},
+			},
 		},
-		func(args map[string]interface{}) fxctx.ToolResponse {
+		func(args map[string]interface{}) *mcp.CallToolResult {
 			ctx := k8s.GetKubeConfig()
 			cfg, err := ctx.RawConfig()
 			if err != nil {
 				log.Printf("failed to get kubeconfig: %v", err)
-				return fxctx.ToolResponse{
+				return &mcp.CallToolResult{
 					IsError: utils.Ptr(true),
 					Meta: map[string]interface{}{
 						"error": err.Error(),
@@ -36,7 +38,7 @@ func NewListContextsTool() fxctx.Tool {
 				}
 			}
 
-			return fxctx.ToolResponse{
+			return &mcp.CallToolResult{
 				Meta:    map[string]interface{}{},
 				Content: getListContextsToolContent(cfg),
 				IsError: utils.Ptr(false),
