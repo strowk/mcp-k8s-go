@@ -3,7 +3,6 @@ package tools
 import (
 	"context"
 	"fmt"
-	"strconv"
 	"time"
 
 	"github.com/strowk/mcp-k8s-go/internal/k8s"
@@ -11,6 +10,7 @@ import (
 
 	"github.com/strowk/foxy-contexts/pkg/fxctx"
 	"github.com/strowk/foxy-contexts/pkg/mcp"
+	"github.com/strowk/foxy-contexts/pkg/toolinput"
 
 	v1 "k8s.io/api/core/v1"
 
@@ -18,86 +18,50 @@ import (
 )
 
 func NewPodLogsTool(pool k8s.ClientPool) fxctx.Tool {
+	schema := toolinput.NewToolInputSchema(
+		toolinput.WithRequiredString("context", "Name of the Kubernetes context to use"),
+		toolinput.WithRequiredString("namespace", "Name of the namespace where the pod is located"),
+		toolinput.WithRequiredString("pod", "Name of the pod to get logs from"),
+		toolinput.WithString("sinceDuration", "Only return logs newer than a relative duration like 5s, 2m, or 3h. Only one of sinceTime or sinceDuration may be set."),
+		toolinput.WithString("sinceTime", "Only return logs after a specific date (RFC3339). Only one of sinceTime or sinceDuration may be set."),
+		toolinput.WithBoolean("previousContainer", "Return previous terminated container logs, defaults to false."),
+	)
 	return fxctx.NewTool(
 		"get-k8s-pod-logs",
 		"Get logs for a Kubernetes pod using specific context in a specified namespace",
-		mcp.ToolInputSchema{
-			Type: "object",
-			Properties: map[string]map[string]interface{}{
-				"context": {
-					"type":        "string",
-					"description": "Name of the Kubernetes context to use",
-				},
-				"namespace": {
-					"type":        "string",
-					"description": "Name of the namespace where the pod is located",
-				},
-				"pod": {
-					"type":        "string",
-					"description": "Name of the pod to get logs from",
-				},
-				"sinceDuration": {
-					"type":        "string",
-					"description": "Only return logs newer than a relative duration like 5s, 2m, or 3h, only one of sinceTime or sinceDuration may be set.",
-				},
-				"sinceTime": {
-					"type":        "string",
-					"description": "Only return logs after a specific date (RFC3339), only one of sinceTime or sinceDuration may be set.",
-				},
-				"previousContainer": {
-					"type":        "boolean",
-					"description": "Return previous terminated container logs, defaults to false.",
-				},
-			},
-			Required: []string{
-				"context",
-				"namespace",
-				"pod",
-			},
-		},
+		schema.GetMcpToolInputSchema(),
 		func(args map[string]interface{}) fxctx.ToolResponse {
-			k8sCtx := args["context"].(string)
-			k8sNamespace := args["namespace"].(string)
-			k8sPod := args["pod"].(string)
-
-			sinceDurationStr := ""
-			sinceDurationArg := args["sinceDuration"]
-			if sinceDurationArg != nil {
-				sinceDurationStr = sinceDurationArg.(string)
+			input, err := schema.Validate(args)
+			if err != nil {
+				return errResponse(fmt.Errorf("invalid input: %w", err))
 			}
+
+			k8sCtx, err := input.String("context")
+			if err != nil {
+				return errResponse(fmt.Errorf("invalid input: %w", err))
+			}
+
+			k8sNamespace, err := input.String("namespace")
+			if err != nil {
+				return errResponse(fmt.Errorf("invalid input: %w", err))
+			}
+
+			k8sPod, err := input.String("pod")
+			if err != nil {
+				return errResponse(fmt.Errorf("invalid input: %w", err))
+			}
+
+			sinceDurationStr := input.StringOr("sinceDuration", "")
 
 			sinceTimeStr := ""
-			sinceTimeArg := args["sinceTime"]
-			if sinceTimeArg != nil {
-				sinceTimeStr = sinceTimeArg.(string)
-			}
+
+			sinceTimeStr = input.StringOr("sinceTime", "")
 
 			if sinceDurationStr != "" && sinceTimeStr != "" {
 				return errResponse(fmt.Errorf("only one of sinceDuration or sinceTime may be set"))
 			}
 
-			previousContainer := false
-			previousContainerArg := args["previousContainer"]
-			if previousContainerArg != nil {
-				// TODO: this all has to be moved somewhere separately
-				// preferably into some json schema aware validator in foxy-contexts
-				previousContainerStr, ok := previousContainerArg.(string)
-				if ok {
-					if previousContainerStr != "" {
-						previousContainerVal, err := strconv.ParseBool(previousContainerStr)
-						if err != nil {
-							return errResponse(fmt.Errorf("invalid value of previousContainer: %s, expected to be a boolean, got '%w' trying to parse", previousContainerStr, err))
-						}
-						previousContainer = previousContainerVal
-					}
-				} else {
-					previousContainerVal, ok := previousContainerArg.(bool)
-					if !ok {
-						return errResponse(fmt.Errorf("invalid type of previousContainer"))
-					}
-					previousContainer = previousContainerVal
-				}
-			}
+			previousContainer := input.BooleanOr("previousContainer", false)
 
 			options := &v1.PodLogOptions{
 				Previous: previousContainer,
@@ -147,6 +111,7 @@ func NewPodLogsTool(pool k8s.ClientPool) fxctx.Tool {
 
 			return fxctx.ToolResponse{
 				Content: []interface{}{content},
+				IsError: utils.Ptr(false),
 			}
 		},
 	)
