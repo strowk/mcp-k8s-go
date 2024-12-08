@@ -19,7 +19,34 @@ tools/inspector/run.sh
 
 ## Example usage with Claude Desktop
 
-To use this MCP server with Claude Desktop you would firstly need to install it by running:
+To use this MCP server with Claude Desktop you would firstly need to install it.
+
+You have two options at the moment - use pre-built binaries published in npm or build it from source, in which case names of binaries might differ.
+
+### Using pre-built binaries
+
+Use this if you have npm installed and want to use pre-built binaries:
+
+```bash
+npm install -g @strowk/mcp-k8s
+```
+
+Then check version by running `mcp-k8s --version` and if this printed installed version, you can proceed to add configuration to `claude-desktop.json` file:
+
+```json
+{
+    "mcpServers": {
+        "mcp_k8s": {
+            "command": "mcp-k8s",
+            "args": []
+        }
+    }
+}
+```
+
+### Building from source
+
+You would need Golang installed to build this project:
 
 ```bash
 go get github.com/strowk/mcp-k8s-go
@@ -38,6 +65,8 @@ go install github.com/strowk/mcp-k8s-go
     }
 }
 ```
+
+### Using from Claude Desktop
 
 Now you should be able to run Claude Desktop and:
 - see K8S contexts available to attach to conversation as a resource
