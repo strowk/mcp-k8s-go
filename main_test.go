@@ -14,6 +14,9 @@ import (
 )
 
 func TestListContexts(t *testing.T) {
+	if os.Getenv("CI") != "" {
+		t.Skip("Skipping k3d tests in CI for now")
+	}
 	ts, err := foxytest.Read("testdata/k8s_contexts")
 	if err != nil {
 		t.Fatal(err)
@@ -31,6 +34,7 @@ func TestListTools(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
+	ts.WithLogging()
 	ts.WithExecutable("go", []string{"run", "main.go"})
 	cntrl := foxytest.NewTestRunner(t)
 	ts.Run(cntrl)
@@ -43,6 +47,7 @@ func TestInK3dCluster(t *testing.T) {
 	if os.Getenv("CI") != "" {
 		t.Skip("Skipping k3d tests in CI for now")
 	}
+
 	ts, err := foxytest.Read("testdata/with_k3d")
 	if err != nil {
 		t.Fatal(err)
@@ -67,7 +72,10 @@ func withK3dCluster(t *testing.T, name string, fn func()) {
 	t.Helper()
 	cmd := exec.Command("k3d", "cluster", "delete", name)
 	cmd.Stderr = os.Stderr
-	cmd.Run() // precleanup if cluster has leaked from previous test
+	err := cmd.Run() // precleanup if cluster has leaked from previous test
+	if err != nil {
+		t.Logf("error in preclean: %v", err)
+	}
 
 	defer deleteK3dCluster(t, name)
 
