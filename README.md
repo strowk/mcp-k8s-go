@@ -33,7 +33,7 @@ Use this if you have npm installed and want to use pre-built binaries:
 npm install -g @strowk/mcp-k8s
 ```
 
-Then check version by running `mcp-k8s --version` and if this printed installed version, you can proceed to add configuration to `claude-desktop.json` file:
+Then check version by running `mcp-k8s --version` and if this printed installed version, you can proceed to add configuration to `claude_desktop_config.json` file:
 
 ```json
 {
@@ -50,7 +50,7 @@ Then check version by running `mcp-k8s --version` and if this printed installed 
 
 Head to [GitHub releases](https://github.com/strowk/mcp-k8s-go/releases) and download the latest release for your platform.
 
-Unpack the archive, which would contain binary named `mcp-k8s-go`, put that binary somewhere in your PATH and then add the following configuration to the `claude-desktop.json` file:
+Unpack the archive, which would contain binary named `mcp-k8s-go`, put that binary somewhere in your PATH and then add the following configuration to the `claude_desktop_config.json` file:
 
 ```json
 {
@@ -73,7 +73,7 @@ go get github.com/strowk/mcp-k8s-go
 go install github.com/strowk/mcp-k8s-go
 ```
 
-, and then add the following configuration to the `claude-desktop.json` file:
+, and then add the following configuration to the `claude_desktop_config.json` file:
 
 ```json
 {
