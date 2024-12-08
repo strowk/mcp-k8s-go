@@ -62,8 +62,21 @@ out:
                   "type": "object",
                   "properties":
                     {
-                      "context": { "type": "string" },
-                      "namespace": { "type": "string" },
+                      "context":
+                        {
+                          "type": "string",
+                          "description": "Name of the Kubernetes context to use",
+                        },
+                      "namespace":
+                        {
+                          "type": "string",
+                          "description": "Name of the namespace to list events from",
+                        },
+                      "limit":
+                        {
+                          "type": "number",
+                          "description": "Maximum number of events to list",
+                        },
                     },
                   "required": ["context", "namespace"],
                 },

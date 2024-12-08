@@ -8,51 +8,67 @@ import (
 
 	"github.com/strowk/foxy-contexts/pkg/fxctx"
 	"github.com/strowk/foxy-contexts/pkg/mcp"
+	"github.com/strowk/foxy-contexts/pkg/toolinput"
 
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 )
 
 func NewListEventsTool(pool k8s.ClientPool) fxctx.Tool {
+	schema := toolinput.NewToolInputSchema(
+		toolinput.WithRequiredString("context", "Name of the Kubernetes context to use"),
+		toolinput.WithRequiredString("namespace", "Name of the namespace to list events from"),
+		toolinput.WithNumber("limit", "Maximum number of events to list"),
+	)
 	return fxctx.NewTool(
 		&mcp.Tool{
 			Name:        "list-k8s-events",
 			Description: utils.Ptr("List Kubernetes events using specific context in a specified namespace"),
-			InputSchema: mcp.ToolInputSchema{
-				Type: "object",
-				Properties: map[string]map[string]interface{}{
-					"context": {
-						"type": "string",
-					},
-					"namespace": {
-						"type": "string",
-					},
-				},
-				Required: []string{
-					"context",
-					"namespace",
-				},
-			},
+			InputSchema: schema.GetMcpToolInputSchema(),
 		},
 		func(args map[string]interface{}) *mcp.CallToolResult {
-			k8sCtx := args["context"].(string)
-			k8sNamespace := args["namespace"].(string)
+			input, err := schema.Validate(args)
+			if err != nil {
+				return errResponse(err)
+			}
+
+			k8sCtx, err := input.String("context")
+			if err != nil {
+				return errResponse(err)
+			}
+
+			k8sNamespace, err := input.String("namespace")
+			if err != nil {
+				return errResponse(err)
+			}
 
 			clientset, err := pool.GetClientset(k8sCtx)
+
+			options := metav1.ListOptions{}
+			if limit, err := input.Number("limit"); err == nil {
+				options.Limit = int64(limit)
+			}
 
 			events, err := clientset.
 				CoreV1().
 				Events(k8sNamespace).
-				List(context.Background(), metav1.ListOptions{})
+				List(context.Background(), options)
 			if err != nil {
 				return errResponse(err)
 			}
 
 			var contents []interface{} = make([]interface{}, len(events.Items))
 			for i, event := range events.Items {
-				content, err := NewJsonContent(EventInList{
+				eventInList := EventInList{
 					Action:  event.Action,
 					Message: event.Message,
-				})
+					Type:    event.Type,
+					Reason:  event.Reason,
+					InvolvedObject: InvolvedObject{
+						Kind: event.InvolvedObject.Kind,
+						Name: event.InvolvedObject.Name,
+					},
+				}
+				content, err := NewJsonContent(eventInList)
 				if err != nil {
 					return errResponse(err)
 				}
@@ -68,7 +84,15 @@ func NewListEventsTool(pool k8s.ClientPool) fxctx.Tool {
 	)
 }
 
+type InvolvedObject struct {
+	Kind string `json:"kind"`
+	Name string `json:"name"`
+}
+
 type EventInList struct {
-	Action  string `json:"action"`
-	Message string `json:"message"`
+	Action         string         `json:"action"`
+	Message        string         `json:"message"`
+	Type           string         `json:"type"`
+	Reason         string         `json:"reason"`
+	InvolvedObject InvolvedObject `json:"involvedObject"`
 }
