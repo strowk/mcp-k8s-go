@@ -94,6 +94,8 @@ github.com/strowk/foxy-contexts v0.0.4-0.20241208041506-9496aae569c8 h1:ibZMel4G
 github.com/strowk/foxy-contexts v0.0.4-0.20241208041506-9496aae569c8/go.mod h1:mqbY/AmvM5uyoITd6+Qtq5gchqwCaIn5pqgbH7v/DeA=
 github.com/strowk/foxy-contexts v0.0.4-0.20241208042141-60f71025f96e h1:9BnF9OeK4kAEZFmnsK1SyP3K/m6CtsuAq0suPNlG1TE=
 github.com/strowk/foxy-contexts v0.0.4-0.20241208042141-60f71025f96e/go.mod h1:mqbY/AmvM5uyoITd6+Qtq5gchqwCaIn5pqgbH7v/DeA=
+github.com/strowk/foxy-contexts v0.0.4 h1:Rb77zQVdcZbUADAHMeLMsbMlzd+xxGvu92C6Vp4SVa0=
+github.com/strowk/foxy-contexts v0.0.4/go.mod h1:mqbY/AmvM5uyoITd6+Qtq5gchqwCaIn5pqgbH7v/DeA=
 github.com/x448/float16 v0.8.4 h1:qLwI1I70+NjRFUR3zs1JPUCgaCXSh3SW62uAKT1mSBM=
 github.com/x448/float16 v0.8.4/go.mod h1:14CWIYCyZA/cWjXOioeEpHeN/83MdbZDRQHoFcYsOfg=
 github.com/yuin/goldmark v1.1.27/go.mod h1:3hX8gzYuyVAZsxl0MRgGTJEmQBFcNTphYh9decYSb74=
