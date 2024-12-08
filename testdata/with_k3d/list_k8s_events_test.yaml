@@ -43,8 +43,6 @@ in:
       },
   }
 
-# "text": "missing required property",
-
 out:
   {
     "jsonrpc": "2.0",
