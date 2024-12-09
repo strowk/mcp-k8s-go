@@ -11,7 +11,7 @@ in:
         "arguments":
           {
             "context": "k3d-mcp-k8s-integration-test",
-            "namespace": "default",
+            "namespace": "test",
             "pod": "busybox",
           },
       },
@@ -38,7 +38,7 @@ in:
         "arguments":
           {
             "context": "k3d-mcp-k8s-integration-test",
-            "namespace": "default",
+            "namespace": "test",
             "pod": "nonexistingpod",
           },
       },
@@ -69,7 +69,7 @@ in:
         "arguments":
           {
             "context": "k3d-mcp-k8s-integration-test",
-            "namespace": "default",
+            "namespace": "test",
             "pod": "busybox",
             "sinceDuration": "1s",
           },
@@ -99,7 +99,7 @@ in:
         "arguments":
           {
             "context": "k3d-mcp-k8s-integration-test",
-            "namespace": "default",
+            "namespace": "test",
             "pod": "busybox",
             "sinceTime": "2021-01-01T00:00:00Z",
           },

@@ -95,6 +95,28 @@ out:
                   "required": ["context", "namespace"],
                 },
             },
+            {
+              "name": "list-k8s-services",
+              "description": "List Kubernetes services using specific context in a specified namespace",
+              "inputSchema":
+                {
+                  "type": "object",
+                  "properties":
+                    {
+                      "context":
+                        {
+                          "type": "string",
+                          "description": "Name of the Kubernetes context to use, defaults to current context",
+                        },
+                      "namespace":
+                        {
+                          "type": "string",
+                          "description": "Name of the namespace to list events from",
+                        },
+                    },
+                  "required": ["namespace"],
+                },
+            },
           ],
       },
   }

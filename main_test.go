@@ -46,11 +46,15 @@ func TestInK3dCluster(t *testing.T) {
 		t.Fatal(err)
 	}
 
+	nginxImage := "nginx:1.27.3"
+	busyboxImage := "busybox:1.37.0"
 	withK3dCluster(t, k3dClusterName, func() {
-		preloadImage(t, "nginx:latest", k3dClusterName)
-		preloadImage(t, "busybox:latest", k3dClusterName)
-		createPod(t, "nginx", "nginx:latest")
-		createPod(t, "busybox", "busybox:latest", "--", "sh", "-c", "echo HELLO ; tail -f /dev/null")
+		preloadImage(t, nginxImage, k3dClusterName)
+		preloadImage(t, busyboxImage, k3dClusterName)
+		createTestNamespace(t)
+		createPod(t, "nginx", nginxImage)
+		createPod(t, "busybox", busyboxImage, "--", "sh", "-c", "echo HELLO ; tail -f /dev/null")
+		createPodService(t, "nginx", "nginx-headless", "None")
 		ts.WithLogging()
 		ts.WithExecutable("go", []string{"run", "main.go"})
 		cntrl := foxytest.NewTestRunner(t)
@@ -80,9 +84,19 @@ func withK3dCluster(t *testing.T, name string, fn func()) {
 	fn()
 }
 
+func createTestNamespace(t *testing.T) {
+	t.Helper()
+	cmd := exec.Command("kubectl", "create", "namespace", "test")
+	cmd.Stderr = os.Stderr
+	err := cmd.Run()
+	if err != nil {
+		t.Fatal(err)
+	}
+}
+
 func createPod(t *testing.T, name string, image string, args ...string) {
 	t.Helper()
-	allargs := []string{"-n", "default", "run", name, "--image=" + image, "--restart=Never"}
+	allargs := []string{"-n", "test", "run", name, "--image=" + image, "--restart=Never"}
 	allargs = append(allargs, args...)
 	cmd := exec.Command("kubectl", allargs...)
 	cmd.Stderr = os.Stderr
@@ -94,9 +108,19 @@ func createPod(t *testing.T, name string, image string, args ...string) {
 	t.Logf("waiting for pod %s to be running", name)
 
 	// wait for pod to be running
-	cmd = exec.Command("kubectl", "-n", "default", "wait", "--for=condition=Ready", "--timeout=5m", "pod", name)
+	cmd = exec.Command("kubectl", "-n", "test", "wait", "--for=condition=Ready", "--timeout=5m", "pod", name)
 	cmd.Stderr = os.Stderr
 	err = cmd.Run()
+	if err != nil {
+		t.Fatal(err)
+	}
+}
+
+func createPodService(t *testing.T, podName string, serviceName string, clusterIp string) {
+	t.Helper()
+	cmd := exec.Command("kubectl", "expose", "-n", "test", "pod", podName, "--port", "80", "--target-port", "80", "--name", serviceName, "--cluster-ip", clusterIp)
+	cmd.Stderr = os.Stderr
+	err := cmd.Run()
 	if err != nil {
 		t.Fatal(err)
 	}

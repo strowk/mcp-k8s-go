@@ -37,7 +37,7 @@ in:
         "arguments":
           {
             "context": "k3d-mcp-k8s-integration-test",
-            "namespace": "default",
+            "namespace": "test",
             "limit": 1,
           },
       },
@@ -53,7 +53,7 @@ out:
           [
             {
               "type": "text",
-              "text": '{"action":"Binding","message":"Successfully assigned default/busybox to k3d-mcp-k8s-integration-test-server-0","type":"Normal","reason":"Scheduled","involvedObject":{"kind":"Pod","name":"busybox"}}',
+              "text": '{"action":"Binding","message":"Successfully assigned test/busybox to k3d-mcp-k8s-integration-test-server-0","type":"Normal","reason":"Scheduled","involvedObject":{"kind":"Pod","name":"busybox"}}',
             },
           ],
         "isError": false,

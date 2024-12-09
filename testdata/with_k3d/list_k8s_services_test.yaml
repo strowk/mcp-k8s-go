@@ -5,7 +5,7 @@ in:
     "id": 2,
     "params":
       {
-        "name": "list-k8s-pods",
+        "name": "list-k8s-services",
         "arguments":
           { "context": "k3d-mcp-k8s-integration-test", "namespace": "test" },
       },
@@ -20,11 +20,7 @@ out:
           [
             {
               "type": "text",
-              "text": '{"name":"busybox","namespace":"test"}',
-            },
-            {
-              "type": "text",
-              "text": '{"name":"nginx","namespace":"test"}',
+              "text": '{"name":"nginx-headless","namespace":"test","type":"ClusterIP","clusterIP":"None","externalIPs":null,"ports":["80/TCP"]}',
             },
           ],
         "isError": false,

@@ -92,6 +92,7 @@ func main() {
 		fx.Provide(fxctx.AsTool(tools.NewListPodsTool)),
 		fx.Provide(fxctx.AsTool(tools.NewListEventsTool)),
 		fx.Provide(fxctx.AsTool(tools.NewPodLogsTool)),
+		fx.Provide(fxctx.AsTool(tools.NewListServicesTool)),
 
 		// resources
 		fxctx.ProvideResourceMux(),

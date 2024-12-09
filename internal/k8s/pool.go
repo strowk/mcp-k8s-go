@@ -37,8 +37,11 @@ func (p *pool) GetClientset(k8sContext string) (kubernetes.Interface, error) {
 func getClientset(k8sContext string) (kubernetes.Interface, error) {
 	loadingRules := clientcmd.NewDefaultClientConfigLoadingRules()
 	configOverrides := &clientcmd.ConfigOverrides{}
-
-	configOverrides.CurrentContext = k8sContext
+	if k8sContext == "" {
+		configOverrides = nil
+	} else {
+		configOverrides.CurrentContext = k8sContext
+	}
 
 	kubeConfig := clientcmd.NewNonInteractiveDeferredLoadingClientConfig(
 		loadingRules,
