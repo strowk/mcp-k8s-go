@@ -23,7 +23,7 @@ out:
   }
 
 ---
-## This don't work because content is a bit unpredictable
+
 case: List k8s events
 
 in:
