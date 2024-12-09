@@ -10,6 +10,9 @@ if [ -z "$new_version" ]; then
   exit 1
 fi
 
+# drop the v prefix
+new_version="${new_version#v}"
+
 # check that new version is X.Y.Z
 if [[ ! $new_version =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
   echo "Version should be in format X.Y.Z where X, Y, Z are numbers"
