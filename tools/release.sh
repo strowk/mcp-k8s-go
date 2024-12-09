@@ -6,6 +6,7 @@ new_version="${1}"
 
 if [ -z "$new_version" ]; then
   echo "Usage: $0 <new_version>"
+  echo "hint: last tag is $(git describe --tags --abbrev=0)"
   exit 1
 fi
 
