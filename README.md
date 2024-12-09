@@ -12,7 +12,13 @@ Currently available:
 
 ## Example usage with Inspector
 
-To use this MCP server with Inspector you can run it from root folder of this project:
+To use latest published version with Inspector you can run this:
+
+```bash
+npx @modelcontextprotocol/inspector npx @strowk/mcp-k8s
+```
+
+, or to use version built from sources, then in root folder of this project:
 
 ```bash
 tools/inspector/run.sh
