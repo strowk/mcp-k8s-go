@@ -28,7 +28,14 @@ tools/inspector/run.sh
 
 To use this MCP server with Claude Desktop you would firstly need to install it.
 
-You have two options at the moment - use pre-built binaries published in npm or build it from source, in which case names of binaries might differ.
+You have several options for installation:
+
+1. Using mcp-get (recommended):
+```bash
+npx @michaellatman/mcp-get@latest install @strowk/mcp-k8s
+```
+
+2. Using pre-built binaries published in npm or building from source.
 
 ### Using pre-built binaries
 
@@ -70,7 +77,6 @@ Unpack the archive, which would contain binary named `mcp-k8s-go`, put that bina
 }
 ```
 
-
 ### Building from source
 
 You would need Golang installed to build this project:
@@ -101,6 +107,11 @@ Now you should be able to run Claude Desktop and:
 - ask Claude to list pods in a given context and namespace
 - ask Claude to list events in a given context and namespace
 - ask Claude to read logs of a given pod in a given context and namespace
+
+## Environment Variables
+
+The following environment variables are used by the MCP server:
+- `KUBECONFIG`: Path to your Kubernetes configuration file (optional, defaults to ~/.kube/config)
 
 ### Contributing
 
