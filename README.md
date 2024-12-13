@@ -1,4 +1,5 @@
 # MCP K8S Go
+[![smithery badge](https://smithery.ai/badge/@strowk/mcp-k8s)](https://smithery.ai/protocol/@strowk/mcp-k8s)
 
 This project is intended as a both MCP server connecting to Kubernetes and a library to build more servers for any custom resources in Kubernetes.
 
@@ -30,12 +31,20 @@ To use this MCP server with Claude Desktop you would firstly need to install it.
 
 You have several options for installation:
 
-1. Using mcp-get (recommended):
+1. Using Smithery:
+
+To install MCP K8S Go for Claude Desktop automatically via [Smithery](https://smithery.ai/protocol/@strowk/mcpk8s):
+
+```bash
+npx @smithery/cli install @strowk/mcp-k8s --client claude
+```
+
+2. Using mcp-get:
 ```bash
 npx @michaellatman/mcp-get@latest install @strowk/mcp-k8s
 ```
 
-2. Using pre-built binaries published in npm or building from source.
+3. Using pre-built binaries published in npm or building from source.
 
 ### Using pre-built binaries
 
@@ -122,5 +131,4 @@ Check out [CONTRIBUTION.md](./CONTRIBUTION.md) for more information on how to co
 Following chat with Claude Desktop demonstrates how it looks when selected particular context as a resource and then asked to check pod logs for errors in kube-system namespace:
 
 ![Claude Desktop](docs/images/claude-desktop-logs.png)
-
 
