@@ -62,3 +62,54 @@ In addition to describing test case, you might need to setup some resources in K
 For how that could be done check methods such as `createPod` in [main_test.go](./main_test.go).
 You can either use `kubectl` command or `client-go` library to create and wait for initialization of resources before foxytest test runner starts.
 
+## Development
+
+You can run the project with automatic reload if you firstly install arelo:
+
+```bash
+go install github.com/makiuchi-d/arelo@latest
+```
+
+Then simple 
+
+```bash
+arelo -p '**/*.go' -i '**/.*' -i '**/*_test.go' -- go run main.go
+```
+
+would start the project's process, you might need to wait a bit before passing any input, as arelo would be building the project.
+
+Now you could start sending requests to the server, for example this would list available tools:
+
+```json
+{ "jsonrpc": "2.0", "method": "tools/list", "id": 1, "params": {} }
+```
+
+If you want output to be prettified, you can use `jq` and start the server like this:
+
+```bash
+arelo -p '**/*.go' -i '**/.*' -i '**/*_test.go' -- go run main.go | jq
+```
+
+Whenever you change any go files, arelo would automatically rebuild the project and restart the server, you might need to send some empty lines though to know whether it is up.
+Once empty lines would result in error response, you would know that server is up.
+
+You can also use it with inspector, for example:
+
+```bash
+npx @modelcontextprotocol/inspector arelo -p '**/*.go' -i '**/.*' -i '**/*_test.go' -- go run main.go 
+```
+
+, then open `http://localhost:5173/` and Connect to the server, you would have inspector UI to send requests and see responses, while at the same time having automatic reload of the server on any code changes.
+
+Command (example path for windows) in order to use it from any location (useful for providing to any clients, which are part of another program):
+
+```bash
+arelo -p '**/*.go' -i '**/.*' -i '**/*_test.go' -t C:/work/mcp-k8s-go -- go run -C C:/work/mcp-k8s-go main.go
+```
+<!-- arelo -p '**/*.go' -i '**/.*' -i '**/*_test.go' -t C:/work/mcp-k8s-go -- mcp-stdio-dev C:/work/mcp-k8s-go/dev.log.yaml go run -C C:/work/mcp-k8s-go main.go -->
+<!-- mcp-stdio-dev test.yaml mcp-k8s-go -->
+
+The only issue with this reload is that server is not aware of initialization, however at the moment it does not really preserve any state between restarts that would be depending on initialization, hence noone notices that.
+
+It does have an effect, though, that since clients typically would cache what tools/prompts/resources are available, adding new one would require actually asking for full restart.
+
