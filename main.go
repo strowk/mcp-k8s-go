@@ -1,7 +1,6 @@
 package main
 
 import (
-	"context"
 	"os"
 
 	"github.com/strowk/mcp-k8s-go/internal/k8s"
@@ -9,9 +8,8 @@ import (
 	"github.com/strowk/mcp-k8s-go/internal/tools"
 	"github.com/strowk/mcp-k8s-go/internal/utils"
 
-	"github.com/strowk/foxy-contexts/pkg/fxctx"
+	"github.com/strowk/foxy-contexts/pkg/app"
 	"github.com/strowk/foxy-contexts/pkg/mcp"
-	"github.com/strowk/foxy-contexts/pkg/server"
 	"github.com/strowk/foxy-contexts/pkg/stdio"
 
 	"go.uber.org/fx"
@@ -56,85 +54,43 @@ func main() {
 		return
 	}
 
-	app := fx.New(
-		// k8s client
-		fx.Provide(func() clientcmd.ClientConfig {
-			return k8s.GetKubeConfig()
-		}),
-		fx.Provide(func() (*kubernetes.Clientset, error) {
-			return k8s.GetKubeClientset()
-		}),
-		fx.Provide(func() k8s.ClientPool {
-			return k8s.NewClientPool()
-		}),
-
-		// transport
-		fx.Provide(func() server.Transport {
-			return stdio.NewTransport()
-		}),
-
-		// logging configuration
-		fx.Provide(func() *zap.Logger {
-			cfg := zap.NewDevelopmentConfig()
-			cfg.Level.SetLevel(zap.ErrorLevel)
-			logger, _ := cfg.Build()
-			return logger
-		}),
-		fx.Option(fx.WithLogger(
-			func(logger *zap.Logger) fxevent.Logger {
-				return &fxevent.ZapLogger{Logger: logger}
-			},
-		)),
-
-		// tools
-		fxctx.ProvideToolMux(),
-		fx.Provide(fxctx.AsTool(tools.NewListContextsTool)),
-		fx.Provide(fxctx.AsTool(tools.NewListPodsTool)),
-		fx.Provide(fxctx.AsTool(tools.NewListEventsTool)),
-		fx.Provide(fxctx.AsTool(tools.NewPodLogsTool)),
-		fx.Provide(fxctx.AsTool(tools.NewListServicesTool)),
-
-		// resources
-		fxctx.ProvideResourceMux(),
-		fx.Provide(fxctx.AsResourceProvider(resources.NewContextsResourceProvider)),
-
-		// server
-		fx.Invoke(func(
-			lc fx.Lifecycle,
-			tp server.Transport,
-			shutdowner fx.Shutdowner,
-			toolMux fxctx.ToolMux,
-			resourceMux fxctx.ResourceMux,
-		) {
-			lc.Append(fx.Hook{
-				OnStart: func(ctx context.Context) error {
-					go func() {
-						tp.Run(
-							getCapabilities(),
-							getImplementation(),
-							server.ServerStartCallbackOption{
-								Callback: func(s server.Server) {
-									toolMux.RegisterHandlers(s)
-									resourceMux.RegisterHandlers(s)
-								},
-							},
-						)
-
-						// if transport is stopped, this means that standard
-						// input was closed, so we should shutdown the application
-						shutdowner.Shutdown()
-					}()
-					return nil
+	app.
+		NewFoxyApp().
+		WithFxOptions(
+			fx.Provide(func() clientcmd.ClientConfig {
+				return k8s.GetKubeConfig()
+			}),
+			fx.Provide(func() (*kubernetes.Clientset, error) {
+				return k8s.GetKubeClientset()
+			}),
+			fx.Provide(func() k8s.ClientPool {
+				return k8s.NewClientPool()
+			}),
+		).
+		WithTool(tools.NewPodLogsTool).
+		WithTool(tools.NewListContextsTool).
+		WithTool(tools.NewListEventsTool).
+		WithTool(tools.NewListPodsTool).
+		WithTool(tools.NewListServicesTool).
+		WithResourceProvider(resources.NewContextsResourceProvider).
+		WithServerCapabilities(getCapabilities()).
+		// setting up server
+		WithName("mcp-k8s-go").
+		WithVersion("0.0.1").
+		WithTransport(stdio.NewTransport()).
+		// Configuring fx logging to only show errors
+		WithFxOptions(
+			fx.Provide(func() *zap.Logger {
+				cfg := zap.NewDevelopmentConfig()
+				cfg.Level.SetLevel(zap.ErrorLevel)
+				logger, _ := cfg.Build()
+				return logger
+			}),
+			fx.Option(fx.WithLogger(
+				func(logger *zap.Logger) fxevent.Logger {
+					return &fxevent.ZapLogger{Logger: logger}
 				},
-				OnStop: func(ctx context.Context) error {
-					return tp.Shutdown(ctx)
-				},
-			})
-		}),
-	)
+			)),
+		).Run()
 
-	// fx would handle the lifecycle of the application
-	// including starting and stopping the server, handling
-	// termination signals and so on
-	app.Run()
 }

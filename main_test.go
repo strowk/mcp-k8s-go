@@ -26,7 +26,7 @@ func TestListContexts(t *testing.T) {
 	ts.AssertNoErrors(cntrl)
 }
 
-func TestListTools(t *testing.T) {
+func TestLists(t *testing.T) {
 	ts, err := foxytest.Read("testdata")
 	if err != nil {
 		t.Fatal(err)
