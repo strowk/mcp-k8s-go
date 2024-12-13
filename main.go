@@ -69,6 +69,7 @@ func main() {
 		).
 		WithTool(tools.NewPodLogsTool).
 		WithTool(tools.NewListContextsTool).
+		WithTool(tools.NewListNamespacesTool).
 		WithTool(tools.NewListEventsTool).
 		WithTool(tools.NewListPodsTool).
 		WithTool(tools.NewListServicesTool).

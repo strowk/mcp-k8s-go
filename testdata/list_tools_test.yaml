@@ -82,6 +82,22 @@ out:
                 },
             },
             {
+              "name": "list-k8s-namespaces",
+              "description": "List Kubernetes namespaces using specific context",
+              "inputSchema":
+                {
+                  "type": "object",
+                  "properties":
+                    {
+                      "context":
+                        {
+                          "type": "string",
+                          "description": "Name of the Kubernetes context to use, defaults to current context",
+                        },
+                    },
+                },
+            },
+            {
               "name": "list-k8s-pods",
               "description": "List Kubernetes pods using specific context in a specified namespace",
               "inputSchema":
