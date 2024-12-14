@@ -78,6 +78,7 @@ func main() {
 		WithTool(tools.NewListPodsTool).
 		WithTool(tools.NewListServicesTool).
 		WithPrompt(prompts.NewListPodsPrompt).
+		WithPrompt(prompts.NewListNamespacesPrompt).
 		WithResourceProvider(resources.NewContextsResourceProvider).
 		WithServerCapabilities(getCapabilities()).
 		// setting up server

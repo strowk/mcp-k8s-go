@@ -1,3 +1,5 @@
+case: List k8s namespaces using tool
+
 in:
   {
     "jsonrpc": "2.0",
@@ -42,3 +44,68 @@ out:
         "isError": false,
       },
   }
+
+---
+
+case: List k8s namespaces using prompt
+
+in: {
+  "jsonrpc": "2.0",
+  "method": "prompts/get",
+  "id": 3,
+  "params": {
+    "name": "list-k8s-namespaces"
+  }
+}
+
+out: {
+  "jsonrpc": "2.0",
+  "id": 3,
+  "result": {
+    "description": "Namespaces, context 'k3d-mcp-k8s-integration-test'",
+    "messages": [
+      {
+        "content": {
+          "type": "text",
+          "text": "There are 5 namespaces, context 'k3d-mcp-k8s-integration-test':"
+        },
+        "role": "user"
+      },
+      {
+        "content": {
+          "type": "text",
+          "text": "{\"name\":\"default\"}"
+        },
+        "role": "user"
+      },
+      {
+        "content": {
+          "type": "text",
+          "text": "{\"name\":\"kube-node-lease\"}"
+        },
+        "role": "user"
+      },
+      {
+        "content": {
+          "type": "text",
+          "text": "{\"name\":\"kube-public\"}"
+        },
+        "role": "user"
+      },
+      {
+        "content": {
+          "type": "text",
+          "text": "{\"name\":\"kube-system\"}"
+        },
+        "role": "user"
+      },
+      {
+        "content": {
+          "type": "text",
+          "text": "{\"name\":\"test\"}"
+        },
+        "role": "user"
+      }
+    ]
+  }
+}

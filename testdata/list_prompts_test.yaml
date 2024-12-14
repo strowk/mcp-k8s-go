@@ -8,6 +8,17 @@ out:
       {
         "prompts": [
           {
+            "name": "list-k8s-namespaces",
+            "description": "List Kubernetes Namespaces in the specified context",
+            "arguments": [
+              {
+                "description": "Context to list namespaces in, defaults to current context",
+                "name": "context",
+                "required": false,
+              },
+            ]
+          },
+          {
             "name": "list-k8s-pods",
             "description": "List Kubernetes Pods with name and namespace in the current context",
             "arguments": [
