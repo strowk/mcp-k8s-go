@@ -11,6 +11,15 @@ func GetKubeConfig() clientcmd.ClientConfig {
 	return kubeConfig
 }
 
+func GetCurrentContext() (string, error) {
+	kubeConfig := GetKubeConfig()
+	config, err := kubeConfig.RawConfig()
+	if err != nil {
+		return "", err
+	}
+	return config.CurrentContext, nil
+}
+
 func GetKubeClientset() (*kubernetes.Clientset, error) {
 	kubeConfig := GetKubeConfig()
 

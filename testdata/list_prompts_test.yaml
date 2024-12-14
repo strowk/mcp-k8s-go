@@ -1,0 +1,23 @@
+case: List Prompts
+in: { "jsonrpc": "2.0", "method": "prompts/list", "id": 1, "params": {} }
+out:
+  {
+    "id": 1,
+    "jsonrpc": "2.0",
+    "result":
+      {
+        "prompts": [
+          {
+            "name": "list-k8s-pods",
+            "description": "List Kubernetes Pods with name and namespace in the current context",
+            "arguments": [
+              {
+                "description": "Namespace to list Pods from, defaults to all namespaces",
+                "name": "namespace",
+                "required": false,
+              },
+            ]
+          }
+        ]
+      },
+  }

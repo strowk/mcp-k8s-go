@@ -4,6 +4,7 @@ import (
 	"os"
 
 	"github.com/strowk/mcp-k8s-go/internal/k8s"
+	"github.com/strowk/mcp-k8s-go/internal/prompts"
 	"github.com/strowk/mcp-k8s-go/internal/resources"
 	"github.com/strowk/mcp-k8s-go/internal/tools"
 	"github.com/strowk/mcp-k8s-go/internal/utils"
@@ -24,6 +25,9 @@ func getCapabilities() *mcp.ServerCapabilities {
 		Resources: &mcp.ServerCapabilitiesResources{
 			ListChanged: utils.Ptr(false),
 			Subscribe:   utils.Ptr(false),
+		},
+		Prompts: &mcp.ServerCapabilitiesPrompts{
+			ListChanged: utils.Ptr(false),
 		},
 	}
 }
@@ -73,6 +77,7 @@ func main() {
 		WithTool(tools.NewListEventsTool).
 		WithTool(tools.NewListPodsTool).
 		WithTool(tools.NewListServicesTool).
+		WithPrompt(prompts.NewListPodsPrompt).
 		WithResourceProvider(resources.NewContextsResourceProvider).
 		WithServerCapabilities(getCapabilities()).
 		// setting up server

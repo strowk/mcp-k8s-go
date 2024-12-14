@@ -1,3 +1,4 @@
+case: List k8s pods using tool
 in:
   {
     "jsonrpc": "2.0",
@@ -18,13 +19,51 @@ out:
       {
         "content":
           [
+            { "type": "text", "text": '{"name":"busybox","namespace":"test"}' },
+            { "type": "text", "text": '{"name":"nginx","namespace":"test"}' },
+          ],
+        "isError": false,
+      },
+  }
+
+---
+case: List k8s pods using prompt
+
+in:
+  {
+    "jsonrpc": "2.0",
+    "method": "tools/call",
+    "id": 3,
+    "params":
+      {
+        "name": "list-k8s-pods",
+        "arguments": { "context": "k3d-mcp-k8s-integration-test" },
+      },
+  }
+
+out:
+  {
+    "jsonrpc": "2.0",
+    "id": 3,
+    "result":
+      {
+        "messages":
+          [
             {
-              "type": "text",
-              "text": '{"name":"busybox","namespace":"test"}',
+              "content":
+                {
+                  "type": "text",
+                  "text": '{"name":"busybox","namespace":"test"}',
+                },
+              "role": "user",
             },
             {
-              "type": "text",
-              "text": '{"name":"nginx","namespace":"test"}',
+              "content":
+                {
+                  "type": "text",
+                  "text": '{"name":"nginx","namespace":"test"}',
+                },
+              "role": "user",
             },
           ],
         "isError": false,
