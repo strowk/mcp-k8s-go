@@ -105,10 +105,9 @@ out:
                   "type": "object",
                   "properties":
                     {
-                      "context": { "type": "string" },
-                      "namespace": { "type": "string" },
+                      "context": { "type": "string", "description": "Name of the Kubernetes context to use, defaults to current context" },
+                      "namespace": { "type": "string", "description": "Namespace to list pods from, defaults to all namespaces" },
                     },
-                  "required": ["context", "namespace"],
                 },
             },
             {

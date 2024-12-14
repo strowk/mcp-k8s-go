@@ -9,37 +9,33 @@ import (
 
 	"github.com/strowk/foxy-contexts/pkg/fxctx"
 	"github.com/strowk/foxy-contexts/pkg/mcp"
+	"github.com/strowk/foxy-contexts/pkg/toolinput"
 
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 )
 
 func NewListPodsTool(pool k8s.ClientPool) fxctx.Tool {
+	schema := toolinput.NewToolInputSchema(
+		toolinput.WithString("context", "Name of the Kubernetes context to use, defaults to current context"),
+		toolinput.WithString("namespace", "Namespace to list pods from, defaults to all namespaces"),
+	)
 	return fxctx.NewTool(
 		&mcp.Tool{
 			Name:        "list-k8s-pods",
 			Description: utils.Ptr("List Kubernetes pods using specific context in a specified namespace"),
-			InputSchema: mcp.ToolInputSchema{
-				Type: "object",
-				Properties: map[string]map[string]interface{}{
-					"context": {
-						"type": "string",
-					},
-					"namespace": {
-						"type": "string",
-					},
-				},
-				Required: []string{
-					"context",
-					"namespace",
-				},
-			},
+			InputSchema: schema.GetMcpToolInputSchema(),
 		},
 		func(args map[string]interface{}) *mcp.CallToolResult {
-			// TODO: figure out how to bind args reflectively
-			k8sCtx := args["context"].(string)
-			k8sNamespace := args["namespace"].(string)
+			input, err := schema.Validate(args)
+			if err != nil {
+				return errResponse(err)
+			}
 
-			// TODO: figure out how to use current context, i.e need to make k8sCtx optional
+			k8sCtx := input.StringOr("context", "")
+			k8sNamespace := input.StringOr("namespace", "")
+			if k8sNamespace == "" {
+				k8sNamespace = metav1.NamespaceAll
+			}
 
 			clientset, err := pool.GetClientset(k8sCtx)
 
