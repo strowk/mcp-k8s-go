@@ -32,12 +32,12 @@ case: List k8s pods using prompt
 in:
   {
     "jsonrpc": "2.0",
-    "method": "tools/call",
+    "method": "prompts/get",
     "id": 3,
     "params":
       {
         "name": "list-k8s-pods",
-        "arguments": { "context": "k3d-mcp-k8s-integration-test" },
+        "arguments": { "namespace": "test" },
       },
   }
 
@@ -47,8 +47,17 @@ out:
     "id": 3,
     "result":
       {
+        "description": "Pods in namespace 'test', context 'k3d-mcp-k8s-integration-test'",
         "messages":
           [
+            {
+              "content":
+                {
+                  "type": "text",
+                  "text": "There are 2 pods in namespace 'test':",
+                },
+              "role": "user",
+            },
             {
               "content":
                 {
@@ -66,6 +75,5 @@ out:
               "role": "user",
             },
           ],
-        "isError": false,
       },
   }
