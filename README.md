@@ -1,20 +1,36 @@
-# MCP K8S Go
+<h1 align="center">
+   <img src="docs/images/logo.png" width="180"/>
+   <br/>
+   MCP K8S Go
+</h1>
+
+<h4 align="center">MCP server connecting to Kubernetes and a library to build more servers for any custom resources</h4>
+
+<p align="center">
+  <a href="#features">Features</a> ⚙
+  <a href="#browse-with-inspector">Browse With Inspector</a> ⚙
+  <a href="#use-with-claude">Use With Claude</a> ⚙
+  <a href="#contributing">Contributing</a>
+</p>
+
+[![MCP Package](https://mcp-get.com/api/badge/%40strowk%2Fmcp-k8s)](https://mcp-get.com/packages/%40strowk%2Fmcp-k8s)
+[![MCP Package Installs](https://mcp-get.com/api/badge/%40strowk%2Fmcp-k8s?style=installs)](https://mcp-get.com/packages/%40strowk%2Fmcp-k8s)
+[![MCP Package Views](https://mcp-get.com/api/badge/%40strowk%2Fmcp-k8s?style=views)](https://mcp-get.com/packages/%40strowk%2Fmcp-k8s)
 [![smithery badge](https://smithery.ai/badge/@strowk/mcp-k8s)](https://smithery.ai/protocol/@strowk/mcp-k8s)
 
-This project is intended as a both MCP server connecting to Kubernetes and a library to build more servers for any custom resources in Kubernetes.
+## Features
 
-Currently available:
-- resource: K8S contexts as read from kubeconfig configurations
-- tool: list-k8s-contexts
-- tool: list-k8s-namespaces in a given context
-- tool: list-k8s-pods in a given context and namespace
-- tool: list-k8s-events in a given context and namespace
-- tool: list-k8s-services in a given context and namespace
-- tool: get-k8s-pod-logs in a given context and namespace
-- prompt: list-k8s-namespaces in a given context
-- prompt: list-k8s-pods in current context and with given namespace
+- 🗂️ resource: K8S contexts as read from kubeconfig configurations
+- 🤖 tool: list-k8s-contexts
+- 🤖 tool: list-k8s-namespaces in a given context
+- 🤖 tool: list-k8s-pods in a given context and namespace
+- 🤖 tool: list-k8s-events in a given context and namespace
+- 🤖 tool: list-k8s-services in a given context and namespace
+- 🤖 tool: get-k8s-pod-logs in a given context and namespace
+- 💬 prompt: list-k8s-namespaces in a given context
+- 💬 prompt: list-k8s-pods in current context and with given namespace
 
-## Example usage with Inspector
+## Browse With Inspector
 
 To use latest published version with Inspector you can run this:
 
@@ -28,28 +44,39 @@ npx @modelcontextprotocol/inspector npx @strowk/mcp-k8s
 tools/inspector/run.sh
 ```
 
-## Example usage with Claude Desktop
+## Use With Claude
+
+<details><summary><b>
+Demo Usage
+</b></summary>
+
+Following chat with Claude Desktop demonstrates how it looks when selected particular context as a resource and then asked to check pod logs for errors in kube-system namespace:
+
+![Claude Desktop](docs/images/claude-desktop-logs.png)
+
+</details>
+
 
 To use this MCP server with Claude Desktop you would firstly need to install it.
-
 You have several options for installation:
 
-1. Using Smithery:
+### Using Smithery
 
-To install MCP K8S Go for Claude Desktop automatically via [Smithery](https://smithery.ai/protocol/@strowk/mcpk8s):
+To install MCP K8S Go for Claude Desktop automatically via [Smithery](https://smithery.ai/protocol/@strowk/mcp-k8s):
 
 ```bash
 npx @smithery/cli install @strowk/mcp-k8s --client claude
 ```
 
-2. Using mcp-get:
+### Using mcp-get
+
+To install MCP K8S Go for Claude Desktop automatically via [mcp-get](https://mcp-get.com/packages/%40strowk%2Fmcp-k8s):
+
 ```bash
 npx @michaellatman/mcp-get@latest install @strowk/mcp-k8s
 ```
 
-3. Using pre-built binaries published in npm or building from source.
-
-### Using pre-built binaries
+### Manually with pre-built binaries
 
 #### From npm
 
@@ -120,18 +147,11 @@ Now you should be able to run Claude Desktop and:
 - ask Claude to list events in a given context and namespace
 - ask Claude to read logs of a given pod in a given context and namespace
 
-## Environment Variables
+### Environment Variables
 
 The following environment variables are used by the MCP server:
 - `KUBECONFIG`: Path to your Kubernetes configuration file (optional, defaults to ~/.kube/config)
 
-### Contributing
+## Contributing
 
 Check out [CONTRIBUTION.md](./CONTRIBUTION.md) for more information on how to contribute to this project.
-
-### Demo usage with Claude Desktop
-
-Following chat with Claude Desktop demonstrates how it looks when selected particular context as a resource and then asked to check pod logs for errors in kube-system namespace:
-
-![Claude Desktop](docs/images/claude-desktop-logs.png)
-
