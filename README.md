@@ -58,7 +58,13 @@ Following chat with Claude Desktop demonstrates how it looks when selected parti
 
 
 To use this MCP server with Claude Desktop you would firstly need to install it.
+
 You have several options for installation:
+
+| | <a href="#using-smithery">Smithery</a> | <a href="#using-mcp-get">mcp-get</a> | <a href="#prebuilt-from-npm">Pre-built NPM</a> | <a href="#from-github-releases">Pre-built in Github</a> | <a href="#building-from-source">From sources</a> |
+|---|---|---|---|---|---|
+| Claude Setup | Auto | Auto | Manual | Manual | Manual |
+| Prerequisite | Node.js | Node.js | Node.js | None | Golang |
 
 ### Using Smithery
 
@@ -76,9 +82,9 @@ To install MCP K8S Go for Claude Desktop automatically via [mcp-get](https://mcp
 npx @michaellatman/mcp-get@latest install @strowk/mcp-k8s
 ```
 
-### Manually with pre-built binaries
+### Manually with prebuilt binaries
 
-#### From npm
+#### Prebuilt from npm
 
 Use this if you have npm installed and want to use pre-built binaries:
 
