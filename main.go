@@ -77,6 +77,7 @@ func main() {
 		WithTool(tools.NewListEventsTool).
 		WithTool(tools.NewListPodsTool).
 		WithTool(tools.NewListServicesTool).
+		WithTool(tools.NewListNodesTool).
 		WithPrompt(prompts.NewListPodsPrompt).
 		WithPrompt(prompts.NewListNamespacesPrompt).
 		WithResourceProvider(resources.NewContextsResourceProvider).

@@ -98,6 +98,22 @@ out:
                 },
             },
             {
+              "name": "list-k8s-nodes",
+              "description": "List Kubernetes nodes using specific context",
+              "inputSchema":
+                {
+                  "type": "object",
+                  "properties":
+                    {
+                      "context":
+                        {
+                          "type": "string",
+                          "description": "Name of the Kubernetes context to use, defaults to current context",
+                        },
+                    },
+                },
+            },
+            {
               "name": "list-k8s-pods",
               "description": "List Kubernetes pods using specific context in a specified namespace",
               "inputSchema":
@@ -105,8 +121,16 @@ out:
                   "type": "object",
                   "properties":
                     {
-                      "context": { "type": "string", "description": "Name of the Kubernetes context to use, defaults to current context" },
-                      "namespace": { "type": "string", "description": "Namespace to list pods from, defaults to all namespaces" },
+                      "context":
+                        {
+                          "type": "string",
+                          "description": "Name of the Kubernetes context to use, defaults to current context",
+                        },
+                      "namespace":
+                        {
+                          "type": "string",
+                          "description": "Namespace to list pods from, defaults to all namespaces",
+                        },
                     },
                 },
             },

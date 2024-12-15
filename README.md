@@ -30,6 +30,7 @@
 - 🗂️ resource: K8S contexts as read from kubeconfig configurations
 - 🤖 tool: list-k8s-contexts
 - 🤖 tool: list-k8s-namespaces in a given context
+- 🤖 tool: list-k8s-nodes in a given context
 - 🤖 tool: list-k8s-pods in a given context and namespace
 - 🤖 tool: list-k8s-events in a given context and namespace
 - 🤖 tool: list-k8s-services in a given context and namespace

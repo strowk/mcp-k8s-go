@@ -3,15 +3,17 @@
 This is a distribution of MCP server connecting to Kubernetes written in Golang and published to npm.
 
 Currently available:
-- resource: K8S contexts as read from kubeconfig configurations
-- tool: list-k8s-contexts
-- tool: list-k8s-namespaces in a given context
-- tool: list-k8s-pods in a given context and namespace
-- tool: list-k8s-events in a given context and namespace
-- tool: list-k8s-services in a given context and namespace
-- tool: get-k8s-pod-logs in a given context and namespace
-- prompt: list-k8s-namespaces in a given context
-- prompt: list-k8s-pods in current context and with given namespace
+
+- 🗂️ resource: K8S contexts as read from kubeconfig configurations
+- 🤖 tool: list-k8s-contexts
+- 🤖 tool: list-k8s-namespaces in a given context
+- 🤖 tool: list-k8s-nodes in a given context
+- 🤖 tool: list-k8s-pods in a given context and namespace
+- 🤖 tool: list-k8s-events in a given context and namespace
+- 🤖 tool: list-k8s-services in a given context and namespace
+- 🤖 tool: get-k8s-pod-logs in a given context and namespace
+- 💬 prompt: list-k8s-namespaces in a given context
+- 💬 prompt: list-k8s-pods in current context and with given namespace
 
 ## Example usage with Claude Desktop
 
