@@ -1,10 +1,10 @@
+<h4 align="center">MCP server connecting to Kubernetes written in Golang</h4>
+
 <h1 align="center">
    <img src="docs/images/logo.png" width="180"/>
    <br/>
    MCP K8S Go
 </h1>
-
-<h4 align="center">MCP server connecting to Kubernetes and a library to build more servers for any custom resources</h4>
 
 <p align="center">
   <a href="#features">Features</a> ⚙
@@ -13,12 +13,17 @@
   <a href="#contributing">Contributing</a>
 </p>
 
-[![MCP Package](https://mcp-get.com/api/badge/%40strowk%2Fmcp-k8s)](https://mcp-get.com/packages/%40strowk%2Fmcp-k8s)
-[![MCP Package Installs](https://mcp-get.com/api/badge/%40strowk%2Fmcp-k8s?style=installs)](https://mcp-get.com/packages/%40strowk%2Fmcp-k8s)
-[![MCP Package Views](https://mcp-get.com/api/badge/%40strowk%2Fmcp-k8s?style=views)](https://mcp-get.com/packages/%40strowk%2Fmcp-k8s)
-[![smithery badge](https://smithery.ai/badge/@strowk/mcp-k8s)](https://smithery.ai/protocol/@strowk/mcp-k8s)
-[![Dependabot Updates](https://github.com/strowk/mcp-k8s-go/actions/workflows/dependabot/dependabot-updates/badge.svg)](https://github.com/strowk/mcp-k8s-go/actions/workflows/dependabot/dependabot-updates)
-[![Tests](https://github.com/strowk/mcp-k8s-go/actions/workflows/test.yaml/badge.svg)](https://github.com/strowk/mcp-k8s-go/actions/workflows/test.yaml)
+<p align="center">
+    <a href="https://github.com/strowk/mcp-k8s-go/actions/workflows/dependabot/dependabot-updates"> <img src="https://github.com/strowk/mcp-k8s-go/actions/workflows/dependabot/dependabot-updates/badge.svg"> </a>
+    <a href="https://github.com/strowk/mcp-k8s-go/actions/workflows/test.yaml"> <img src="https://github.com/strowk/mcp-k8s-go/actions/workflows/test.yaml/badge.svg"> </a>
+    <a href="https://smithery.ai/protocol/@strowk/mcp-k8s"> <img src="https://smithery.ai/badge/@strowk/mcp-k8s" alt="smithery badge"> </a>
+</p>
+
+<p align="center">
+    <a href="https://mcp-get.com/packages/%40strowk%2Fmcp-k8s"> <img src="https://mcp-get.com/api/badge/%40strowk%2Fmcp-k8s" alt="MCP Package"> </a>
+    <a href="https://mcp-get.com/packages/%40strowk%2Fmcp-k8s"> <img src="https://mcp-get.com/api/badge/%40strowk%2Fmcp-k8s?style=installs" alt="MCP Package Installs"> </a>
+    <a href="https://mcp-get.com/packages/%40strowk%2Fmcp-k8s"> <img src="https://mcp-get.com/api/badge/%40strowk%2Fmcp-k8s?style=views" alt="MCP Package Views"> </a>
+</p>
 
 ## Features
 
