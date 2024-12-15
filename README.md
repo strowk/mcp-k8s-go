@@ -17,6 +17,8 @@
 [![MCP Package Installs](https://mcp-get.com/api/badge/%40strowk%2Fmcp-k8s?style=installs)](https://mcp-get.com/packages/%40strowk%2Fmcp-k8s)
 [![MCP Package Views](https://mcp-get.com/api/badge/%40strowk%2Fmcp-k8s?style=views)](https://mcp-get.com/packages/%40strowk%2Fmcp-k8s)
 [![smithery badge](https://smithery.ai/badge/@strowk/mcp-k8s)](https://smithery.ai/protocol/@strowk/mcp-k8s)
+[![Dependabot Updates](https://github.com/strowk/mcp-k8s-go/actions/workflows/dependabot/dependabot-updates/badge.svg)](https://github.com/strowk/mcp-k8s-go/actions/workflows/dependabot/dependabot-updates)
+[![Tests](https://github.com/strowk/mcp-k8s-go/actions/workflows/test.yaml/badge.svg)](https://github.com/strowk/mcp-k8s-go/actions/workflows/test.yaml)
 
 ## Features
 
