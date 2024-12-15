@@ -40,21 +40,22 @@ func NewListContextsTool() fxctx.Tool {
 
 			return &mcp.CallToolResult{
 				Meta:    map[string]interface{}{},
-				Content: getListContextsToolContent(cfg),
+				Content: getListContextsToolContent(cfg, cfg.CurrentContext),
 				IsError: utils.Ptr(false),
 			}
 		},
 	)
 }
 
-func getListContextsToolContent(cfg api.Config) []interface{} {
+func getListContextsToolContent(cfg api.Config, current string) []interface{} {
 	var contents []interface{} = make([]interface{}, len(cfg.Contexts))
 	i := 0
 
-	for _, c := range cfg.Contexts {
+	for name, c := range cfg.Contexts {
 		marshalled, err := json.Marshal(ContextJsonEncoded{
 			Context: c,
 			Name:    c.Cluster,
+			Current: name == current,
 		})
 		if err != nil {
 			log.Printf("failed to marshal context: %v", err)
@@ -73,4 +74,5 @@ func getListContextsToolContent(cfg api.Config) []interface{} {
 type ContextJsonEncoded struct {
 	Context *api.Context `json:"context"`
 	Name    string       `json:"name"`
+	Current bool         `json:"current"`
 }

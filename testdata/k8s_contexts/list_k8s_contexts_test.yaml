@@ -15,7 +15,7 @@ out:
           [
             {
               "type": "text",
-              "text": '{"context":{"cluster":"test-cluster","user":"test-user"},"name":"test-cluster"}',
+              "text": '{"context":{"cluster":"test-cluster","user":"test-user"},"name":"test-cluster","current":true}',
             },
           ],
         "isError": false,
