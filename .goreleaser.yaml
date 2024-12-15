@@ -47,3 +47,7 @@ changelog:
       - "^changed:"
       - "^removed:"
       - "^deprecated:"
+
+release:
+  prerelease: auto
+  
