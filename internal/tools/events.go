@@ -42,6 +42,9 @@ func NewListEventsTool(pool k8s.ClientPool) fxctx.Tool {
 			}
 
 			clientset, err := pool.GetClientset(k8sCtx)
+			if err != nil {
+				return errResponse(err)
+			}
 
 			options := metav1.ListOptions{}
 			if limit, err := input.Number("limit"); err == nil {

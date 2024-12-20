@@ -48,6 +48,9 @@ func NewListServicesTool(pool k8s.ClientPool) fxctx.Tool {
 			}
 
 			clientset, err := pool.GetClientset(k8sCtx)
+			if err != nil {
+				return errResponse(err)
+			}
 
 			services, err := clientset.
 				CoreV1().

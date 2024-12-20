@@ -38,6 +38,9 @@ func NewListPodsTool(pool k8s.ClientPool) fxctx.Tool {
 			}
 
 			clientset, err := pool.GetClientset(k8sCtx)
+			if err != nil {
+				return errResponse(err)
+			}
 
 			pods, err := clientset.
 				CoreV1().
