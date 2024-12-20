@@ -50,4 +50,10 @@ changelog:
 
 release:
   prerelease: auto
+
+git:
+  ignore_tags:
+  # This will make goreleaser to build changelogs between releases
+  # instead of from prerelease to release.
+    - "{{ if not .Prerelease}}*beta*{{ end }}"
   
