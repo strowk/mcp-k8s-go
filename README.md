@@ -20,8 +20,8 @@
     <a href="https://github.com/strowk/mcp-k8s-go/actions/workflows/test.yaml">
         <img src="https://github.com/strowk/mcp-k8s-go/actions/workflows/test.yaml/badge.svg">
     </a>
-	<a href="https://github.com/strowk/foxy-contexts/actions/workflows/golangci-lint.yaml">
-        <img src="https://github.com/strowk/foxy-contexts/actions/workflows/golangci-lint.yaml/badge.svg"/>
+	<a href="https://github.com/strowk/mcp-k8s-go/actions/workflows/golangci-lint.yaml">
+        <img src="https://github.com/strowk/mcp-k8s-go/actions/workflows/golangci-lint.yaml/badge.svg"/>
     </a>
     <a href="https://smithery.ai/protocol/@strowk/mcp-k8s">
         <img src="https://smithery.ai/badge/@strowk/mcp-k8s" alt="smithery badge">
