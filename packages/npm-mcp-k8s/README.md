@@ -11,7 +11,9 @@ Currently available:
 - 🤖 tool: list-k8s-pods in a given context and namespace
 - 🤖 tool: list-k8s-events in a given context and namespace
 - 🤖 tool: list-k8s-services in a given context and namespace
-- 🤖 tool: get-k8s-pod-logs in a given context and namespace
+- 🤖 tool: get-k8s-pod-logs in a given context and namespace for specified pod
+- 🤖 tool: list-k8s-deployments in a given context and namespace
+- 🤖 tool: get-k8s-deployment in a given context and namespace for specified deployment
 - 💬 prompt: list-k8s-namespaces in a given context
 - 💬 prompt: list-k8s-pods in current context and with given namespace
 

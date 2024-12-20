@@ -1,0 +1,32 @@
+case: List k8s deployments using tool
+in:
+  {
+    "jsonrpc": "2.0",
+    "method": "tools/call",
+    "id": 2,
+    "params":
+      {
+        "name": "list-k8s-deployments",
+        "arguments":
+          {
+            "context": "k3d-mcp-k8s-integration-test",
+            "namespace": "test-deployment",
+          },
+      },
+  }
+out:
+  {
+    "jsonrpc": "2.0",
+    "id": 2,
+    "result":
+      {
+        "content":
+          [
+            {
+              "type": "text",
+              "text": !!ere '{"name":"nginx-deployment","namespace":"test-deployment","age":"/[0-9sm]+/","desired_replicas":0,"ready_replicas":0,"updated_replicas":0,"available_replicas":0,"created_at":"/.+/"}',
+            },
+          ],
+        "isError": false,
+      },
+  }

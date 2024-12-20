@@ -2,8 +2,10 @@ package main
 
 import (
 	"context"
+	"fmt"
 	"os"
 	"os/exec"
+	"path"
 	"testing"
 	"time"
 
@@ -41,25 +43,48 @@ func TestLists(t *testing.T) {
 const k3dClusterName = "mcp-k8s-integration-test"
 
 func TestInK3dCluster(t *testing.T) {
-	ts, err := foxytest.Read("testdata/with_k3d")
-	if err != nil {
-		t.Fatal(err)
+	testSuites := []string{
+		"testdata/with_k3d",
+		"internal/k8s/apps/v1/deployment",
 	}
 
-	nginxImage := "nginx:1.27.3"
-	busyboxImage := "busybox:1.37.0"
 	withK3dCluster(t, k3dClusterName, func() {
+		nginxImage := "nginx:1.27.3"
+		busyboxImage := "busybox:1.37.0"
+
 		preloadImage(t, nginxImage, k3dClusterName)
 		preloadImage(t, busyboxImage, k3dClusterName)
-		createTestNamespace(t)
+		createTestNamespace(t, "test")
 		createPod(t, "nginx", nginxImage)
 		createPod(t, "busybox", busyboxImage, "--", "sh", "-c", "echo HELLO ; tail -f /dev/null")
 		createPodService(t, "nginx", "nginx-headless", "None")
-		ts.WithLogging()
-		ts.WithExecutable("go", []string{"run", "main.go"})
-		cntrl := foxytest.NewTestRunner(t)
-		ts.Run(cntrl)
-		ts.AssertNoErrors(cntrl)
+
+		for _, suite := range testSuites {
+			ts, err := foxytest.Read(suite)
+			if err != nil {
+				t.Fatal(err)
+			}
+
+			manifestsFolder := fmt.Sprintf("%s/test_manifests", suite)
+
+			// if exists, apply manifests specific to particular testsuite
+			if _, err := os.Stat(manifestsFolder); err == nil {
+				namespaceName := fmt.Sprintf("test-%s", path.Base(suite))
+				createTestNamespace(t, namespaceName)
+				cmd := exec.Command("kubectl", "apply", "-f", manifestsFolder)
+				cmd.Stderr = os.Stderr
+				err := cmd.Run()
+				if err != nil {
+					t.Fatal(err)
+				}
+			}
+
+			ts.WithLogging()
+			ts.WithExecutable("go", []string{"run", "main.go"})
+			cntrl := foxytest.NewTestRunner(t)
+			ts.Run(cntrl)
+			ts.AssertNoErrors(cntrl)
+		}
 	})
 }
 
@@ -84,9 +109,9 @@ func withK3dCluster(t *testing.T, name string, fn func()) {
 	fn()
 }
 
-func createTestNamespace(t *testing.T) {
+func createTestNamespace(t *testing.T, name string) {
 	t.Helper()
-	cmd := exec.Command("kubectl", "create", "namespace", "test")
+	cmd := exec.Command("kubectl", "create", "namespace", name)
 	cmd.Stderr = os.Stderr
 	err := cmd.Run()
 	if err != nil {

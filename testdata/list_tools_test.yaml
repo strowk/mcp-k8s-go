@@ -8,6 +8,33 @@ out:
         "tools":
           [
             {
+              "name": "get-k8s-deployment",
+              "description": "Get single Kubernetes Deployment with detailed information",
+              "inputSchema":
+                {
+                  "type": "object",
+                  "properties":
+                    {
+                      "context":
+                        {
+                          "type": "string",
+                          "description": "Name of the Kubernetes context to use, defaults to current context",
+                        },
+                      "namespace":
+                        {
+                          "type": "string",
+                          "description": "Namespace to get Deployment from",
+                        },
+                      "name":
+                        {
+                          "type": "string",
+                          "description": "Name of the Deployment to get",
+                        },
+                    },
+                  "required": ["namespace", "name"],
+                },
+            },
+            {
               "name": "get-k8s-pod-logs",
               "description": "Get logs for a Kubernetes pod using specific context in a specified namespace",
               "inputSchema":
@@ -53,6 +80,27 @@ out:
               "name": "list-k8s-contexts",
               "description": "List Kubernetes contexts from configuration files such as kubeconfig",
               "inputSchema": { "type": "object" },
+            },
+            {
+              "name": "list-k8s-deployments",
+              "description": "List Kubernetes Deployments with basic information",
+              "inputSchema":
+                {
+                  "type": "object",
+                  "properties":
+                    {
+                      "context":
+                        {
+                          "type": "string",
+                          "description": "Name of the Kubernetes context to use, defaults to current context",
+                        },
+                      "namespace":
+                        {
+                          "type": "string",
+                          "description": "Namespace to list Deployments from, defaults to all namespaces",
+                        },
+                    },
+                },
             },
             {
               "name": "list-k8s-events",

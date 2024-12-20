@@ -14,15 +14,27 @@
 </p>
 
 <p align="center">
-    <a href="https://github.com/strowk/mcp-k8s-go/actions/workflows/dependabot/dependabot-updates"><img src="https://github.com/strowk/mcp-k8s-go/actions/workflows/dependabot/dependabot-updates/badge.svg"></a>
-    <a href="https://github.com/strowk/mcp-k8s-go/actions/workflows/test.yaml"><img src="https://github.com/strowk/mcp-k8s-go/actions/workflows/test.yaml/badge.svg"></a>
-    <a href="https://smithery.ai/protocol/@strowk/mcp-k8s"><img src="https://smithery.ai/badge/@strowk/mcp-k8s" alt="smithery badge"></a>
+    <a href="https://github.com/strowk/mcp-k8s-go/actions/workflows/dependabot/dependabot-updates">
+        <img src="https://github.com/strowk/mcp-k8s-go/actions/workflows/dependabot/dependabot-updates/badge.svg">
+    </a>
+    <a href="https://github.com/strowk/mcp-k8s-go/actions/workflows/test.yaml">
+        <img src="https://github.com/strowk/mcp-k8s-go/actions/workflows/test.yaml/badge.svg">
+    </a>
+    <a href="https://smithery.ai/protocol/@strowk/mcp-k8s">
+        <img src="https://smithery.ai/badge/@strowk/mcp-k8s" alt="smithery badge">
+    </a>
 </p>
 
 <p align="center">
-    <a href="https://mcp-get.com/packages/%40strowk%2Fmcp-k8s"><img src="https://mcp-get.com/api/badge/%40strowk%2Fmcp-k8s" alt="MCP Package"></a>
-    <a href="https://mcp-get.com/packages/%40strowk%2Fmcp-k8s"><img src="https://mcp-get.com/api/badge/%40strowk%2Fmcp-k8s?style=installs" alt="MCP Package Installs"></a>
-    <a href="https://mcp-get.com/packages/%40strowk%2Fmcp-k8s"><img src="https://mcp-get.com/api/badge/%40strowk%2Fmcp-k8s?style=views" alt="MCP Package Views"></a>
+    <a href="https://mcp-get.com/packages/%40strowk%2Fmcp-k8s">
+        <img src="https://mcp-get.com/api/badge/%40strowk%2Fmcp-k8s" alt="MCP Package">
+    </a>
+    <a href="https://mcp-get.com/packages/%40strowk%2Fmcp-k8s">
+        <img src="https://mcp-get.com/api/badge/%40strowk%2Fmcp-k8s?style=installs" alt="MCP Package Installs">
+    </a>
+    <a href="https://mcp-get.com/packages/%40strowk%2Fmcp-k8s">
+        <img src="https://mcp-get.com/api/badge/%40strowk%2Fmcp-k8s?style=views" alt="MCP Package Views">
+    </a>
 </p>
 
 ## Features
@@ -34,7 +46,9 @@
 - 🤖 tool: list-k8s-pods in a given context and namespace
 - 🤖 tool: list-k8s-events in a given context and namespace
 - 🤖 tool: list-k8s-services in a given context and namespace
-- 🤖 tool: get-k8s-pod-logs in a given context and namespace
+- 🤖 tool: get-k8s-pod-logs in a given context and namespace for specified pod
+- 🤖 tool: list-k8s-deployments in a given context and namespace
+- 🤖 tool: get-k8s-deployment in a given context and namespace for specified deployment
 - 💬 prompt: list-k8s-namespaces in a given context
 - 💬 prompt: list-k8s-pods in current context and with given namespace
 
