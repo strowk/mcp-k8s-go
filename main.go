@@ -1,6 +1,7 @@
 package main
 
 import (
+	"log"
 	"os"
 
 	"github.com/strowk/mcp-k8s-go/internal/k8s"
@@ -32,13 +33,6 @@ func getCapabilities() *mcp.ServerCapabilities {
 	}
 }
 
-func getImplementation() *mcp.Implementation {
-	return &mcp.Implementation{
-		Name:    "mcp-k8s-go",
-		Version: "0.0.1",
-	}
-}
-
 var (
 	version = "dev"
 	commit  = "none"
@@ -55,11 +49,29 @@ func main() {
 			println("Commit: ", commit)
 			println("Date: ", date)
 		}
+		if os.Args[1] == "help" || os.Args[1] == "--help" {
+			println("mcp-k8s is an MCP server for Kubernetes")
+			println("Read more about it in: https://github.com/strowk/mcp-k8s-go\n")
+			println("Usage: <bin> [flags]")
+			println("  Run with no flags to start the server\n")
+			println("Flags:")
+			println("  help, --help: Print this help message")
+			println("  --version: Print the version of the server")
+			println("  version: Print the version, commit and date of the server")
+		}
 		return
 	}
 
-	app.
-		NewFoxyApp().
+	foxyApp := getApp()
+	err := foxyApp.Run()
+	if err != nil {
+		log.Fatalf("Error: %v", err)
+	}
+}
+
+func getApp() *app.Builder {
+	return app.
+		NewBuilder().
 		WithFxOptions(
 			fx.Provide(func() clientcmd.ClientConfig {
 				return k8s.GetKubeConfig()
@@ -99,6 +111,5 @@ func main() {
 					return &fxevent.ZapLogger{Logger: logger}
 				},
 			)),
-		).Run()
-
+		)
 }
