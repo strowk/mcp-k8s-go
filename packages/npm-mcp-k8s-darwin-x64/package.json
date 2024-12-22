@@ -1,6 +1,6 @@
 {
   "name": "@strowk/mcp-k8s-darwin-x64",
-  "version": "0.0.21-beta.2",
+  "version": "0.0.21",
   "os": [
     "darwin"
   ],
