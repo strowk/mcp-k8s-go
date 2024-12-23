@@ -1,0 +1,10 @@
+id = "k8s-context-server"
+name = "K8s context server"
+version = "0.0.1"
+schema_version = 1
+authors = ["Your Name <you@example.com>"]
+description = "My cool extension"
+repository = "https://github.com/your-name/my-zed-extension"
+
+[context_servers.k8s-mcp-context-server]
+name = "K8S Context Server"
