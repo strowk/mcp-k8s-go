@@ -1,0 +1,38 @@
+case: Get k8s deployment
+in:
+  {
+    "jsonrpc": "2.0",
+    "method": "tools/call",
+    "id": 2,
+    "params":
+      {
+        "name": "restart-k8s-deployment",
+        "arguments":
+          {
+            "context": "k3d-mcp-k8s-integration-test",
+            "namespace": "test-deployment",
+            "name": "nginx-deployment",
+          },
+      },
+  }
+out:
+  # we only check response parially, because there is too much various data there
+  # and we will not benefit much from verifying all of it, so we only check the beginning
+  # where metadata has name and namespace of the resource, if more detailed check is needed
+  # it should be done in unit test where assertions could be made more dynamically in Go
+
+  {
+    "jsonrpc": "2.0",
+    "id": 2,
+    "result":
+      {
+        "content":
+          [
+            {
+              "type": "text",
+              "text": '{"text":"Applied patch to restart Deployment","type":"text"}',
+            },
+          ],
+        "isError": false,
+      },
+  }

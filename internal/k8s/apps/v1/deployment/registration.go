@@ -8,4 +8,5 @@ import (
 var Registration = fx.Options(
 	fx.Provide(fxctx.AsTool(NewGetDeploymentTool)),
 	fx.Provide(fxctx.AsTool(NewListDeploymentsTool)),
+	fx.Provide(fxctx.AsTool(NewRestartDeploymentTool)),
 )
