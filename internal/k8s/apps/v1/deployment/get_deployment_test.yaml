@@ -6,11 +6,12 @@ in:
     "id": 2,
     "params":
       {
-        "name": "get-k8s-deployment",
+        "name": "get-k8s-resource",
         "arguments":
           {
             "context": "k3d-mcp-k8s-integration-test",
             "namespace": "test-deployment",
+            "kind": "deployment",
             "name": "nginx-deployment",
           },
       },

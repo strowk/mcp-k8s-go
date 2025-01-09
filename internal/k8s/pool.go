@@ -2,7 +2,6 @@ package k8s
 
 import (
 	"k8s.io/client-go/kubernetes"
-	"k8s.io/client-go/tools/clientcmd"
 )
 
 type ClientPool interface {
@@ -35,18 +34,7 @@ func (p *pool) GetClientset(k8sContext string) (kubernetes.Interface, error) {
 }
 
 func getClientset(k8sContext string) (kubernetes.Interface, error) {
-	loadingRules := clientcmd.NewDefaultClientConfigLoadingRules()
-	configOverrides := &clientcmd.ConfigOverrides{}
-	if k8sContext == "" {
-		configOverrides = nil
-	} else {
-		configOverrides.CurrentContext = k8sContext
-	}
-
-	kubeConfig := clientcmd.NewNonInteractiveDeferredLoadingClientConfig(
-		loadingRules,
-		configOverrides,
-	)
+	kubeConfig := GetKubeConfigForContext(k8sContext)
 
 	config, err := kubeConfig.ClientConfig()
 	if err != nil {

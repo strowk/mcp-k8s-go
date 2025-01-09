@@ -8,33 +8,6 @@ out:
         "tools":
           [
             {
-              "name": "get-k8s-deployment",
-              "description": "Get single Kubernetes Deployment with detailed information",
-              "inputSchema":
-                {
-                  "type": "object",
-                  "properties":
-                    {
-                      "context":
-                        {
-                          "type": "string",
-                          "description": "Name of the Kubernetes context to use, defaults to current context",
-                        },
-                      "namespace":
-                        {
-                          "type": "string",
-                          "description": "Namespace to get Deployment from",
-                        },
-                      "name":
-                        {
-                          "type": "string",
-                          "description": "Name of the Deployment to get",
-                        },
-                    },
-                  "required": ["namespace", "name"],
-                },
-            },
-            {
               "name": "get-k8s-pod-logs",
               "description": "Get logs for a Kubernetes pod using specific context in a specified namespace",
               "inputSchema":
@@ -77,13 +50,8 @@ out:
                 },
             },
             {
-              "name": "list-k8s-contexts",
-              "description": "List Kubernetes contexts from configuration files such as kubeconfig",
-              "inputSchema": { "type": "object" },
-            },
-            {
-              "name": "list-k8s-deployments",
-              "description": "List Kubernetes Deployments with basic information",
+              "name": "get-k8s-resource",
+              "description": "Get Kubernetes resource completely",
               "inputSchema":
                 {
                   "type": "object",
@@ -97,10 +65,36 @@ out:
                       "namespace":
                         {
                           "type": "string",
-                          "description": "Namespace to list Deployments from, defaults to all namespaces",
+                          "description": "Namespace to get resource from",
+                        },
+                      "name":
+                        {
+                          "type": "string",
+                          "description": "Name of the resource to get",
+                        },
+                      "group":
+                        {
+                          "type": "string",
+                          "description": "API Group of the resource to get",
+                        },
+                      "version":
+                        {
+                          "type": "string",
+                          "description": "API Version of the resource to get",
+                        },
+                      "kind":
+                        {
+                          "type": "string",
+                          "description": "Kind of resource to get",
                         },
                     },
+                  "required": ["namespace", "kind", "name"],
                 },
+            },
+            {
+              "name": "list-k8s-contexts",
+              "description": "List Kubernetes contexts from configuration files such as kubeconfig",
+              "inputSchema": { "type": "object" },
             },
             {
               "name": "list-k8s-events",
@@ -161,9 +155,10 @@ out:
                     },
                 },
             },
+
             {
-              "name": "list-k8s-pods",
-              "description": "List Kubernetes pods using specific context in a specified namespace",
+              "name": "list-k8s-resources",
+              "description": "List arbitrary Kubernetes resources",
               "inputSchema":
                 {
                   "type": "object",
@@ -177,31 +172,24 @@ out:
                       "namespace":
                         {
                           "type": "string",
-                          "description": "Namespace to list pods from, defaults to all namespaces",
+                          "description": "Namespace to list resources from, defaults to all namespaces",
                         },
-                    },
-                },
-            },
-            {
-              "name": "list-k8s-services",
-              "description": "List Kubernetes services using specific context in a specified namespace",
-              "inputSchema":
-                {
-                  "type": "object",
-                  "properties":
-                    {
-                      "context":
+                      "group":
                         {
                           "type": "string",
-                          "description": "Name of the Kubernetes context to use, defaults to current context",
+                          "description": "API Group of resources to list",
                         },
-                      "namespace":
+                      "version":
                         {
                           "type": "string",
-                          "description": "Name of the namespace to list events from",
+                          "description": "API Version of resources to list",
+                        },
+                      "kind":
+                        {
+                          "type": "string",
+                          "description": "Kind of resources to list",
                         },
                     },
-                  "required": ["namespace"],
                 },
             },
           ],

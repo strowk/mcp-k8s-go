@@ -5,7 +5,6 @@ import (
 	"os"
 
 	"github.com/strowk/mcp-k8s-go/internal/k8s"
-	"github.com/strowk/mcp-k8s-go/internal/k8s/apps/v1/deployment"
 	"github.com/strowk/mcp-k8s-go/internal/prompts"
 	"github.com/strowk/mcp-k8s-go/internal/resources"
 	"github.com/strowk/mcp-k8s-go/internal/tools"
@@ -87,13 +86,12 @@ func getApp() *app.Builder {
 		WithTool(tools.NewPodLogsTool).
 		WithTool(tools.NewListContextsTool).
 		WithTool(tools.NewListNamespacesTool).
-		WithTool(tools.NewListEventsTool).
-		WithTool(tools.NewListPodsTool).
-		WithTool(tools.NewListServicesTool).
+		WithTool(tools.NewListResourcesTool).
+		WithTool(tools.NewGetResourceTool).
 		WithTool(tools.NewListNodesTool).
+		WithTool(tools.NewListEventsTool).
 		WithPrompt(prompts.NewListPodsPrompt).
 		WithPrompt(prompts.NewListNamespacesPrompt).
-		WithFxOptions(deployment.Registration).
 		WithResourceProvider(resources.NewContextsResourceProvider).
 		WithServerCapabilities(getCapabilities()).
 		// setting up server

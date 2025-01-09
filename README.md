@@ -32,12 +32,11 @@
 - 🤖 tool: list-k8s-contexts
 - 🤖 tool: list-k8s-namespaces in a given context
 - 🤖 tool: list-k8s-nodes in a given context
-- 🤖 tool: list-k8s-pods in a given context and namespace
+- 🤖 tool: list-k8s-resources in a given context and namespace for specified resource kind
+  - includes custom mappings for resources like pods, services, deployments
+- 🤖 tool: get-k8s-resource in a given context and namespace for specified name and resource kind
 - 🤖 tool: list-k8s-events in a given context and namespace
-- 🤖 tool: list-k8s-services in a given context and namespace
 - 🤖 tool: get-k8s-pod-logs in a given context and namespace for specified pod
-- 🤖 tool: list-k8s-deployments in a given context and namespace
-- 🤖 tool: get-k8s-deployment in a given context and namespace for specified deployment
 - 💬 prompt: list-k8s-namespaces in a given context
 - 💬 prompt: list-k8s-pods in current context and with given namespace
 
@@ -67,15 +66,14 @@ Following chat with Claude Desktop demonstrates how it looks when selected parti
 
 </details>
 
-
 To use this MCP server with Claude Desktop you would firstly need to install it.
 
 You have several options for installation:
 
-| | <a href="#using-smithery">Smithery</a> | <a href="#using-mcp-get">mcp-get</a> | <a href="#prebuilt-from-npm">Pre-built NPM</a> | <a href="#from-github-releases">Pre-built in Github</a> | <a href="#building-from-source">From sources</a> |
-|---|---|---|---|---|---|
-| Claude Setup | Auto | Auto | Manual | Manual | Manual |
-| Prerequisite | Node.js | Node.js | Node.js | None | Golang |
+|              | <a href="#using-smithery">Smithery</a> | <a href="#using-mcp-get">mcp-get</a> | <a href="#prebuilt-from-npm">Pre-built NPM</a> | <a href="#from-github-releases">Pre-built in Github</a> | <a href="#building-from-source">From sources</a> |
+| ------------ | -------------------------------------- | ------------------------------------ | ---------------------------------------------- | ------------------------------------------------------- | ------------------------------------------------ |
+| Claude Setup | Auto                                   | Auto                                 | Manual                                         | Manual                                                  | Manual                                           |
+| Prerequisite | Node.js                                | Node.js                              | Node.js                                        | None                                                    | Golang                                           |
 
 ### Using Smithery
 
@@ -107,12 +105,12 @@ Then check version by running `mcp-k8s --version` and if this printed installed 
 
 ```json
 {
-    "mcpServers": {
-        "mcp_k8s": {
-            "command": "mcp-k8s",
-            "args": []
-        }
+  "mcpServers": {
+    "mcp_k8s": {
+      "command": "mcp-k8s",
+      "args": []
     }
+  }
 }
 ```
 
@@ -124,12 +122,12 @@ Unpack the archive, which would contain binary named `mcp-k8s-go`, put that bina
 
 ```json
 {
-    "mcpServers": {
-        "mcp_k8s": {
-            "command": "mcp-k8s-go",
-            "args": []
-        }
+  "mcpServers": {
+    "mcp_k8s": {
+      "command": "mcp-k8s-go",
+      "args": []
     }
+  }
 }
 ```
 
@@ -146,18 +144,19 @@ go install github.com/strowk/mcp-k8s-go
 
 ```json
 {
-    "mcpServers": {
-        "mcp_k8s_go": {
-            "command": "mcp-k8s-go",
-            "args": []
-        }
+  "mcpServers": {
+    "mcp_k8s_go": {
+      "command": "mcp-k8s-go",
+      "args": []
     }
+  }
 }
 ```
 
 ### Using from Claude Desktop
 
 Now you should be able to run Claude Desktop and:
+
 - see K8S contexts available to attach to conversation as a resource
 - ask Claude to list contexts
 - ask Claude to list pods in a given context and namespace
@@ -167,6 +166,7 @@ Now you should be able to run Claude Desktop and:
 ### Environment Variables
 
 The following environment variables are used by the MCP server:
+
 - `KUBECONFIG`: Path to your Kubernetes configuration file (optional, defaults to ~/.kube/config)
 
 ## Contributing

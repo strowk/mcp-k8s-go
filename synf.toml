@@ -1,0 +1,39 @@
+# language is used to determine the default paths to watch for changes
+# and the default command to run the server.
+# Possible values are "typescript", "python", "kotlin" and "golang"
+language = "golang"
+
+# Resending resource subscriptions can be enabled to make synf
+# parse all incoming requests and cache any resource subscriptions
+# and later resend them after server restart, defaults to false
+# resend_resource_subscriptions = false
+
+[build]
+# command and args are used to specify the command to build the server after changes.
+# These are the default values for golang:
+
+# command = ""
+# args = [""]
+
+[run]
+# command and args are used to specify the command to run the server
+# during development after it has been rebuilt
+# These are the default values for golang:
+
+# command = "go"
+# args = ["run", "main.go"]
+
+[watch]
+# Watch configurations are used to specify the files and directories to watch for changes
+# when hot reloading the server during development
+
+# default_paths are the paths that are watched by default
+# and are defined by the language that is being used.
+# You can override the default paths by specifying them here.
+# These are the paths that are watched by default for golang:
+
+# default_paths = ["go.mod"]
+
+# extra_paths are the paths that are watched in addition to the default paths.
+# You can use it to add more paths to watch for changes besides the default paths.
+extra_paths = ["internal"]

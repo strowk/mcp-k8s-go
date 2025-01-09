@@ -1,4 +1,4 @@
-case: List k8s deployments using tool
+case: Get k8s pod using tool
 in:
   {
     "jsonrpc": "2.0",
@@ -6,12 +6,13 @@ in:
     "id": 2,
     "params":
       {
-        "name": "list-k8s-resources",
+        "name": "get-k8s-resource",
         "arguments":
           {
             "context": "k3d-mcp-k8s-integration-test",
-            "namespace": "test-deployment",
-            "kind": "deployment",
+            "namespace": "test",
+            "kind": "pod",
+            "name": "nginx",
           },
       },
   }
@@ -25,7 +26,7 @@ out:
           [
             {
               "type": "text",
-              "text": !!ere '{"name":"nginx-deployment","namespace":"test-deployment","age":"/[0-9sm]+/","desired_replicas":0,"ready_replicas":0,"updated_replicas":0,"available_replicas":0,"created_at":"/.+/"}',
+              "text": !!ere '{"apiVersion":"v1","kind":"Pod","metadata":{/.*/"name":"nginx","namespace":"test"/.*/',
             },
           ],
         "isError": false,

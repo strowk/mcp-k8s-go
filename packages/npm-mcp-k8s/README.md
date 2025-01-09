@@ -8,12 +8,11 @@ Currently available:
 - 🤖 tool: list-k8s-contexts
 - 🤖 tool: list-k8s-namespaces in a given context
 - 🤖 tool: list-k8s-nodes in a given context
-- 🤖 tool: list-k8s-pods in a given context and namespace
+- 🤖 tool: list-k8s-resources in a given context and namespace for specified resource kind
+  - includes custom mappings for resources like pods, services, deployments
+- 🤖 tool: get-k8s-resource in a given context and namespace for specified name and resource kind
 - 🤖 tool: list-k8s-events in a given context and namespace
-- 🤖 tool: list-k8s-services in a given context and namespace
 - 🤖 tool: get-k8s-pod-logs in a given context and namespace for specified pod
-- 🤖 tool: list-k8s-deployments in a given context and namespace
-- 🤖 tool: get-k8s-deployment in a given context and namespace for specified deployment
 - 💬 prompt: list-k8s-namespaces in a given context
 - 💬 prompt: list-k8s-pods in current context and with given namespace
 

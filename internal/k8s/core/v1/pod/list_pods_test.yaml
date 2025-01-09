@@ -6,9 +6,9 @@ in:
     "id": 2,
     "params":
       {
-        "name": "list-k8s-pods",
+        "name": "list-k8s-resources",
         "arguments":
-          { "context": "k3d-mcp-k8s-integration-test", "namespace": "test" },
+          { "context": "k3d-mcp-k8s-integration-test", "namespace": "test", "kind": "pod" },
       },
   }
 out:

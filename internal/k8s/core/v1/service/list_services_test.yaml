@@ -5,9 +5,13 @@ in:
     "id": 2,
     "params":
       {
-        "name": "list-k8s-services",
+        "name": "list-k8s-resources",
         "arguments":
-          { "context": "k3d-mcp-k8s-integration-test", "namespace": "test" },
+          {
+            "context": "k3d-mcp-k8s-integration-test",
+            "namespace": "test",
+            "kind": "service",
+          },
       },
   }
 out:

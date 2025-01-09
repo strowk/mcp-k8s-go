@@ -11,6 +11,21 @@ func GetKubeConfig() clientcmd.ClientConfig {
 	return kubeConfig
 }
 
+func GetKubeConfigForContext(k8sContext string) clientcmd.ClientConfig {
+	loadingRules := clientcmd.NewDefaultClientConfigLoadingRules()
+	configOverrides := &clientcmd.ConfigOverrides{}
+	if k8sContext == "" {
+		configOverrides = nil
+	} else {
+		configOverrides.CurrentContext = k8sContext
+	}
+
+	return clientcmd.NewNonInteractiveDeferredLoadingClientConfig(
+		loadingRules,
+		configOverrides,
+	)
+}
+
 func GetCurrentContext() (string, error) {
 	kubeConfig := GetKubeConfig()
 	config, err := kubeConfig.RawConfig()
