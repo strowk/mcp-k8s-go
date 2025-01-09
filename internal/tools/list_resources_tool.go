@@ -95,7 +95,7 @@ func NewListResourcesTool(pool k8s.ClientPool) fxctx.Tool {
 
 			for _, r := range res {
 				for _, apiResource := range r.APIResources {
-					if strings.ToLower(apiResource.Kind) == strings.ToLower(kind) && (strings.ToLower(apiResource.Group) == strings.ToLower(group) || group == "") && (strings.ToLower(apiResource.Version) == strings.ToLower(version) || version == "") {
+					if strings.EqualFold(apiResource.Kind, kind) && (group == "" || strings.EqualFold(apiResource.Group, group)) && (version == "" || strings.EqualFold(apiResource.Version, version)) {
 						gvk := schema.GroupVersionKind{
 							Group:   apiResource.Group,
 							Version: apiResource.Version,
