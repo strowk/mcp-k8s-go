@@ -32,3 +32,31 @@ out:
         "isError": false,
       },
   }
+
+---
+case: Get k8s pod dnsPolicy
+in:
+  {
+    "jsonrpc": "2.0",
+    "method": "tools/call",
+    "id": 2,
+    "params":
+      {
+        "name": "get-k8s-resource",
+        "arguments":
+          {
+            "context": "k3d-mcp-k8s-integration-test",
+            "namespace": "test",
+            "kind": "pod",
+            "name": "nginx",
+            "go_template": "{{ .spec.dnsPolicy }}",
+          },
+      },
+  }
+out:
+  {
+    "jsonrpc": "2.0",
+    "id": 2,
+    "result":
+      { "content": [{ "type": "text", "text": "ClusterFirst" }], "isError": false },
+  }

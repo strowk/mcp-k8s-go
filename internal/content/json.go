@@ -6,7 +6,7 @@ import (
 	"github.com/strowk/foxy-contexts/pkg/mcp"
 )
 
-func NewJsonContent(v interface{}) (mcp.TextContent, error) {
+func NewJsonContent(v any) (mcp.TextContent, error) {
 	contents, err := json.Marshal(v)
 	if err != nil {
 		return mcp.TextContent{}, err

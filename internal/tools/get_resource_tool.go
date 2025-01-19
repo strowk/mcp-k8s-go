@@ -3,6 +3,7 @@ package tools
 import (
 	"context"
 	"fmt"
+	"html/template"
 	"strings"
 
 	"github.com/strowk/foxy-contexts/pkg/fxctx"
@@ -26,6 +27,7 @@ func NewGetResourceTool(pool k8s.ClientPool) fxctx.Tool {
 	groupProperty := "group"
 	versionProperty := "version"
 	nameProperty := "name"
+	templateProperty := "go_template"
 
 	inputSchema := toolinput.NewToolInputSchema(
 		toolinput.WithString(contextProperty, "Name of the Kubernetes context to use, defaults to current context"),
@@ -34,6 +36,7 @@ func NewGetResourceTool(pool k8s.ClientPool) fxctx.Tool {
 		toolinput.WithString(versionProperty, "API Version of the resource to get"),
 		toolinput.WithRequiredString(kindProperty, "Kind of resource to get"),
 		toolinput.WithRequiredString(nameProperty, "Name of the resource to get"),
+		toolinput.WithString(templateProperty, "Go template to render the output, if not specified, the complete JSON object will be returned"),
 	)
 
 	return fxctx.NewTool(
@@ -72,8 +75,10 @@ func NewGetResourceTool(pool k8s.ClientPool) fxctx.Tool {
 				return utils.ErrResponse(err)
 			}
 
+			templateStr := input.StringOr(templateProperty, "")
+
 			if strings.ToLower(kind) == "deployment" && (group == "apps" || group == "") && (version == "v1" || version == "") {
-				return deployment.GetDeployment(clientset, namespace, name)
+				return deployment.GetDeployment(clientset, namespace, name, templateStr)
 			}
 
 			res, err := clientset.Discovery().ServerPreferredResources()
@@ -120,11 +125,29 @@ func NewGetResourceTool(pool k8s.ClientPool) fxctx.Tool {
 							}
 						}
 
-						cnt, err := content.NewJsonContent(unstructured.Object)
-						if err != nil {
-							return utils.ErrResponse(err)
+						var cnt any
+						if templateStr != "" {
+							tmpl, err := template.New("template").Parse(templateStr)
+							if err != nil {
+								return utils.ErrResponse(err)
+							}
+							buf := new(strings.Builder)
+							err = tmpl.Execute(buf, object)
+							if err != nil {
+								return utils.ErrResponse(err)
+							}
+							cnt = mcp.TextContent{
+								Type: "text",
+								Text: buf.String(),
+							}
+						} else {
+							c, err := content.NewJsonContent(object)
+							if err != nil {
+								return utils.ErrResponse(err)
+							}
+							cnt = c
 						}
-						var contents = []interface{}{cnt}
+						var contents = []any{cnt}
 
 						return &mcp.CallToolResult{
 							Meta:    map[string]interface{}{},

@@ -38,3 +38,34 @@ out:
         "isError": false,
       },
   }
+
+---
+case: Get k8s deployment name
+in:
+  {
+    "jsonrpc": "2.0",
+    "method": "tools/call",
+    "id": 2,
+    "params":
+      {
+        "name": "get-k8s-resource",
+        "arguments":
+          {
+            "context": "k3d-mcp-k8s-integration-test",
+            "namespace": "test-deployment",
+            "kind": "deployment",
+            "name": "nginx-deployment",
+            "go_template": "{{ .metadata.name }}",
+          },
+      },
+  }
+out:
+  {
+    "jsonrpc": "2.0",
+    "id": 2,
+    "result":
+      {
+        "content": [{ "type": "text", "text": "nginx-deployment" }],
+        "isError": false,
+      },
+  }
