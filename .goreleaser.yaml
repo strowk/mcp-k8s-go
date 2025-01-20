@@ -47,7 +47,6 @@ changelog:
       - "^changed:"
       - "^removed:"
       - "^deprecated:"
-      - "^build(deps):"
 
 release:
   prerelease: auto
