@@ -6,7 +6,7 @@ require (
 	github.com/google/uuid v1.6.0 // indirect
 	go.uber.org/fx v1.23.0
 	go.uber.org/zap v1.27.0
-	k8s.io/apimachinery v0.32.0
+	k8s.io/apimachinery v0.32.1
 	k8s.io/client-go v0.32.0
 )
 
