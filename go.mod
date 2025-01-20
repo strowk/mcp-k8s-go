@@ -7,14 +7,14 @@ require (
 	go.uber.org/fx v1.23.0
 	go.uber.org/zap v1.27.0
 	k8s.io/apimachinery v0.32.1
-	k8s.io/client-go v0.32.0
+	k8s.io/client-go v0.32.1
 )
 
 require (
 	github.com/stretchr/testify v1.10.0
 	github.com/strowk/foxy-contexts v0.0.15-beta.1
 	go.uber.org/mock v0.5.0
-	k8s.io/api v0.32.0
+	k8s.io/api v0.32.1
 )
 
 // Can use this to develop a bit faster when changing the library:
