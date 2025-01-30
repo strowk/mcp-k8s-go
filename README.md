@@ -17,7 +17,7 @@
     <a href="https://github.com/strowk/mcp-k8s-go/actions/workflows/dependabot/dependabot-updates"><img src="https://github.com/strowk/mcp-k8s-go/actions/workflows/dependabot/dependabot-updates/badge.svg"></a>
     <a href="https://github.com/strowk/mcp-k8s-go/actions/workflows/test.yaml"><img src="https://github.com/strowk/mcp-k8s-go/actions/workflows/test.yaml/badge.svg"></a>
 	<a href="https://github.com/strowk/mcp-k8s-go/actions/workflows/golangci-lint.yaml"><img src="https://github.com/strowk/mcp-k8s-go/actions/workflows/golangci-lint.yaml/badge.svg"/></a>
-    <a href="https://smithery.ai/protocol/@strowk/mcp-k8s"><img src="https://smithery.ai/badge/@strowk/mcp-k8s" alt="smithery badge"></a>
+    <a href="https://smithery.ai/server/@strowk/mcp-k8s"><img src="https://smithery.ai/badge/@strowk/mcp-k8s" alt="smithery badge"></a>
 </p>
 
 <p align="center">
@@ -77,10 +77,10 @@ You have several options for installation:
 
 ### Using Smithery
 
-To install MCP K8S Go for Claude Desktop automatically via [Smithery](https://smithery.ai/protocol/@strowk/mcp-k8s):
+To install MCP K8S Go for Claude Desktop automatically via [Smithery](https://smithery.ai/server/@strowk/mcp-k8s):
 
 ```bash
-npx @smithery/cli install @strowk/mcp-k8s --client claude
+npx -y @smithery/cli install @strowk/mcp-k8s --client claude
 ```
 
 ### Using mcp-get
