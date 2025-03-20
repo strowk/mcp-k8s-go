@@ -163,11 +163,17 @@ Now you should be able to run Claude Desktop and:
 - ask Claude to list events in a given context and namespace
 - ask Claude to read logs of a given pod in a given context and namespace
 
-### Environment Variables
+### Environment Variables and Command-line Options
 
 The following environment variables are used by the MCP server:
 
 - `KUBECONFIG`: Path to your Kubernetes configuration file (optional, defaults to ~/.kube/config)
+
+The following command-line options are supported:
+
+- `--allowed-contexts=<ctx1,ctx2,...>`: Comma-separated list of allowed Kubernetes contexts that users can access. If not specified, all contexts are allowed.
+- `--help`: Display help information
+- `--version`: Display version information
 
 ## Contributing
 

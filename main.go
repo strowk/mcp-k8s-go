@@ -4,6 +4,7 @@ import (
 	"log"
 	"os"
 
+	"github.com/strowk/mcp-k8s-go/internal/config"
 	"github.com/strowk/mcp-k8s-go/internal/k8s"
 	"github.com/strowk/mcp-k8s-go/internal/prompts"
 	"github.com/strowk/mcp-k8s-go/internal/resources"
@@ -41,24 +42,26 @@ var (
 
 func main() {
 	if len(os.Args) > 1 {
-		if os.Args[1] == "--version" {
+		arg := os.Args[1]
+		if arg == "--version" {
 			println(version)
+			return
 		}
-		if os.Args[1] == "version" {
+		if arg == "version" {
 			println("Version: ", version)
 			println("Commit: ", commit)
 			println("Date: ", date)
+			return
 		}
-		if os.Args[1] == "help" || os.Args[1] == "--help" {
-			println("mcp-k8s is an MCP server for Kubernetes")
-			println("Read more about it in: https://github.com/strowk/mcp-k8s-go\n")
-			println("Usage: <bin> [flags]")
-			println("  Run with no flags to start the server\n")
-			println("Flags:")
-			println("  help, --help: Print this help message")
-			println("  --version: Print the version of the server")
-			println("  version: Print the version, commit and date of the server")
+		if arg == "help" || arg == "--help" {
+			printHelp()
+			return
 		}
+	}
+
+	// Parse configuration flags
+	shouldContinue := config.ParseFlags()
+	if !shouldContinue {
 		return
 	}
 
@@ -67,6 +70,19 @@ func main() {
 	if err != nil {
 		log.Fatalf("Error: %v", err)
 	}
+}
+
+func printHelp() {
+	println("mcp-k8s is an MCP server for Kubernetes")
+	println("Read more about it in: https://github.com/strowk/mcp-k8s-go\n")
+	println("Usage: <bin> [flags]")
+	println("  Run with no flags to start the server\n")
+	println("Flags:")
+	println("  help, --help: Print this help message")
+	println("  --version: Print the version of the server")
+	println("  version: Print the version, commit and date of the server")
+	println("  --allowed-contexts=<ctx1,ctx2,...>: Comma-separated list of allowed k8s contexts")
+	println("      If not specified, all contexts are allowed")
 }
 
 func getApp() *app.Builder {

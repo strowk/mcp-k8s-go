@@ -1,6 +1,7 @@
 package k8s
 
 import (
+	"fmt"
 	"k8s.io/client-go/kubernetes"
 )
 
@@ -19,7 +20,22 @@ func NewClientPool() ClientPool {
 }
 
 func (p *pool) GetClientset(k8sContext string) (kubernetes.Interface, error) {
-	key := k8sContext
+	var effectiveContext string
+	if k8sContext == "" {
+		var err error
+		effectiveContext, err = GetCurrentContext()
+		if err != nil {
+			return nil, err
+		}
+	} else {
+		effectiveContext = k8sContext
+	}
+	
+	if !IsContextAllowed(effectiveContext) {
+		return nil, fmt.Errorf("context %s is not allowed", effectiveContext)
+	}
+	
+	key := effectiveContext
 	if client, ok := p.clients[key]; ok {
 		return client, nil
 	}
