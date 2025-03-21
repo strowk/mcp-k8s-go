@@ -73,8 +73,14 @@ func TestInK3dCluster(t *testing.T) {
 		createPod(t, "busybox", busyboxImage, "--", "sh", "-c", "echo HELLO ; tail -f /dev/null")
 		createPodService(t, "nginx", "nginx-headless", "None")
 
-		// wait to make sure that more than a second passes for log test to pass
+		// wait to make sure that more than a second passes for log test
 		// (see more in get_k8s_pod_logs_test.yaml)
+		cmd := exec.Command("kubectl", "wait", "--for=condition=Ready", "--timeout=5m", "pod", "busybox", "-n", "test")
+		cmd.Stderr = os.Stderr
+		err := cmd.Run()
+		if err != nil {
+			t.Fatal(err)
+		}
 		time.Sleep(2 * time.Second)
 
 		for _, suite := range testSuites {
