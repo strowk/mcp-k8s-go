@@ -22,7 +22,6 @@
 
 <p align="center">
     <a href="https://mcp-get.com/packages/%40strowk%2Fmcp-k8s"><img src="https://mcp-get.com/api/badge/%40strowk%2Fmcp-k8s" alt="MCP Package"></a>
-    <a href="https://mcp-get.com/packages/%40strowk%2Fmcp-k8s"><img src="https://mcp-get.com/api/badge/%40strowk%2Fmcp-k8s?style=installs" alt="MCP Package Installs"></a>
     <a href="https://mcp-get.com/packages/%40strowk%2Fmcp-k8s"><img src="https://mcp-get.com/api/badge/%40strowk%2Fmcp-k8s?style=views" alt="MCP Package Views"></a>
 </p>
 
