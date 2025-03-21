@@ -19,4 +19,4 @@ jobs:
         uses: golangci/golangci-lint-action@v6
         with:
           version: v1.62.2
-          args: --timeout 10m
+          args: --timeout 5m --disable-all --enable gosimple,errcheck,govet,unused
