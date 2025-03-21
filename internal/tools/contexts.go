@@ -48,25 +48,35 @@ func NewListContextsTool() fxctx.Tool {
 }
 
 func getListContextsToolContent(cfg api.Config, current string) []interface{} {
-	var contents []interface{} = make([]interface{}, len(cfg.Contexts))
+	// First count allowed contexts to allocate the right size
+	allowedContextsCount := 0
+	for name := range cfg.Contexts {
+		if k8s.IsContextAllowed(name) {
+			allowedContextsCount++
+		}
+	}
+
+	var contents []interface{} = make([]interface{}, allowedContextsCount)
 	i := 0
 
 	for name, c := range cfg.Contexts {
-		marshalled, err := json.Marshal(ContextJsonEncoded{
-			Context: c,
-			Name:    c.Cluster,
-			Current: name == current,
-		})
-		if err != nil {
-			log.Printf("failed to marshal context: %v", err)
-			continue
-		}
-		contents[i] = mcp.TextContent{
-			Type: "text",
-			Text: string(marshalled),
-		}
+		if k8s.IsContextAllowed(name) {
+			marshalled, err := json.Marshal(ContextJsonEncoded{
+				Context: c,
+				Name:    c.Cluster,
+				Current: name == current,
+			})
+			if err != nil {
+				log.Printf("failed to marshal context: %v", err)
+				continue
+			}
+			contents[i] = mcp.TextContent{
+				Type: "text",
+				Text: string(marshalled),
+			}
 
-		i++
+			i++
+		}
 	}
 	return contents
 }

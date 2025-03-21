@@ -28,6 +28,19 @@ func TestListContexts(t *testing.T) {
 	ts.AssertNoErrors(cntrl)
 }
 
+func TestWithAllowedContexts(t *testing.T) {
+	ts, err := foxytest.Read("testdata/with_k8s")
+	if err != nil {
+		t.Fatal(err)
+	}
+	os.Setenv("KUBECONFIG", "./testdata/k8s_contexts/kubeconfig")
+	defer os.Unsetenv("KUBECONFIG")
+	ts.WithExecutable("go", []string{"run", "main.go", "--allowed-contexts=allowed-ctx"})
+	cntrl := foxytest.NewTestRunner(t)
+	ts.Run(cntrl)
+	ts.AssertNoErrors(cntrl)
+}
+
 func TestLists(t *testing.T) {
 	ts, err := foxytest.Read("testdata")
 	if err != nil {

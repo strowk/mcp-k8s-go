@@ -1,2 +1,4 @@
 dist/
 dev.log.yaml
+.aider*
+mcp-k8s-go

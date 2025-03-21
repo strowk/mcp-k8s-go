@@ -22,7 +22,9 @@ func NewContextsResourceProvider() fxctx.ResourceProvider {
 
 			resources := []mcp.Resource{}
 			for name := range cfg.Contexts {
-				resources = append(resources, toMcpResourcse(name))
+				if k8s.IsContextAllowed(name) {
+					resources = append(resources, toMcpResourcse(name))
+				}
 			}
 			return resources, nil
 		},
@@ -75,18 +77,28 @@ func toMcpResourcse(contextName string) mcp.Resource {
 }
 
 func getContextsContent(uri string, cfg api.Config) []interface{} {
-	var contents []interface{} = make([]interface{}, len(cfg.Contexts))
+	// First count allowed contexts to allocate the right size
+	allowedContextsCount := 0
+	for name := range cfg.Contexts {
+		if k8s.IsContextAllowed(name) {
+			allowedContextsCount++
+		}
+	}
+
+	var contents []interface{} = make([]interface{}, allowedContextsCount)
 	i := 0
 
 	for name, c := range cfg.Contexts {
-		contents[i] = ContextContent{
-			Uri:  uri + "/" + name,
-			Text: name,
+		if k8s.IsContextAllowed(name) {
+			contents[i] = ContextContent{
+				Uri:  uri + "/" + name,
+				Text: name,
 
-			Context: c,
-			Name:    name,
+				Context: c,
+				Name:    name,
+			}
+			i++
 		}
-		i++
 	}
 	return contents
 }

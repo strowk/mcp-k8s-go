@@ -1,6 +1,7 @@
 package k8s
 
 import (
+	"github.com/strowk/mcp-k8s-go/internal/config"
 	"k8s.io/client-go/kubernetes"
 	"k8s.io/client-go/tools/clientcmd"
 )
@@ -48,4 +49,9 @@ func GetKubeClientset() (*kubernetes.Clientset, error) {
 		return nil, err
 	}
 	return clientset, nil
+}
+
+// IsContextAllowed checks if a context is allowed based on the configuration
+func IsContextAllowed(contextName string) bool {
+	return config.IsContextAllowed(contextName)
 }
