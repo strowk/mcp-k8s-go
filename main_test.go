@@ -73,6 +73,10 @@ func TestInK3dCluster(t *testing.T) {
 		createPod(t, "busybox", busyboxImage, "--", "sh", "-c", "echo HELLO ; tail -f /dev/null")
 		createPodService(t, "nginx", "nginx-headless", "None")
 
+		// wait to make sure that more than a second passes for log test to pass
+		// (see more in get_k8s_pod_logs_test.yaml)
+		time.Sleep(2 * time.Second)
+
 		for _, suite := range testSuites {
 			ts, err := foxytest.Read(suite)
 			if err != nil {
