@@ -1,15 +1,6 @@
 case: List namespaces with disallowed context
 in:
-  {
-    "jsonrpc": "2.0",
-    "method": "tools/call",
-    "id": 2,
-    "params":
-      {
-        "name": "list-k8s-namespaces",
-        "arguments": { "context": "disallowed-ctx" }
-      }
-  }
+  { "jsonrpc": "2.0", "method": "tools/call", "id": 2, "params": { "name": "list-k8s-namespaces", "arguments": { "context": "disallowed-ctx" } } }
 out:
   {
     "jsonrpc": "2.0",
@@ -24,16 +15,7 @@ out:
 ---
 case: List k8s resources with disallowed context
 in:
-  {
-    "jsonrpc": "2.0",
-    "method": "tools/call",
-    "id": 3,
-    "params":
-      {
-        "name": "list-k8s-resources",
-        "arguments": { "context": "disallowed-ctx", "kind": "pod", "namespace": "default" }
-      }
-  }
+  { "jsonrpc": "2.0", "method": "tools/call", "id": 3, "params": { "name": "list-k8s-resources", "arguments": { "context": "disallowed-ctx", "kind": "pod", "namespace": "default" } } }
 out:
   {
     "jsonrpc": "2.0",

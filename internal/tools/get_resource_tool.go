@@ -11,13 +11,8 @@ import (
 	"github.com/strowk/foxy-contexts/pkg/toolinput"
 	"github.com/strowk/mcp-k8s-go/internal/content"
 	"github.com/strowk/mcp-k8s-go/internal/k8s"
-	"github.com/strowk/mcp-k8s-go/internal/k8s/apps/v1/deployment"
 	"github.com/strowk/mcp-k8s-go/internal/utils"
-	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
-	"k8s.io/apimachinery/pkg/runtime/schema"
-	"k8s.io/client-go/discovery/cached/memory"
-	"k8s.io/client-go/dynamic"
-	"k8s.io/client-go/restmapper"
+	"k8s.io/apimachinery/pkg/apis/meta/v1/unstructured"
 )
 
 func NewGetResourceTool(pool k8s.ClientPool) fxctx.Tool {
@@ -45,7 +40,7 @@ func NewGetResourceTool(pool k8s.ClientPool) fxctx.Tool {
 			Description: utils.Ptr("Get Kubernetes resource completely"),
 			InputSchema: inputSchema.GetMcpToolInputSchema(),
 		},
-		func(ctx context.Context, args map[string]interface{}) *mcp.CallToolResult {
+		func(_ context.Context, args map[string]interface{}) *mcp.CallToolResult {
 			input, err := inputSchema.Validate(args)
 			if err != nil {
 				return utils.ErrResponse(err)
@@ -70,95 +65,63 @@ func NewGetResourceTool(pool k8s.ClientPool) fxctx.Tool {
 			group := input.StringOr(groupProperty, "")
 			version := input.StringOr(versionProperty, "")
 
-			clientset, err := pool.GetClientset(k8sCtx)
-			if err != nil {
-				return utils.ErrResponse(err)
-			}
-
 			templateStr := input.StringOr(templateProperty, "")
 
-			if strings.ToLower(kind) == "deployment" && (group == "apps" || group == "") && (version == "v1" || version == "") {
-				return deployment.GetDeployment(clientset, namespace, name, templateStr)
-			}
-
-			res, err := clientset.Discovery().ServerPreferredResources()
-			if res == nil && err != nil {
-				return utils.ErrResponse(err)
-			}
-
-			cfg := k8s.GetKubeConfigForContext(k8sCtx)
-			restConfig, err := cfg.ClientConfig()
+			informer, err := pool.GetInformer(k8sCtx, kind, group, version)
 			if err != nil {
 				return utils.ErrResponse(err)
 			}
 
-			dynClient, err := dynamic.NewForConfig(restConfig)
+			accumulator, exist, err := informer.Informer().GetIndexer().GetByKey(fmt.Sprintf("%s/%s", namespace, name))
 			if err != nil {
 				return utils.ErrResponse(err)
 			}
-			mapper := restmapper.NewDeferredDiscoveryRESTMapper(memory.NewMemCacheClient(clientset.Discovery()))
+			if !exist {
+				return utils.ErrResponse(fmt.Errorf("resource %s/%s/%s/%s/%s not found", group, version, kind, namespace, name))
+			}
+			unstructuredAcc, ok := accumulator.(*unstructured.Unstructured)
+			if !ok {
+				return utils.ErrResponse(fmt.Errorf("resource %s/%s/%s/%s/%s is not unstructured", group, version, kind, namespace, name))
+			}
 
-			for _, r := range res {
-				for _, apiResource := range r.APIResources {
-					if strings.EqualFold(apiResource.Kind, kind) && (group == "" || strings.EqualFold(apiResource.Group, group)) && (version == "" || strings.EqualFold(apiResource.Version, version)) {
-						gvk := schema.GroupVersionKind{
-							Group:   apiResource.Group,
-							Version: apiResource.Version,
-							Kind:    apiResource.Kind,
-						}
-						mapping, err := mapper.RESTMapping(gvk.GroupKind(), gvk.Version)
-						if err != nil {
-							return utils.ErrResponse(err)
-						}
+			object := unstructuredAcc.Object
 
-						unstructured, err := dynClient.Resource(mapping.Resource).Namespace(namespace).Get(ctx, name, metav1.GetOptions{})
-						if err != nil {
-							return utils.ErrResponse(err)
-						}
-
-						object := unstructured.Object
-
-						if metadata, ok := object["metadata"]; ok {
-							if metadataMap, ok := metadata.(map[string]interface{}); ok {
-								// this is too big and somewhat useless
-								delete(metadataMap, "managedFields")
-							}
-						}
-
-						var cnt any
-						if templateStr != "" {
-							tmpl, err := template.New("template").Parse(templateStr)
-							if err != nil {
-								return utils.ErrResponse(err)
-							}
-							buf := new(strings.Builder)
-							err = tmpl.Execute(buf, object)
-							if err != nil {
-								return utils.ErrResponse(err)
-							}
-							cnt = mcp.TextContent{
-								Type: "text",
-								Text: buf.String(),
-							}
-						} else {
-							c, err := content.NewJsonContent(object)
-							if err != nil {
-								return utils.ErrResponse(err)
-							}
-							cnt = c
-						}
-						var contents = []any{cnt}
-
-						return &mcp.CallToolResult{
-							Meta:    map[string]interface{}{},
-							Content: contents,
-							IsError: utils.Ptr(false),
-						}
-					}
+			if metadata, ok := object["metadata"]; ok {
+				if metadataMap, ok := metadata.(map[string]interface{}); ok {
+					// this is too big and somewhat useless
+					delete(metadataMap, "managedFields")
 				}
 			}
 
-			return utils.ErrResponse(fmt.Errorf("resource %s/%s/%s not found", group, version, kind))
+			var cnt any
+			if templateStr != "" {
+				tmpl, err := template.New("template").Parse(templateStr)
+				if err != nil {
+					return utils.ErrResponse(err)
+				}
+				buf := new(strings.Builder)
+				err = tmpl.Execute(buf, object)
+				if err != nil {
+					return utils.ErrResponse(err)
+				}
+				cnt = mcp.TextContent{
+					Type: "text",
+					Text: buf.String(),
+				}
+			} else {
+				c, err := content.NewJsonContent(object)
+				if err != nil {
+					return utils.ErrResponse(err)
+				}
+				cnt = c
+			}
+			var contents = []any{cnt}
+
+			return &mcp.CallToolResult{
+				Meta:    map[string]interface{}{},
+				Content: contents,
+				IsError: utils.Ptr(false),
+			}
 		},
 	)
 }

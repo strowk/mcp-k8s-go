@@ -1,15 +1,12 @@
 package service
 
 import (
-	"context"
 	"fmt"
-	"sort"
 
-	"github.com/strowk/foxy-contexts/pkg/mcp"
-	"github.com/strowk/mcp-k8s-go/internal/content"
-	"github.com/strowk/mcp-k8s-go/internal/utils"
-	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
-	"k8s.io/client-go/kubernetes"
+	"github.com/strowk/mcp-k8s-go/internal/k8s/list_mapping"
+	corev1 "k8s.io/api/core/v1"
+	"k8s.io/apimachinery/pkg/runtime"
+	"k8s.io/apimachinery/pkg/runtime/schema"
 )
 
 type ServiceContent struct {
@@ -21,47 +18,55 @@ type ServiceContent struct {
 	Ports       []string `json:"ports"`
 }
 
-func ListServices(clientset kubernetes.Interface, k8sNamespace string) *mcp.CallToolResult {
-	services, err := clientset.
-		CoreV1().
-		Services(k8sNamespace).
-		List(context.Background(), metav1.ListOptions{})
-	if err != nil {
-		return utils.ErrResponse(err)
+func NewServiceContent(service *corev1.Service) *ServiceContent {
+	serviceContent := &ServiceContent{
+		Name:        service.Name,
+		Namespace:   service.Namespace,
+		Type:        string(service.Spec.Type),
+		ClusterIP:   service.Spec.ClusterIP,
+		ExternalIPs: service.Spec.ExternalIPs,
+		Ports:       []string{},
 	}
 
-	sort.Slice(services.Items, func(i, j int) bool {
-		return services.Items[i].Name < services.Items[j].Name
-	})
+	for _, port := range service.Spec.Ports {
+		// this is done similarly to kubectl get services
+		// see https://kubernetes.io/docs/reference/generated/kubectl/kubectl-commands#-em-service-em-
+		serviceContent.Ports = append(serviceContent.Ports, fmt.Sprintf("%d/%s", port.Port, port.Protocol))
+	}
 
-	var contents = make([]interface{}, len(services.Items))
-	for i, service := range services.Items {
-		serviceContent := ServiceContent{
-			Name:        service.Name,
-			Namespace:   service.Namespace,
-			Type:        string(service.Spec.Type),
-			ClusterIP:   service.Spec.ClusterIP,
-			ExternalIPs: service.Spec.ExternalIPs,
-			Ports:       []string{},
-		}
+	return serviceContent
+}
 
-		for _, port := range service.Spec.Ports {
-			// this is done similarly to kubectl get services
-			// see https://kubernetes.io/docs/reference/generated/kubectl/kubectl-commands#-em-service-em-
-			serviceContent.Ports = append(serviceContent.Ports, fmt.Sprintf("%d/%s", port.Port, port.Protocol))
-		}
+func (s *ServiceContent) GetName() string {
+	return s.Name
+}
 
-		content, err := content.NewJsonContent(serviceContent)
+func (s *ServiceContent) GetNamespace() string {
+	return s.Namespace
+}
 
+func getServiceListMapping() list_mapping.ListMapping {
+	return func(u runtime.Unstructured) (list_mapping.ListContentItem, error) {
+		svc := corev1.Service{}
+		err := runtime.DefaultUnstructuredConverter.FromUnstructuredWithValidation(u.UnstructuredContent(), &svc, false)
 		if err != nil {
-			return utils.ErrResponse(err)
+			return nil, err
 		}
-		contents[i] = content
+		return NewServiceContent(&svc), nil
 	}
+}
 
-	return &mcp.CallToolResult{
-		Meta:    map[string]interface{}{},
-		Content: contents,
-		IsError: utils.Ptr(false),
+type listMappingResolver struct {
+	list_mapping.ListMappingResolver
+}
+
+func (r *listMappingResolver) GetListMapping(gvk *schema.GroupVersionKind) list_mapping.ListMapping {
+	if (gvk.Group == "core" || gvk.Group == "") && gvk.Version == "v1" && gvk.Kind == "Service" {
+		return getServiceListMapping()
 	}
+	return nil
+}
+
+func NewListMappingResolver() list_mapping.ListMappingResolver {
+	return &listMappingResolver{}
 }
