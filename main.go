@@ -31,6 +31,9 @@ func getCapabilities() *mcp.ServerCapabilities {
 		Prompts: &mcp.ServerCapabilitiesPrompts{
 			ListChanged: utils.Ptr(false),
 		},
+		Tools: &mcp.ServerCapabilitiesTools{
+			ListChanged: utils.Ptr(false),
+		},
 	}
 }
 
