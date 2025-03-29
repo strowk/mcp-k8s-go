@@ -1,5 +1,5 @@
 {
   "dependencies": {
-    "@modelcontextprotocol/inspector": "^0.2.6"
+    "@modelcontextprotocol/inspector": "^0.7.0"
   }
 }
