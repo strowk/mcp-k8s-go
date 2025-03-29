@@ -19,6 +19,7 @@ import (
 	"go.uber.org/fx/fxevent"
 	"go.uber.org/zap"
 	"k8s.io/client-go/kubernetes"
+	_ "k8s.io/client-go/plugin/pkg/client/auth/exec"
 	_ "k8s.io/client-go/plugin/pkg/client/auth/oidc"
 	"k8s.io/client-go/tools/clientcmd"
 )
