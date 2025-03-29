@@ -111,6 +111,7 @@ func getApp() *app.Builder {
 		WithTool(tools.NewGetResourceTool).
 		WithTool(tools.NewListNodesTool).
 		WithTool(tools.NewListEventsTool).
+		WithTool(tools.NewPodExecCommandTool).
 		WithPrompt(prompts.NewListPodsPrompt).
 		WithPrompt(prompts.NewListNamespacesPrompt).
 		WithResourceProvider(resources.NewContextsResourceProvider).
