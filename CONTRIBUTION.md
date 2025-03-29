@@ -54,7 +54,7 @@ To describe a test case, this project uses foxytest package with every test bein
 
 Check tests in testdata directory for examples:
 - [list_tools_test.yaml](testdata/list_tools_test.yaml) - test for listing tools
-- [list_k8s_logs_test.yaml](testdata/with_k3d/list_k8s_logs_test.yaml) - test for listing logs of a pod
+- [get_k8s_pod_logs_test.yaml](testdata/with_k3d/get_k8s_pod_logs_test.yaml) - test for listing logs of a pod
 
 These tests are single or multi document YAML files, where each document is a separate test case with name in "case" field, "in" and "out" for input and expected output being jsonrpc2 requests and responses.
 
