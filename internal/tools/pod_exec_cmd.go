@@ -115,7 +115,7 @@ func cmdExecuter(
 	}
 
 	if len(pod.Spec.Containers) == 0 {
-		return execResult, fmt.Errorf("Pod %s has no containers", podName)
+		return execResult, fmt.Errorf("pod %s has no containers", podName)
 	}
 
 	containerName := pod.Spec.Containers[0].Name

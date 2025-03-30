@@ -51,7 +51,7 @@ func NewListNodesTool(pool k8s.ClientPool) fxctx.Tool {
 				return nodes.Items[i].Name < nodes.Items[j].Name
 			})
 
-			var contents []interface{} = make([]interface{}, len(nodes.Items))
+			var contents = make([]interface{}, len(nodes.Items))
 			for i, ns := range nodes.Items {
 				// Calculate age
 				age := time.Since(ns.CreationTimestamp.Time)

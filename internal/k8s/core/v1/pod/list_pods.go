@@ -24,7 +24,7 @@ func ListPods(clientset kubernetes.Interface, k8sNamespace string) *mcp.CallTool
 		return pods.Items[i].Name < pods.Items[j].Name
 	})
 
-	var contents []interface{} = make([]interface{}, len(pods.Items))
+	var contents = make([]interface{}, len(pods.Items))
 	for i, pod := range pods.Items {
 		content, err := content.NewJsonContent(PodInList{
 			Name:      pod.Name,

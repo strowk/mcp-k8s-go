@@ -112,7 +112,7 @@ func NewListResourcesTool(pool k8s.ClientPool) fxctx.Tool {
 							return utils.ErrResponse(err)
 						}
 
-						var contents []interface{} = make([]interface{}, len(unstructured.Items))
+						var contents = make([]interface{}, len(unstructured.Items))
 						for i, item := range unstructured.Items {
 							// we try to list only metadata to avoid too big outputs
 							metadata, ok := item.Object["metadata"].(map[string]interface{})

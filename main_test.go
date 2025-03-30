@@ -9,6 +9,7 @@ import (
 	"testing"
 	"time"
 
+	"github.com/stretchr/testify/require"
 	"github.com/strowk/foxy-contexts/pkg/foxytest"
 	"github.com/strowk/mcp-k8s-go/internal/k8s"
 
@@ -20,8 +21,8 @@ func TestListContexts(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	os.Setenv("KUBECONFIG", "./testdata/k8s_contexts/kubeconfig")
-	defer os.Unsetenv("KUBECONFIG")
+	require.NoError(t, os.Setenv("KUBECONFIG", "./testdata/k8s_contexts/kubeconfig"))
+	defer require.NoError(t, os.Unsetenv("KUBECONFIG"))
 	ts.WithExecutable("go", []string{"run", "main.go"})
 	cntrl := foxytest.NewTestRunner(t)
 	ts.Run(cntrl)
@@ -33,8 +34,8 @@ func TestWithAllowedContexts(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	os.Setenv("KUBECONFIG", "./testdata/k8s_contexts/kubeconfig")
-	defer os.Unsetenv("KUBECONFIG")
+	require.NoError(t, os.Setenv("KUBECONFIG", "./testdata/k8s_contexts/kubeconfig"))
+	defer require.NoError(t, os.Unsetenv("KUBECONFIG"))
 	ts.WithExecutable("go", []string{"run", "main.go", "--allowed-contexts=allowed-ctx"})
 	cntrl := foxytest.NewTestRunner(t)
 	ts.Run(cntrl)
@@ -188,7 +189,7 @@ func createK3dCluster(t *testing.T, name string) {
 }
 
 func saveKubeconfig(t *testing.T, name string) {
-	os.Setenv("KUBECONFIG", kubeconfigPath)
+	require.NoError(t, os.Setenv("KUBECONFIG", kubeconfigPath))
 
 	// write kubeconfig to file
 	data, err := exec.Command("k3d", "kubeconfig", "get", name).Output()

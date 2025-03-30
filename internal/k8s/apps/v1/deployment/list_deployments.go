@@ -49,7 +49,7 @@ func ListDeployments(clientset kubernetes.Interface, namespace string) *mcp.Call
 		return deployments.Items[i].Namespace < deployments.Items[j].Namespace
 	})
 
-	var contents []interface{} = make([]interface{}, len(deployments.Items))
+	var contents = make([]interface{}, len(deployments.Items))
 	for i, deployment := range deployments.Items {
 		// Calculate age
 		age := time.Since(deployment.CreationTimestamp.Time)

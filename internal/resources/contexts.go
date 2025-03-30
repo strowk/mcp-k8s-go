@@ -49,7 +49,7 @@ func NewContextsResourceProvider() fxctx.ResourceProvider {
 					return nil, fmt.Errorf("context not found: %s", name)
 				}
 
-				var contents []interface{} = make([]interface{}, 1)
+				var contents = make([]interface{}, 1)
 				contents[0] = &struct {
 					Uri     string       `json:"uri"`
 					Text    string       `json:"text"`
@@ -85,7 +85,7 @@ func getContextsContent(uri string, cfg api.Config) []interface{} {
 		}
 	}
 
-	var contents []interface{} = make([]interface{}, allowedContextsCount)
+	var contents = make([]interface{}, allowedContextsCount)
 	i := 0
 
 	for name, c := range cfg.Contexts {

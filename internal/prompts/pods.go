@@ -60,7 +60,7 @@ func NewListPodsPrompt(pool k8s.ClientPool) fxctx.Prompt {
 				namespaceInMessage = fmt.Sprintf("namespace '%s'", k8sNamespace)
 			}
 
-			var messages []mcp.PromptMessage = make(
+			var messages = make(
 				[]mcp.PromptMessage,
 				len(pods.Items)+1,
 			)

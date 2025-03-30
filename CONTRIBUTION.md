@@ -62,6 +62,17 @@ In addition to describing test case, you might need to setup some resources in K
 For how that could be done check methods such as `createPod` in [main_test.go](./main_test.go).
 You can either use `kubectl` command or `client-go` library to create and wait for initialization of resources before foxytest test runner starts.
 
+## Linting
+
+This project uses [golangci-lint](https://golangci-lint.run/) for linting.
+Version in use currently is `v2.0.2`.
+
+Once you have installed linter, you can run it with the following command:
+
+```bash
+golangci-lint run
+```
+
 ## Development
 
 You can run the project with automatic reload if you firstly install arelo:

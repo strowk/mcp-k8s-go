@@ -56,7 +56,7 @@ func NewListNamespacesPrompt(pool k8s.ClientPool) fxctx.Prompt {
 				ofContextMsg = fmt.Sprintf(", context '%s'", currentContext)
 			}
 
-			var messages []mcp.PromptMessage = make(
+			var messages = make(
 				[]mcp.PromptMessage,
 				len(namespaces.Items)+1,
 			)

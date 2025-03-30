@@ -34,7 +34,7 @@ func ListServices(clientset kubernetes.Interface, k8sNamespace string) *mcp.Call
 		return services.Items[i].Name < services.Items[j].Name
 	})
 
-	var contents []interface{} = make([]interface{}, len(services.Items))
+	var contents = make([]interface{}, len(services.Items))
 	for i, service := range services.Items {
 		serviceContent := ServiceContent{
 			Name:        service.Name,

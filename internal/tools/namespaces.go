@@ -49,7 +49,7 @@ func NewListNamespacesTool(pool k8s.ClientPool) fxctx.Tool {
 				return namespace.Items[i].Name < namespace.Items[j].Name
 			})
 
-			var contents []interface{} = make([]interface{}, len(namespace.Items))
+			var contents = make([]interface{}, len(namespace.Items))
 			for i, namespace := range namespace.Items {
 				content, err := NewJsonContent(NamespacesInList{
 					Name: namespace.Name,

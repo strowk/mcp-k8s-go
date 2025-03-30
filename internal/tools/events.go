@@ -59,7 +59,7 @@ func NewListEventsTool(pool k8s.ClientPool) fxctx.Tool {
 				return errResponse(err)
 			}
 
-			var contents []interface{} = make([]interface{}, len(events.Items))
+			var contents = make([]interface{}, len(events.Items))
 			for i, event := range events.Items {
 				eventInList := EventInList{
 					Action:  event.Action,

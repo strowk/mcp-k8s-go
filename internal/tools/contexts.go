@@ -56,7 +56,7 @@ func getListContextsToolContent(cfg api.Config, current string) []interface{} {
 		}
 	}
 
-	var contents []interface{} = make([]interface{}, allowedContextsCount)
+	var contents = make([]interface{}, allowedContextsCount)
 	i := 0
 
 	for name, c := range cfg.Contexts {
