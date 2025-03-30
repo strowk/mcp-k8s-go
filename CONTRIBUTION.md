@@ -124,3 +124,10 @@ The only issue with this reload is that server is not aware of initialization, h
 
 It does have an effect, though, that since clients typically would cache what tools/prompts/resources are available, adding new one would require actually asking for full restart.
 
+## Git Hooks
+
+Setup git hooks used in project by running:
+
+```bash
+git config core.hooksPath .githooks
+```
