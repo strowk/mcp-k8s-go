@@ -92,6 +92,42 @@ out:
                 },
             },
             {
+              "name": "k8s-pod-exec",
+              "description": "Execute command in Kubernetes pod",
+              "inputSchema":
+                {
+                  "type": "object",
+                  "properties":
+                    {
+                      "context":
+                        {
+                          "type": "string",
+                          "description": "Kubernetes context name, defaults to current context",
+                        },
+                      "namespace":
+                        {
+                          "type": "string",
+                          "description": "Namespace where pod is located",
+                        },
+                      "pod":
+                        {
+                          "type": "string",
+                          "description": "Name of the pod to execute command in",
+                        },
+                      "command":
+                        {
+                          "type": "string",
+                          "description": "Command to be executed",
+                        },
+                      "stdin":
+                        {
+                          "type": "string",
+                          "description": "Standard input to the command, defaults to empty string",
+                        },
+                    },
+                },
+            },
+            {
               "name": "list-k8s-contexts",
               "description": "List Kubernetes contexts from configuration files such as kubeconfig",
               "inputSchema": { "type": "object" },

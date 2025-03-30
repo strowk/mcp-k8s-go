@@ -5,6 +5,7 @@ import (
 	"context"
 	"fmt"
 	"strings"
+	"time"
 
 	"github.com/strowk/mcp-k8s-go/internal/k8s"
 	"github.com/strowk/mcp-k8s-go/internal/utils"
@@ -20,16 +21,20 @@ import (
 	"k8s.io/client-go/tools/remotecommand"
 )
 
+const timeout = 5 * time.Second
+
 func NewPodExecCommandTool(pool k8s.ClientPool) fxctx.Tool {
 	k8sNamespace := "namespace"
-	k8sPodName := "podName"
+	k8sPodName := "pod"
 	execCommand := "command"
 	k8sContext := "context"
+	stdin := "stdin"
 	schema := toolinput.NewToolInputSchema(
-		toolinput.WithRequiredString(k8sNamespace, "The name of the namespace where the pod to execute the command is located."),
-		toolinput.WithRequiredString(k8sPodName, "The name of the pod in which the command needs to be executed."),
-		toolinput.WithRequiredString(execCommand, "The command to be executed inside the pod."),
-		toolinput.WithString(k8sContext, "Kubernetes context name."),
+		toolinput.WithString(k8sContext, "Kubernetes context name, defaults to current context"),
+		toolinput.WithRequiredString(k8sNamespace, "Namespace where pod is located"),
+		toolinput.WithRequiredString(k8sPodName, "Name of the pod to execute command in"),
+		toolinput.WithRequiredString(execCommand, "Command to be executed"),
+		toolinput.WithString(stdin, "Standard input to the command, defaults to empty string"),
 	)
 	return fxctx.NewTool(
 		&mcp.Tool{
@@ -54,14 +59,15 @@ func NewPodExecCommandTool(pool k8s.ClientPool) fxctx.Tool {
 			if err != nil {
 				return errResponse(fmt.Errorf("invalid input command: %w", err))
 			}
-			k8sContext := input.StringOr(k8sContext, "default")
+			k8sContext := input.StringOr(k8sContext, "")
+			stdin := input.StringOr(stdin, "")
 
 			kubeconfig := k8s.GetKubeConfigForContext(k8sContext)
 			config, err := kubeconfig.ClientConfig()
 			if err != nil {
 				return errResponse(fmt.Errorf("invalid config: %w", err))
 			}
-			execResult, err := cmdExecuter(pool, config, k8sPodName, k8sNamespace, execCommand, k8sContext)
+			execResult, err := cmdExecuter(pool, config, k8sPodName, k8sNamespace, execCommand, k8sContext, stdin)
 			if err != nil {
 				return errResponse(fmt.Errorf("command execute failed: %w", err))
 			}
@@ -88,7 +94,15 @@ type ExecResult struct {
 	Stderr interface{} `json:"stderr"`
 }
 
-func cmdExecuter(pool k8s.ClientPool, config *rest.Config, podName, namespace, cmd, k8sContext string) (ExecResult, error) {
+func cmdExecuter(
+	pool k8s.ClientPool,
+	config *rest.Config,
+	podName,
+	namespace,
+	cmd,
+	k8sContext,
+	stdin string,
+) (ExecResult, error) {
 	execResult := ExecResult{}
 	clientset, err := pool.GetClientset(k8sContext)
 	if err != nil {
@@ -122,12 +136,20 @@ func cmdExecuter(pool k8s.ClientPool, config *rest.Config, podName, namespace, c
 	if err != nil {
 		return execResult, err
 	}
+
+	ctx := context.Background()
+	withTimeout, cancel := context.WithTimeout(ctx, timeout)
+	defer cancel() // release resources if operation finishes before timeout
+
 	var stdout, stderr bytes.Buffer
-	if err = executor.Stream(remotecommand.StreamOptions{
-		Stdin:  strings.NewReader(""),
+	if err = executor.StreamWithContext(withTimeout, remotecommand.StreamOptions{
+		Stdin:  strings.NewReader(stdin),
 		Stdout: &stdout,
 		Stderr: &stderr,
 	}); err != nil {
+		if err == context.DeadlineExceeded {
+			return execResult, fmt.Errorf("command timed out after %s", timeout)
+		}
 		return execResult, err
 	}
 	execResult.Stdout = stdout.String()

@@ -1,0 +1,26 @@
+case: Execute command in busybox pod
+
+in:
+  {
+    "jsonrpc": "2.0",
+    "method": "tools/call",
+    "id": 2,
+    "params":
+      {
+        "name": "k8s-pod-exec",
+        "arguments":
+          {
+            "context": "k3d-mcp-k8s-integration-test",
+            "namespace": "test",
+            "pod": "busybox",
+            "command": "echo HELLO FROM BUSYBOX",
+          },
+      },
+  }
+out:
+  {
+    "jsonrpc": "2.0",
+    "id": 2,
+    "result":
+      { "content": [{ "type": "text", "text": '{"stdout":"HELLO FROM BUSYBOX\n","stderr":""}' }], "isError": false },
+  }
