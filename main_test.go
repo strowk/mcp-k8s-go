@@ -21,7 +21,7 @@ func TestListContexts(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	os.Setenv("KUBECONFIG", "./testdata/k8s_contexts/kubeconfig")
+	require.NoError(t, os.Setenv("KUBECONFIG", "./testdata/k8s_contexts/kubeconfig"))
 	defer func() { require.NoError(t, os.Unsetenv("KUBECONFIG")) }()
 	ts.WithExecutable("go", []string{"run", "main.go"})
 	cntrl := foxytest.NewTestRunner(t)
