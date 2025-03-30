@@ -21,8 +21,8 @@ func TestListContexts(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	require.NoError(t, os.Setenv("KUBECONFIG", "./testdata/k8s_contexts/kubeconfig"))
-	defer require.NoError(t, os.Unsetenv("KUBECONFIG"))
+	os.Setenv("KUBECONFIG", "./testdata/k8s_contexts/kubeconfig")
+	defer func() { require.NoError(t, os.Unsetenv("KUBECONFIG")) }()
 	ts.WithExecutable("go", []string{"run", "main.go"})
 	cntrl := foxytest.NewTestRunner(t)
 	ts.Run(cntrl)
@@ -35,7 +35,7 @@ func TestWithAllowedContexts(t *testing.T) {
 		t.Fatal(err)
 	}
 	require.NoError(t, os.Setenv("KUBECONFIG", "./testdata/k8s_contexts/kubeconfig"))
-	defer require.NoError(t, os.Unsetenv("KUBECONFIG"))
+	defer func() { require.NoError(t, os.Unsetenv("KUBECONFIG")) }()
 	ts.WithExecutable("go", []string{"run", "main.go", "--allowed-contexts=allowed-ctx"})
 	cntrl := foxytest.NewTestRunner(t)
 	ts.Run(cntrl)
