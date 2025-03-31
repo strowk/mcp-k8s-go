@@ -19,14 +19,8 @@
 	<a href="https://github.com/strowk/mcp-k8s-go/actions/workflows/golangci-lint.yaml"><img src="https://github.com/strowk/mcp-k8s-go/actions/workflows/golangci-lint.yaml/badge.svg"/></a>
     <a href="https://github.com/strowk/mcp-k8s-go/releases/latest"><img src="https://img.shields.io/github/v/release/strowk/mcp-k8s-go?logo=github&color=22ff22" alt="latest release badeg"></a>
     <a href="https://www.npmjs.com/package/@strowk/mcp-k8s"><img src="https://img.shields.io/npm/dm/@strowk/mcp-k8s?label=NPM downloads" alt="npm downloads badge"></a>
-    <a href="https://smithery.ai/server/@strowk/mcp-k8s"><img src="https://smithery.ai/badge/@strowk/mcp-k8s" alt="smithery badge"></a>
-    
 </p>
 
-<p align="center">
-    <a href="https://mcp-get.com/packages/%40strowk%2Fmcp-k8s"><img src="https://mcp-get.com/api/badge/%40strowk%2Fmcp-k8s" alt="MCP Package"></a>
-    <a href="https://mcp-get.com/packages/%40strowk%2Fmcp-k8s"><img src="https://mcp-get.com/api/badge/%40strowk%2Fmcp-k8s?style=views" alt="MCP Package Views"></a>
-</p>
 
 ## Features
 
