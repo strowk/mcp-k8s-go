@@ -28,7 +28,7 @@ jobs:
 
       - name: Run goreleaser build
         run: |
-          goreleaser build --clean
+          goreleaser release --clean
           
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
