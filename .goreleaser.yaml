@@ -25,7 +25,8 @@ builds:
 
 dockers:
   - image_templates:
-    - mcpk8s/server
+      - mcpk8s/server
+    skip_push: false
 
 archives:
   - format: tar.gz
