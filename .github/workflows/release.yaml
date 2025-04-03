@@ -10,10 +10,10 @@ permissions:
   contents: write
 
 jobs:
-  # call-run-tests:
-  #   uses: strowk/mcp-k8s-go/.github/workflows/test.yaml@main
+  call-run-tests:
+    uses: strowk/mcp-k8s-go/.github/workflows/test.yaml@main
   release:
-    # needs: call-run-tests
+    needs: call-run-tests
     services:
       registry:
         image: registry:2
@@ -105,37 +105,36 @@ jobs:
             mcpk8s/server@sha256:${digest_arm64} \
             mcpk8s/server@sha256:${digest_amd64}
 
-      # Temporarily disable npm publish while docker image is stabilizing
-      # - name: Publish to npm
-      #   env: 
-      #     NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
-      #   run: |
-      #     chmod +x ./packages/publish_npm.sh
-      #     ./packages/publish_npm.sh
+      - name: Publish to npm
+        env: 
+          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
+        run: |
+          chmod +x ./packages/publish_npm.sh
+          ./packages/publish_npm.sh
 
-  # install:
-  #   strategy:
-  #     matrix:
-  #       os: 
-  #         - windows-latest
-  #         - ubuntu-latest
-  #         - macos-latest
-  #       arch: 
-  #         - x64
-  #         - arm64
-  #   runs-on: ${{ matrix.os }}
-  #   needs: release
-  #   steps:
-  #     - name: Checkout
-  #       uses: actions/checkout@v2
+  install:
+    strategy:
+      matrix:
+        os: 
+          - windows-latest
+          - ubuntu-latest
+          - macos-latest
+        arch: 
+          - x64
+          - arm64
+    runs-on: ${{ matrix.os }}
+    needs: release
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
 
-  #     - name: Install mcp-k8s
-  #       run: |
-  #         npm install -g @strowk/mcp-k8s
+      - name: Install mcp-k8s
+        run: |
+          npm install -g @strowk/mcp-k8s
 
-  #     - name: Test mcp-k8s
-  #       run: |
-  #         mcp-k8s version
+      - name: Test mcp-k8s
+        run: |
+          mcp-k8s version
 
 
 
