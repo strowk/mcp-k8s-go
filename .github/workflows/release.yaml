@@ -1,4 +1,4 @@
-name: Release mcp-k8s to npm
+name: Release mcp-k8s
 
 on:
   workflow_dispatch:
@@ -6,15 +6,25 @@ on:
     tags:
       - '*'
 
+permissions:
+  contents: write
+
 jobs:
   call-run-tests:
     uses: strowk/mcp-k8s-go/.github/workflows/test.yaml@main
   release:
     needs: call-run-tests
+    services:
+      registry:
+        image: registry:2
+        ports:
+          - 5000:5000
     runs-on:  ubuntu-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
 
       - name: Set up Go
         uses: actions/setup-go@v5
@@ -23,12 +33,77 @@ jobs:
 
       - name: Install goreleaser
         run: |
-          go install github.com/goreleaser/goreleaser/v2@latest
+          go install github.com/goreleaser/goreleaser/v2@v2.8.1
           which goreleaser
 
       - name: Run goreleaser build
         run: |
-          goreleaser build --clean
+          goreleaser release --clean
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+        with:
+          driver-opts: network=host
+
+      - name: Login to Docker Hub
+        uses: docker/login-action@v3
+        with:
+          username: mcpk8s
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+      # This bit is a workaround because docker can only do what we need
+      # when pushing directly from build to docker hub (i.e push by digest)
+      # and corresponding github action is unable to push without building
+      - name: Precreate temp context dir
+        run: |
+          mkdir -p /tmp/mcpk8s/arm64
+          echo 'FROM localhost:5000/mcpk8s/server:tmp-linux-arm64' > /tmp/mcpk8s/arm64/Dockerfile
+          mkdir -p /tmp/mcpk8s/amd64
+          echo 'FROM localhost:5000/mcpk8s/server:tmp-linux-amd64' > /tmp/mcpk8s/amd64/Dockerfile
+
+      - name: Build and push arm64 by digest
+        id: build-arm64
+        uses: docker/build-push-action@v6
+        with:
+          context: /tmp/mcpk8s/arm64
+          platforms: linux/arm64
+          tags: mcpk8s/server
+          outputs: type=image,push-by-digest=true,name-canonical=true,push=true
+
+      - name: Build and push amd64 by digest
+        id: build-amd64
+        uses: docker/build-push-action@v6
+        with:
+          context: /tmp/mcpk8s/amd64
+          platforms: linux/amd64
+          tags: mcpk8s/server
+          outputs: type=image,push-by-digest=true,name-canonical=true,push=true
+
+      - name: Create manifest list and push
+        run: |
+          goreleaser_tag=$(cat dist/metadata.json  | jq -r '.tag')
+          echo "goreleaser_tag: ${goreleaser_tag}"
+
+          # the magic here is simply taking outputs from build- actions 
+          # and removing sha256: prefix from them, cause we need to pass
+          # digests further to imagetools without the prefix
+
+          digest_arm64="${{ steps.build-arm64.outputs.digest }}"
+          digest_arm64="${digest_arm64#sha256:}"
+          digest_amd64="${{ steps.build-amd64.outputs.digest }}"
+          digest_amd64="${digest_amd64#sha256:}"
+
+          echo "crate multi-arch image for tag mcpk8s/server:${goreleaser_tag} with images:"
+          echo "  arm64: mcpk8s/server@sha256:${digest_arm64}"
+          echo "  amd64: mcpk8s/server@sha256:${digest_amd64}"
+
+          docker buildx imagetools create \
+            -t mcpk8s/server:${goreleaser_tag} \
+            -t mcpk8s/server:latest \
+            mcpk8s/server@sha256:${digest_arm64} \
+            mcpk8s/server@sha256:${digest_amd64}
 
       - name: Publish to npm
         env: 

@@ -21,16 +21,13 @@ jobs:
           - arm64
     runs-on: ${{ matrix.os }}
     steps:
-      - name: Checkout
-        uses: actions/checkout@v2
+      - name: Install mcp-k8s from docker
+        if: ${{ matrix.os == 'ubuntu-latest' }}
+        run: |
+          docker pull mcpk8s/server:latest
+          docker run --rm mcpk8s/server:latest version
 
-      - name: Install mcp-k8s
+      - name: Install mcp-k8s from npm
         run: |
           npm install -g @strowk/mcp-k8s
-
-      - name: Test mcp-k8s
-        run: |
           mcp-k8s version
-
-
-
