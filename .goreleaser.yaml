@@ -20,8 +20,8 @@ builds:
       - CGO_ENABLED=0
     goos:
       - linux
-      # - windows
-      # - darwin
+      - windows
+      - darwin
 
 dockers:
   - image_templates:
@@ -56,9 +56,9 @@ archives:
       {{- else }}{{ .Arch }}{{ end }}
       {{- if .Arm }}v{{ .Arm }}{{ end }}
     # use zip for windows archives
-    # format_overrides:
-    #   - goos: windows
-    #     format: zip
+    format_overrides:
+      - goos: windows
+        format: zip
 
 changelog:
   sort: asc
