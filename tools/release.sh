@@ -25,5 +25,3 @@ git commit -m "chore: update npm packages versions to $new_version" && git push 
 
 git tag -a "v$new_version" -m "release v$new_version"
 git push origin "v$new_version"
-
-goreleaser release --clean
