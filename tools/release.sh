@@ -21,7 +21,7 @@ fi
 
 packages/update_versions.sh $new_version
 git add ./packages
-git commit -m "chore: update npm packages versions to $new_version" && git push || true
+git commit -m "chore: update npm packages versions to $new_version" --no-verify && git push --no-verify || true
 
 git tag -a "v$new_version" -m "release v$new_version"
-git push origin "v$new_version"
+git push --no-verify origin "v$new_version"
