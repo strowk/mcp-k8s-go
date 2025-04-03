@@ -23,6 +23,10 @@ builds:
       - windows
       - darwin
 
+dockers:
+  - image_templates:
+    - mcpk8s/server
+
 archives:
   - format: tar.gz
     # this name template makes the OS and Arch compatible with the results of `uname`.
