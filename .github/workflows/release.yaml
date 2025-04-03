@@ -1,4 +1,4 @@
-name: Release mcp-k8s to npm
+name: Release mcp-k8s
 
 on:
   workflow_dispatch:
