@@ -6,6 +6,9 @@ on:
     tags:
       - '*'
 
+permissions:
+  contents: write
+
 jobs:
   # call-run-tests:
   #   uses: strowk/mcp-k8s-go/.github/workflows/test.yaml@main
@@ -29,6 +32,8 @@ jobs:
       - name: Run goreleaser build
         run: |
           goreleaser release --clean
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
