@@ -100,9 +100,10 @@ jobs:
           echo "  amd64: mcpk8s/server@sha256:${digest_amd64}"
 
           docker buildx imagetools create \
-           -t mcpk8s/server:${goreleaser_tag} \
-           mcpk8s/server@sha256:${digest_arm64} \
-           mcpk8s/server@sha256:${digest_amd64}
+            -t mcpk8s/server:${goreleaser_tag} \
+            -t mcpk8s/server:latest \
+            mcpk8s/server@sha256:${digest_arm64} \
+            mcpk8s/server@sha256:${digest_amd64}
 
       # Temporarily disable npm publish while docker image is stabilizing
       # - name: Publish to npm
