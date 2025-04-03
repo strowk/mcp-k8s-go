@@ -30,12 +30,66 @@ jobs:
         run: |
           goreleaser build --clean
 
-      - name: Publish to npm
-        env: 
-          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
+      - name: Login to Docker Hub
+        uses: docker/login-action@v3
+        with:
+          username: mcpk8s
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+      # This bit is a workaround because docker can only do what we need
+      # when pushing directly from build to docker hub (i.e push by digest)
+      # and corresponding github action is unable to push without building
+      - name: Precreate temp context dir
         run: |
-          chmod +x ./packages/publish_npm.sh
-          ./packages/publish_npm.sh
+          mkdir -p /tmp/mcpk8s/arm64
+          echo 'FROM mcpk8s/server:tmp-linux-arm64' > /tmp/mcpk8s/arm64/Dockerfile
+          mkdir -p /tmp/mcpk8s/amd64
+          echo 'FROM mcpk8s/server:tmp-linux-amd64' > /tmp/mcpk8s/amd64/Dockerfile
+
+      - name: Build and push arm64 by digest
+        id: build-arm64
+        uses: docker/build-push-action@v6
+        with:
+          context: /tmp/mcpk8s/arm64
+          platforms: linux/arm64
+          tags: mcpk8s/server
+          outputs: type=image,push-by-digest=true,name-canonical=true,push=true
+
+      - name: Build and push amd64 by digest
+        id: build-amd64
+        uses: docker/build-push-action@v6
+        with:
+          context: /tmp/mcpk8s/amd64
+          platforms: linux/amd64
+          tags: mcpk8s/server
+          outputs: type=image,push-by-digest=true,name-canonical=true,push=true
+
+      - name: Create manifest list and push
+        working-directory: ${{ runner.temp }}/digests
+        run: |
+          goreleaser_tag=$(cat dist/metadata.json  | jq -r '.tag')
+
+          # the magic here is simply taking outputs from build- actions 
+          # and removing sha256: prefix from them, cause we need to pass
+          # digests further to imagetools without the prefix
+
+          digest_arm64="${{ steps.build-arm64.outputs.digest }}"
+          digest_arm64="${digest_arm64#sha256:}"
+          digest_amd64="${{ steps.build-amd64.outputs.digest }}"
+          digest_amd64="${digest_amd64#sha256:}"
+
+          docker buildx imagetools create \
+           -t mcpk8s/server:${goreleaser_tag} \
+           mcpk8s@sha256:${digest_arm64} \
+           mcpk8s@sha256:${digest_amd64}
+
+      # Temporarily disable npm publish while docker image is stabilizing
+      # - name: Publish to npm
+      #   env: 
+      #     NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
+      #   run: |
+      #     chmod +x ./packages/publish_npm.sh
+      #     ./packages/publish_npm.sh
 
   install:
     strategy:
