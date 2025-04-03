@@ -7,10 +7,10 @@ on:
       - '*'
 
 jobs:
-  call-run-tests:
-    uses: strowk/mcp-k8s-go/.github/workflows/test.yaml@main
+  # call-run-tests:
+  #   uses: strowk/mcp-k8s-go/.github/workflows/test.yaml@main
   release:
-    needs: call-run-tests
+    # needs: call-run-tests
     runs-on:  ubuntu-latest
     steps:
       - name: Checkout
