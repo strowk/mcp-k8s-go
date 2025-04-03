@@ -82,7 +82,6 @@ jobs:
           outputs: type=image,push-by-digest=true,name-canonical=true,push=true
 
       - name: Create manifest list and push
-        working-directory: ${{ runner.temp }}/digests
         run: |
           goreleaser_tag=$(cat dist/metadata.json  | jq -r '.tag')
 
