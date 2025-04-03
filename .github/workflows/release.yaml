@@ -95,6 +95,10 @@ jobs:
           digest_amd64="${{ steps.build-amd64.outputs.digest }}"
           digest_amd64="${digest_amd64#sha256:}"
 
+          echo "crate multi-arch image for tag mcpk8s/server:${goreleaser_tag} with images:"
+          echo "  arm64: mcpk8s@sha256:${digest_arm64}"
+          echo "  amd64: mcpk8s@sha256:${digest_amd64}"
+
           docker buildx imagetools create \
            -t mcpk8s/server:${goreleaser_tag} \
            mcpk8s@sha256:${digest_arm64} \
