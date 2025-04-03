@@ -25,8 +25,8 @@ builds:
 
 dockers:
   - image_templates:
-      - mcpk8s/server:tmp-linux-amd64
-    skip_push: true # we do not push to docker hub with goreleaser, we only build
+      - localhost:5000/mcpk8s/server:tmp-linux-amd64
+    skip_push: false
     goarch: amd64
     build_flag_templates:
       - "--platform=linux/amd64"
@@ -35,8 +35,8 @@ dockers:
       - "--label=org.opencontainers.image.created={{.Date}}"
       - "--label=org.opencontainers.image.title={{.ProjectName}}"
   - image_templates:
-      - mcpk8s/server:tmp-linux-arm64
-    skip_push: true  # we do not push to docker hub with goreleaser, we only build
+      - localhost:5000/mcpk8s/server:tmp-linux-arm64
+    skip_push: false
     goarch: arm64
     build_flag_templates:
       - "--platform=linux/arm64"

@@ -14,6 +14,11 @@ jobs:
   #   uses: strowk/mcp-k8s-go/.github/workflows/test.yaml@main
   release:
     # needs: call-run-tests
+    services:
+      registry:
+        image: registry:2
+        ports:
+          - 5000:5000
     runs-on:  ubuntu-latest
     steps:
       - name: Checkout
@@ -50,9 +55,9 @@ jobs:
       - name: Precreate temp context dir
         run: |
           mkdir -p /tmp/mcpk8s/arm64
-          echo 'FROM mcpk8s/server:tmp-linux-arm64' > /tmp/mcpk8s/arm64/Dockerfile
+          echo 'FROM localhost:5000/mcpk8s/server:tmp-linux-arm64' > /tmp/mcpk8s/arm64/Dockerfile
           mkdir -p /tmp/mcpk8s/amd64
-          echo 'FROM mcpk8s/server:tmp-linux-amd64' > /tmp/mcpk8s/amd64/Dockerfile
+          echo 'FROM localhost:5000/mcpk8s/server:tmp-linux-amd64' > /tmp/mcpk8s/amd64/Dockerfile
 
       - name: Build and push arm64 by digest
         id: build-arm64
