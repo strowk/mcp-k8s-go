@@ -84,6 +84,7 @@ jobs:
       - name: Create manifest list and push
         run: |
           goreleaser_tag=$(cat dist/metadata.json  | jq -r '.tag')
+          echo "goreleaser_tag: ${goreleaser_tag}"
 
           # the magic here is simply taking outputs from build- actions 
           # and removing sha256: prefix from them, cause we need to pass
