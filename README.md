@@ -63,14 +63,14 @@ Following chat with Claude Desktop demonstrates how it looks when selected parti
 
 </details>
 
-To use this MCP server with Claude Desktop you would firstly need to install it.
+To use this MCP server with Claude Desktop (or any other client) you might need to choose which way of installation to use.
 
-You have several options for installation:
+You have multiple options:
 
-|              | <a href="#using-smithery">Smithery</a> | <a href="#using-mcp-get">mcp-get</a> | <a href="#prebuilt-from-npm">Pre-built NPM</a> | <a href="#from-github-releases">Pre-built in Github</a> | <a href="#building-from-source">From sources</a> |
-| ------------ | -------------------------------------- | ------------------------------------ | ---------------------------------------------- | ------------------------------------------------------- | ------------------------------------------------ |
-| Claude Setup | Auto                                   | Auto                                 | Manual                                         | Manual                                                  | Manual                                           |
-| Prerequisite | Node.js                                | Node.js                              | Node.js                                        | None                                                    | Golang                                           |
+|              | <a href="#using-smithery">Smithery</a> | <a href="#using-mcp-get">mcp-get</a> | <a href="#prebuilt-from-npm">Pre-built NPM</a> | <a href="#from-github-releases">Pre-built in Github</a> | <a href="#building-from-source">From sources</a> | <a href="#using-docker">Using Docker</a> |
+| ------------ | -------------------------------------- | ------------------------------------ | ---------------------------------------------- | ------------------------------------------------------- | ------------------------------------------------ | ---------------------------------------- |
+| Claude Setup | Auto                                   | Auto                                 | Manual                                         | Manual                                                  | Manual                                           | Manual                                   |
+| Prerequisite | Node.js                                | Node.js                              | Node.js                                        | None                                                    | Golang                                           | Docker                                   |
 
 ### Using Smithery
 
@@ -111,6 +111,27 @@ Then check version by running `mcp-k8s --version` and if this printed installed 
 }
 ```
 
+, or using `npx` with any client:
+
+```bash
+npx @strowk/mcp-k8s
+```
+
+For example for Claude:
+
+```json
+{
+  "mcpServers": {
+    "mcp_k8s": {
+      "command": "npx",
+      "args": [
+        "@strowk/mcp-k8s"
+      ]
+    }
+  }
+}
+```
+
 #### From GitHub releases
 
 Head to [GitHub releases](https://github.com/strowk/mcp-k8s-go/releases) and download the latest release for your platform.
@@ -145,6 +166,38 @@ go install github.com/strowk/mcp-k8s-go
     "mcp_k8s_go": {
       "command": "mcp-k8s-go",
       "args": []
+    }
+  }
+}
+```
+
+### Using Docker
+
+This server is built and published to Docker Hub since 0.3.1-beta.2 release with multi-arch images available for linux/amd64 and linux/arm64 architectures.
+
+You can use latest tag f.e like this:
+
+```bash
+docker run -i -v ~/.kube/config:/root/.kube/config --rm mcpk8s/server:latest
+```
+
+Windows users might need to replace `~/.kube/config` with `C:/Users/<username>/.kube/config` at least in Git Bash.
+
+For Claude:
+
+```json
+{
+  "mcpServers": {
+    "mcp_k8s_go": {
+      "command": "docker",
+      "args": [
+        "run",
+        "-i",
+        "-v",
+        "~/.kube/config:/root/.kube/config",
+        "--rm",
+        "mcpk8s/server:latest"
+      ]
     }
   }
 }
