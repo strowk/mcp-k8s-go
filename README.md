@@ -18,13 +18,13 @@
     <a href="https://github.com/strowk/mcp-k8s-go/actions/workflows/test.yaml"><img src="https://github.com/strowk/mcp-k8s-go/actions/workflows/test.yaml/badge.svg"></a>
 	  <a href="https://github.com/strowk/mcp-k8s-go/actions/workflows/golangci-lint.yaml"><img src="https://github.com/strowk/mcp-k8s-go/actions/workflows/golangci-lint.yaml/badge.svg"/></a>
     <a href="https://github.com/strowk/mcp-k8s-go/releases/latest"><img src="https://img.shields.io/github/v/release/strowk/mcp-k8s-go?logo=github&color=22ff22" alt="latest release badeg"></a>
-    <a href="https://www.npmjs.com/package/@strowk/mcp-k8s"><img src="https://img.shields.io/npm/dm/@strowk/mcp-k8s?label=NPM downloads" alt="npm downloads badge"></a>
+    <a href="https://www.npmjs.com/package/@strowk/mcp-k8s"><img src="https://img.shields.io/npm/dw/@strowk/mcp-k8s?label=NPM downloads" alt="npm downloads badge"></a>
     <a href="https://github.com/strowk/mcp-k8s-go/blob/main/LICENSE"><img src="https://img.shields.io/github/license/strowk/mcp-k8s-go" alt="license badge"></a>
 </p>
 
 ## Features
 
-💬 prompt 🗂️ resource 🤖 tool
+| 💬 prompt | 🗂️ resource | 🤖 tool |
 
 - 🗂️🤖 List Kubernetes contexts
 - 💬🤖 List Kubernetes pods
@@ -34,7 +34,7 @@
   - includes custom mappings for resources like pods, services, deployments, but any resource can be listed and retrieved
 - 🤖 Get Kubernetes events
 - 🤖 Get Kubernetes pod logs
-- 🤖 Run command in Kubernetes pod (k8s-pod-exec)
+- 🤖 Run command in Kubernetes pod
 
 ## Browse With Inspector
 
