@@ -32,7 +32,7 @@ func NewPodLogsTool(pool k8s.ClientPool) fxctx.Tool {
 			Description: utils.Ptr("Get logs for a Kubernetes pod using specific context in a specified namespace"),
 			InputSchema: schema.GetMcpToolInputSchema(),
 		},
-		func(args map[string]interface{}) *mcp.CallToolResult {
+		func(ctx context.Context, args map[string]interface{}) *mcp.CallToolResult {
 			input, err := schema.Validate(args)
 			if err != nil {
 				return errResponse(fmt.Errorf("invalid input: %w", err))
@@ -93,7 +93,7 @@ func NewPodLogsTool(pool k8s.ClientPool) fxctx.Tool {
 				CoreV1().
 				Pods(k8sNamespace).
 				GetLogs(k8sPod, options).
-				Do(context.Background())
+				Do(ctx)
 
 			err = podLogs.Error()
 

@@ -27,7 +27,7 @@ func NewListNodesTool(pool k8s.ClientPool) fxctx.Tool {
 			Description: utils.Ptr("List Kubernetes nodes using specific context"),
 			InputSchema: schema.GetMcpToolInputSchema(),
 		},
-		func(args map[string]interface{}) *mcp.CallToolResult {
+		func(ctx context.Context, args map[string]interface{}) *mcp.CallToolResult {
 			input, err := schema.Validate(args)
 			if err != nil {
 				return errResponse(err)
@@ -42,7 +42,7 @@ func NewListNodesTool(pool k8s.ClientPool) fxctx.Tool {
 			nodes, err := clientset.
 				CoreV1().
 				Nodes().
-				List(context.Background(), metav1.ListOptions{})
+				List(ctx, metav1.ListOptions{})
 			if err != nil {
 				return errResponse(err)
 			}

@@ -32,7 +32,7 @@ func NewListPodsPrompt(pool k8s.ClientPool) fxctx.Prompt {
 				},
 			},
 		},
-		func(req *mcp.GetPromptRequest) (*mcp.GetPromptResult, error) {
+		func(ctx context.Context, req *mcp.GetPromptRequest) (*mcp.GetPromptResult, error) {
 			k8sNamespace := req.Params.Arguments["namespace"]
 			if k8sNamespace == "" {
 				k8sNamespace = metav1.NamespaceAll
@@ -46,7 +46,7 @@ func NewListPodsPrompt(pool k8s.ClientPool) fxctx.Prompt {
 			pods, err := clientset.
 				CoreV1().
 				Pods(k8sNamespace).
-				List(context.Background(), metav1.ListOptions{})
+				List(ctx, metav1.ListOptions{})
 			if err != nil {
 				return nil, fmt.Errorf("failed to list pods: %w", err)
 			}

@@ -25,7 +25,7 @@ func NewListNamespacesTool(pool k8s.ClientPool) fxctx.Tool {
 			Description: utils.Ptr("List Kubernetes namespaces using specific context"),
 			InputSchema: schema.GetMcpToolInputSchema(),
 		},
-		func(args map[string]interface{}) *mcp.CallToolResult {
+		func(ctx context.Context, args map[string]interface{}) *mcp.CallToolResult {
 			input, err := schema.Validate(args)
 			if err != nil {
 				return errResponse(err)
@@ -40,7 +40,7 @@ func NewListNamespacesTool(pool k8s.ClientPool) fxctx.Tool {
 			namespace, err := clientset.
 				CoreV1().
 				Namespaces().
-				List(context.Background(), metav1.ListOptions{})
+				List(ctx, metav1.ListOptions{})
 			if err != nil {
 				return errResponse(err)
 			}

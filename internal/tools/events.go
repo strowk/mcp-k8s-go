@@ -25,7 +25,7 @@ func NewListEventsTool(pool k8s.ClientPool) fxctx.Tool {
 			Description: utils.Ptr("List Kubernetes events using specific context in a specified namespace"),
 			InputSchema: schema.GetMcpToolInputSchema(),
 		},
-		func(args map[string]interface{}) *mcp.CallToolResult {
+		func(ctx context.Context, args map[string]interface{}) *mcp.CallToolResult {
 			input, err := schema.Validate(args)
 			if err != nil {
 				return errResponse(err)
@@ -54,7 +54,7 @@ func NewListEventsTool(pool k8s.ClientPool) fxctx.Tool {
 			events, err := clientset.
 				CoreV1().
 				Events(k8sNamespace).
-				List(context.Background(), options)
+				List(ctx, options)
 			if err != nil {
 				return errResponse(err)
 			}

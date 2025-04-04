@@ -1,6 +1,7 @@
 package resources
 
 import (
+	"context"
 	"fmt"
 	"strings"
 
@@ -14,7 +15,7 @@ import (
 
 func NewContextsResourceProvider() fxctx.ResourceProvider {
 	return fxctx.NewResourceProvider(
-		func() ([]mcp.Resource, error) {
+		func(_ context.Context) ([]mcp.Resource, error) {
 			cfg, err := k8s.GetKubeConfig().RawConfig()
 			if err != nil {
 				return nil, fmt.Errorf("failed to get kubeconfig: %w", err)
@@ -29,7 +30,7 @@ func NewContextsResourceProvider() fxctx.ResourceProvider {
 			return resources, nil
 		},
 
-		func(uri string) (*mcp.ReadResourceResult, error) {
+		func(_ context.Context, uri string) (*mcp.ReadResourceResult, error) {
 			cfg, err := k8s.GetKubeConfig().RawConfig()
 			if err != nil {
 				return nil, fmt.Errorf("failed to get kubeconfig: %w", err)

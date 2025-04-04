@@ -42,7 +42,7 @@ func NewListResourcesTool(pool k8s.ClientPool) fxctx.Tool {
 			Description: utils.Ptr("List arbitrary Kubernetes resources"),
 			InputSchema: inputSchema.GetMcpToolInputSchema(),
 		},
-		func(args map[string]interface{}) *mcp.CallToolResult {
+		func(ctx context.Context, args map[string]interface{}) *mcp.CallToolResult {
 			input, err := inputSchema.Validate(args)
 			if err != nil {
 				return utils.ErrResponse(err)
@@ -107,7 +107,7 @@ func NewListResourcesTool(pool k8s.ClientPool) fxctx.Tool {
 							return utils.ErrResponse(err)
 						}
 
-						unstructured, err := dynClient.Resource(mapping.Resource).Namespace(namespace).List(context.Background(), metav1.ListOptions{})
+						unstructured, err := dynClient.Resource(mapping.Resource).Namespace(namespace).List(ctx, metav1.ListOptions{})
 						if err != nil {
 							return utils.ErrResponse(err)
 						}
