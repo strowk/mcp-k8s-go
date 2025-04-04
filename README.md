@@ -217,4 +217,4 @@ The following command-line options are supported:
 
 ## Contributing
 
-Check out [CONTRIBUTION.md](./CONTRIBUTION.md) for more information on how to contribute to this project.
+Check out [CONTRIBUTING.md](./CONTRIBUTING.md) for more information on how to contribute to this project.
