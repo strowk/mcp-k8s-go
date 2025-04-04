@@ -10,7 +10,7 @@
   <a href="#features">Features</a> ⚙
   <a href="#browse-with-inspector">Browse With Inspector</a> ⚙
   <a href="#use-with-claude">Use With Claude</a> ⚙
-  <a href="#contributing">Contributing</a>
+  <a href="https://github.com/strowk/mcp-k8s-go/blob/main/CONTRIBUTING.md">Contributing ↗</a>
 </p>
 
 <p align="center">
@@ -214,7 +214,3 @@ The following command-line options are supported:
 - `--allowed-contexts=<ctx1,ctx2,...>`: Comma-separated list of allowed Kubernetes contexts that users can access. If not specified, all contexts are allowed.
 - `--help`: Display help information
 - `--version`: Display version information
-
-## Contributing
-
-Check out [CONTRIBUTING.md](./CONTRIBUTING.md) for more information on how to contribute to this project.
