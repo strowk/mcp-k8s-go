@@ -31,7 +31,7 @@ func NewListNamespacesPrompt(pool k8s.ClientPool) fxctx.Prompt {
 				},
 			},
 		},
-		func(req *mcp.GetPromptRequest) (*mcp.GetPromptResult, error) {
+		func(ctx context.Context, req *mcp.GetPromptRequest) (*mcp.GetPromptResult, error) {
 			k8sContext := req.Params.Arguments["context"]
 			clientset, err := pool.GetClientset(k8sContext)
 			if err != nil {
@@ -41,7 +41,7 @@ func NewListNamespacesPrompt(pool k8s.ClientPool) fxctx.Prompt {
 			namespaces, err := clientset.
 				CoreV1().
 				Namespaces().
-				List(context.Background(), metav1.ListOptions{})
+				List(ctx, metav1.ListOptions{})
 			if err != nil {
 				return nil, fmt.Errorf("failed to list namespaces: %w", err)
 			}

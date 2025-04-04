@@ -42,7 +42,7 @@ func NewPodExecCommandTool(pool k8s.ClientPool) fxctx.Tool {
 			Description: utils.Ptr("Execute command in Kubernetes pod"),
 			InputSchema: schema.GetMcpToolInputSchema(),
 		},
-		func(args map[string]interface{}) *mcp.CallToolResult {
+		func(ctx context.Context, args map[string]interface{}) *mcp.CallToolResult {
 			input, err := schema.Validate(args)
 			if err != nil {
 				return errResponse(err)
@@ -67,7 +67,7 @@ func NewPodExecCommandTool(pool k8s.ClientPool) fxctx.Tool {
 			if err != nil {
 				return errResponse(fmt.Errorf("invalid config: %w", err))
 			}
-			execResult, err := cmdExecuter(pool, config, k8sPodName, k8sNamespace, execCommand, k8sContext, stdin)
+			execResult, err := cmdExecuter(pool, config, k8sPodName, k8sNamespace, execCommand, k8sContext, stdin, ctx)
 			if err != nil {
 				return errResponse(fmt.Errorf("command execute failed: %w", err))
 			}
@@ -102,6 +102,7 @@ func cmdExecuter(
 	cmd,
 	k8sContext,
 	stdin string,
+	ctx context.Context,
 ) (ExecResult, error) {
 	execResult := ExecResult{}
 	clientset, err := pool.GetClientset(k8sContext)
@@ -109,7 +110,7 @@ func cmdExecuter(
 		return execResult, err
 	}
 
-	pod, err := clientset.CoreV1().Pods(namespace).Get(context.TODO(), podName, metav1.GetOptions{})
+	pod, err := clientset.CoreV1().Pods(namespace).Get(ctx, podName, metav1.GetOptions{})
 	if err != nil {
 		return execResult, err
 	}
@@ -137,7 +138,6 @@ func cmdExecuter(
 		return execResult, err
 	}
 
-	ctx := context.Background()
 	withTimeout, cancel := context.WithTimeout(ctx, timeout)
 	defer cancel() // release resources if operation finishes before timeout
 

@@ -1,6 +1,7 @@
 package tools
 
 import (
+	"context"
 	"encoding/json"
 	"log"
 
@@ -24,7 +25,7 @@ func NewListContextsTool() fxctx.Tool {
 				Required:   []string{},
 			},
 		},
-		func(args map[string]interface{}) *mcp.CallToolResult {
+		func(_ context.Context, args map[string]interface{}) *mcp.CallToolResult {
 			ctx := k8s.GetKubeConfig()
 			cfg, err := ctx.RawConfig()
 			if err != nil {

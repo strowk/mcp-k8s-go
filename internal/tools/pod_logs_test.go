@@ -24,7 +24,7 @@ func TestPodLogs(t *testing.T) {
 			"pod":               "pod",
 			"previousContainer": "invalid",
 		}
-		resp := tool.Callback(args)
+		resp := tool.Callback(t.Context(), args)
 		if assert.NotNil(t, resp.IsError) {
 			assert.True(t, *resp.IsError)
 		}
@@ -45,7 +45,7 @@ func TestPodLogs(t *testing.T) {
 				},
 			},
 		), nil)
-		resp := tool.Callback(args)
+		resp := tool.Callback(t.Context(), args)
 		tests.AssertTextContentContainsInFirstString(t, "fake logs", resp.Content)
 	})
 
@@ -64,7 +64,7 @@ func TestPodLogs(t *testing.T) {
 				},
 			},
 		), nil)
-		resp := tool.Callback(args)
+		resp := tool.Callback(t.Context(), args)
 		tests.AssertTextContentContainsInFirstString(t, "fake logs", resp.Content)
 	})
 }
