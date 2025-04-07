@@ -180,7 +180,7 @@ You can use latest tag f.e like this:
 docker run -i -v ~/.kube/config:/root/.kube/config --rm mcpk8s/server:latest
 ```
 
-Windows users might need to replace `~/.kube/config` with `C:/Users/<username>/.kube/config` at least in Git Bash.
+Windows users might need to replace `~/.kube/config` with `//c/Users/<username>/.kube/config` at least in Git Bash.
 
 For Claude:
 
