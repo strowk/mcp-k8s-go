@@ -4,7 +4,7 @@ go 1.24
 
 require (
 	github.com/stretchr/testify v1.10.0
-	github.com/strowk/foxy-contexts v0.1.0-beta.3
+	github.com/strowk/foxy-contexts v0.1.0-beta.4
 	go.uber.org/fx v1.23.0
 	go.uber.org/mock v0.5.1
 	go.uber.org/zap v1.27.0
