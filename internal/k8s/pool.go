@@ -100,6 +100,9 @@ func (p *pool) GetInformer(
 	// now by canonical resolved gvk
 	alreadySetupResource, ok := p.gvkToResource[*res.gvk]
 	if ok {
+		// rememeber that this key is resolved to already known resource
+		p.keyToResource[key] = alreadySetupResource
+		// and we can return the informer for it
 		return alreadySetupResource.informer, nil
 	}
 
@@ -135,10 +138,6 @@ func (p *pool) resolve(
 		Version: strings.ToLower(version),
 		Kind:    strings.ToLower(kind),
 	}
-	// lookupMapping, err := mapper.RESTMapping(lookupGvk.GroupKind(), lookupGvk.Version)
-	// if err != nil {
-	// 	return nil, fmt.Errorf("failed to get lookup mapping: %w", err)
-	// }
 
 	var resolvedGvk *schema.GroupVersionKind
 	var resolvedMapping *meta.RESTMapping
