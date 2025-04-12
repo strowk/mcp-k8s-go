@@ -26,7 +26,7 @@ func NewGetResourceTool(pool k8s.ClientPool) fxctx.Tool {
 
 	inputSchema := toolinput.NewToolInputSchema(
 		toolinput.WithString(contextProperty, "Name of the Kubernetes context to use, defaults to current context"),
-		toolinput.WithString(namespaceProperty, "Namespace to get resource from"),
+		toolinput.WithString(namespaceProperty, "Namespace to get resource from, skip for cluster resources"),
 		toolinput.WithString(groupProperty, "API Group of the resource to get"),
 		toolinput.WithString(versionProperty, "API Version of the resource to get"),
 		toolinput.WithRequiredString(kindProperty, "Kind of resource to get"),
@@ -37,10 +37,10 @@ func NewGetResourceTool(pool k8s.ClientPool) fxctx.Tool {
 	return fxctx.NewTool(
 		&mcp.Tool{
 			Name:        "get-k8s-resource",
-			Description: utils.Ptr("Get Kubernetes resource completely"),
+			Description: utils.Ptr("Get details of any Kubernetes resource like pod, node or service - completely as JSON or rendered using template"),
 			InputSchema: inputSchema.GetMcpToolInputSchema(),
 		},
-		func(_ context.Context, args map[string]interface{}) *mcp.CallToolResult {
+		func(_ context.Context, args map[string]any) *mcp.CallToolResult {
 			input, err := inputSchema.Validate(args)
 			if err != nil {
 				return utils.ErrResponse(err)

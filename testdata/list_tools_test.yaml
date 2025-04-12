@@ -51,7 +51,7 @@ out:
             },
             {
               "name": "get-k8s-resource",
-              "description": "Get Kubernetes resource completely",
+              "description": "Get details of any Kubernetes resource like pod, node or service - completely as JSON or rendered using template",
               "inputSchema":
                 {
                   "type": "object",
@@ -65,7 +65,7 @@ out:
                       "namespace":
                         {
                           "type": "string",
-                          "description": "Namespace to get resource from",
+                          "description": "Namespace to get resource from, skip for cluster resources",
                         },
                       "name":
                         {
@@ -88,7 +88,7 @@ out:
                           "description": "Kind of resource to get",
                         },
                     },
-                  "required": ["namespace", "kind", "name"],
+                  "required": ["kind", "name"],
                 },
             },
             {
