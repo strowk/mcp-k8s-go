@@ -135,10 +135,10 @@ func (p *pool) resolve(
 		Version: strings.ToLower(version),
 		Kind:    strings.ToLower(kind),
 	}
-	lookupMapping, err := mapper.RESTMapping(lookupGvk.GroupKind(), lookupGvk.Version)
-	if err != nil {
-		return nil, fmt.Errorf("failed to get lookup mapping: %w", err)
-	}
+	// lookupMapping, err := mapper.RESTMapping(lookupGvk.GroupKind(), lookupGvk.Version)
+	// if err != nil {
+	// 	return nil, fmt.Errorf("failed to get lookup mapping: %w", err)
+	// }
 
 	var resolvedGvk *schema.GroupVersionKind
 	var resolvedMapping *meta.RESTMapping
@@ -162,7 +162,7 @@ lookingForResource:
 				}
 			}
 
-			if strings.EqualFold(apiResource.Kind, lookupMapping.GroupVersionKind.Kind) {
+			if strings.EqualFold(apiResource.Kind, lookupGvk.Kind) {
 				// some resources cannot have correct RESTMapping, but we need to create it
 				// to check if the requested resource matches what we have found in the server
 				// , but we can at first at least look if the kind matches what we are looking for
@@ -177,9 +177,11 @@ lookingForResource:
 					return nil, fmt.Errorf("failed to get rest mapping for %s: %w", gvk.String(), err)
 				}
 
-				if strings.EqualFold(mapping.GroupVersionKind.Kind, lookupMapping.GroupVersionKind.Kind) &&
-					strings.EqualFold(mapping.GroupVersionKind.Group, lookupMapping.GroupVersionKind.Group) &&
-					strings.EqualFold(mapping.GroupVersionKind.Version, lookupMapping.GroupVersionKind.Version) {
+				if strings.EqualFold(mapping.GroupVersionKind.Kind, lookupGvk.Kind) &&
+					// if group or version were not specified, we would ignore them when matching
+					// and this would simply match the first resource with maching kind
+					(lookupGvk.Group == "" || strings.EqualFold(mapping.GroupVersionKind.Group, lookupGvk.Group)) &&
+					(lookupGvk.Version == "" || strings.EqualFold(mapping.GroupVersionKind.Version, lookupGvk.Version)) {
 
 					resolvedGvk = &gvk
 					resolvedMapping = mapping

@@ -56,8 +56,6 @@ in:
             "context": "k3d-mcp-k8s-integration-test",
             "namespace": "test-deployment",
             "kind": "deployment",
-            "version": "v1",
-            "group": "apps",
             "name": "nginx-deployment",
             "go_template": "{{ .metadata.name }}",
           },
