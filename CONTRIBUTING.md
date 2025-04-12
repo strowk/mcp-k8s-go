@@ -58,9 +58,10 @@ Check tests in testdata directory for examples:
 
 These tests are single or multi document YAML files, where each document is a separate test case with name in "case" field, "in" and "out" for input and expected output being jsonrpc2 requests and responses.
 
-In addition to describing test case, you might need to setup some resources in Kubernetes cluster. 
-For how that could be done check methods such as `createPod` in [main_test.go](./main_test.go).
-You can either use `kubectl` command or `client-go` library to create and wait for initialization of resources before foxytest test runner starts.
+For new tests which are related to one particular resource, files should be located under `internal/k8s/<group>/<version>/<resource>` folder, for example `internal/k8s/apps/v1/deployment`. If you create new such folder, then you would need to add it in the list of test suites in `TestInK3dCluster` function in [main_test.go](main_test.go) file.
+
+In addition to describing test case, you might need to setup some resources in Kubernetes cluster.
+For this you have to place YAML files describing these resources in test suite subfolder called `test_manifests`. For example when tests within `internal/k8s/apps/v1/deployment` package are run, test manifests should be in `internal/k8s/apps/v1/deployment/test_manifests` folder and would be applied to the cluster before that test suite is run.
 
 ## Linting
 
