@@ -36,4 +36,4 @@ language = "golang"
 
 # extra_paths are the paths that are watched in addition to the default paths.
 # You can use it to add more paths to watch for changes besides the default paths.
-extra_paths = ["internal"]
+extra_paths = ["internal", "main.go"]

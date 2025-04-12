@@ -1,6 +1,7 @@
 package tools
 
 import (
+	"context"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -18,20 +19,20 @@ func TestPodLogs(t *testing.T) {
 
 	tool := NewPodLogsTool(poolMock)
 	t.Run("Call with invalid type of previousContainer", func(t *testing.T) {
-		args := map[string]interface{}{
+		args := map[string]any{
 			"context":           "context",
 			"namespace":         "namespace",
 			"pod":               "pod",
 			"previousContainer": "invalid",
 		}
-		resp := tool.Callback(t.Context(), args)
+		resp := tool.Callback(context.Background(), args)
 		if assert.NotNil(t, resp.IsError) {
 			assert.True(t, *resp.IsError)
 		}
 	})
 
 	t.Run("Call with boolean withing string for previousContainer", func(t *testing.T) {
-		args := map[string]interface{}{
+		args := map[string]any{
 			"context":           "context",
 			"namespace":         "namespace",
 			"pod":               "pod",
@@ -45,12 +46,12 @@ func TestPodLogs(t *testing.T) {
 				},
 			},
 		), nil)
-		resp := tool.Callback(t.Context(), args)
+		resp := tool.Callback(context.Background(), args)
 		tests.AssertTextContentContainsInFirstString(t, "fake logs", resp.Content)
 	})
 
 	t.Run("Call with empty string for previousContainer", func(t *testing.T) {
-		args := map[string]interface{}{
+		args := map[string]any{
 			"context":           "context",
 			"namespace":         "namespace",
 			"pod":               "pod",
@@ -64,7 +65,7 @@ func TestPodLogs(t *testing.T) {
 				},
 			},
 		), nil)
-		resp := tool.Callback(t.Context(), args)
+		resp := tool.Callback(context.Background(), args)
 		tests.AssertTextContentContainsInFirstString(t, "fake logs", resp.Content)
 	})
 }

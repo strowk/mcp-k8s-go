@@ -30,7 +30,7 @@ func TestListContexts(t *testing.T) {
 }
 
 func TestWithAllowedContexts(t *testing.T) {
-	ts, err := foxytest.Read("testdata/with_k8s")
+	ts, err := foxytest.Read("testdata/allowed_contexts")
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -61,6 +61,7 @@ func TestInK3dCluster(t *testing.T) {
 		"testdata/with_k3d",
 		"internal/k8s/apps/v1/deployment",
 		"internal/k8s/core/v1/pod",
+		"internal/k8s/core/v1/service",
 	}
 
 	withK3dCluster(t, k3dClusterName, func() {
@@ -205,7 +206,6 @@ func saveKubeconfig(t *testing.T, name string) {
 
 func waitForClusterReady(t *testing.T) {
 	// wait till all kube-system pods are running
-
 	clients, err := k8s.GetKubeClientset()
 	if err != nil {
 		t.Fatal(err)
@@ -220,13 +220,13 @@ waiting:
 		case <-timeout:
 			t.Fatal("timed out waiting for kube-system pods to be created")
 		case <-ticker.C:
-
 			pods, err := clients.CoreV1().Pods("kube-system").List(context.Background(), metav1.ListOptions{})
-			if err != nil {
-				t.Fatal(err)
-			}
-			if len(pods.Items) > 0 {
-				break waiting
+			if err == nil {
+				if len(pods.Items) > 0 {
+					break waiting
+				}
+			} else {
+				t.Logf("error listing pods: %v", err)
 			}
 		}
 	}
@@ -239,7 +239,6 @@ waiting:
 	// if err != nil {
 	// 	t.Fatal(err)
 	// }
-
 }
 
 func deleteK3dCluster(t *testing.T, name string) {

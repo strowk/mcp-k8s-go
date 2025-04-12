@@ -11,6 +11,8 @@ in:
           {
             "context": "k3d-mcp-k8s-integration-test",
             "namespace": "test-deployment",
+            "version": "v1",
+            "group": "apps",
             "kind": "deployment",
           },
       },

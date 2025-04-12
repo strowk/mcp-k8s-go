@@ -12,7 +12,9 @@ package mock_k8s
 import (
 	reflect "reflect"
 
+	list_mapping "github.com/strowk/mcp-k8s-go/internal/k8s/list_mapping"
 	gomock "go.uber.org/mock/gomock"
+	informers "k8s.io/client-go/informers"
 	kubernetes "k8s.io/client-go/kubernetes"
 )
 
@@ -53,4 +55,33 @@ func (m *MockClientPool) GetClientset(k8sContext string) (kubernetes.Interface, 
 func (mr *MockClientPoolMockRecorder) GetClientset(k8sContext any) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetClientset", reflect.TypeOf((*MockClientPool)(nil).GetClientset), k8sContext)
+}
+
+// GetInformer mocks base method.
+func (m *MockClientPool) GetInformer(k8sCtx, kind, group, version string) (informers.GenericInformer, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "GetInformer", k8sCtx, kind, group, version)
+	ret0, _ := ret[0].(informers.GenericInformer)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// GetInformer indicates an expected call of GetInformer.
+func (mr *MockClientPoolMockRecorder) GetInformer(k8sCtx, kind, group, version any) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetInformer", reflect.TypeOf((*MockClientPool)(nil).GetInformer), k8sCtx, kind, group, version)
+}
+
+// GetListMapping mocks base method.
+func (m *MockClientPool) GetListMapping(k8sCtx, kind, group, version string) list_mapping.ListMapping {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "GetListMapping", k8sCtx, kind, group, version)
+	ret0, _ := ret[0].(list_mapping.ListMapping)
+	return ret0
+}
+
+// GetListMapping indicates an expected call of GetListMapping.
+func (mr *MockClientPoolMockRecorder) GetListMapping(k8sCtx, kind, group, version any) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetListMapping", reflect.TypeOf((*MockClientPool)(nil).GetListMapping), k8sCtx, kind, group, version)
 }

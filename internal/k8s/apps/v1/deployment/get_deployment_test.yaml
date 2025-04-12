@@ -12,6 +12,8 @@ in:
             "context": "k3d-mcp-k8s-integration-test",
             "namespace": "test-deployment",
             "kind": "deployment",
+            "version": "v1",
+            "group": "apps",
             "name": "nginx-deployment",
           },
       },
@@ -32,7 +34,7 @@ out:
             {
               "type": "text",
 
-              "text": !!ere '{"metadata":{"name":"nginx-deployment","namespace":"test-deployment"/.*/"replicas":0/.*/}',
+              "text": !!ere '{"apiVersion":"apps\\/v1","kind":"Deployment","metadata":{/.*/"name":"nginx-deployment","namespace":"test-deployment"/.*/"replicas":0/.*/}',
             },
           ],
         "isError": false,
@@ -54,6 +56,8 @@ in:
             "context": "k3d-mcp-k8s-integration-test",
             "namespace": "test-deployment",
             "kind": "deployment",
+            "version": "v1",
+            "group": "apps",
             "name": "nginx-deployment",
             "go_template": "{{ .metadata.name }}",
           },

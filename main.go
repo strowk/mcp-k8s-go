@@ -6,6 +6,9 @@ import (
 
 	"github.com/strowk/mcp-k8s-go/internal/config"
 	"github.com/strowk/mcp-k8s-go/internal/k8s"
+	"github.com/strowk/mcp-k8s-go/internal/k8s/apps/v1/deployment"
+	"github.com/strowk/mcp-k8s-go/internal/k8s/core/v1/service"
+	"github.com/strowk/mcp-k8s-go/internal/k8s/list_mapping"
 	"github.com/strowk/mcp-k8s-go/internal/prompts"
 	"github.com/strowk/mcp-k8s-go/internal/resources"
 	"github.com/strowk/mcp-k8s-go/internal/tools"
@@ -100,9 +103,22 @@ func getApp() *app.Builder {
 			fx.Provide(func() (*kubernetes.Clientset, error) {
 				return k8s.GetKubeClientset()
 			}),
-			fx.Provide(func() k8s.ClientPool {
-				return k8s.NewClientPool()
-			}),
+			fx.Provide(fx.Annotate(
+				func(listMappingResolvers []list_mapping.ListMappingResolver) k8s.ClientPool {
+					return k8s.NewClientPool(listMappingResolvers)
+				},
+				fx.ParamTags(list_mapping.MappingResolversTag),
+			)),
+			fx.Provide(
+				list_mapping.AsMappingResolver(func() list_mapping.ListMappingResolver {
+					return deployment.NewListMappingResolver()
+				}),
+			),
+			fx.Provide(
+				list_mapping.AsMappingResolver(func() list_mapping.ListMappingResolver {
+					return service.NewListMappingResolver()
+				}),
+			),
 		).
 		WithTool(tools.NewPodLogsTool).
 		WithTool(tools.NewListContextsTool).

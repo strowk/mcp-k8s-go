@@ -44,12 +44,6 @@ To use latest published version with Inspector you can run this:
 npx @modelcontextprotocol/inspector npx @strowk/mcp-k8s
 ```
 
-, or to use version built from sources, then in root folder of this project:
-
-```bash
-tools/inspector/run.sh
-```
-
 ## Use With Claude
 
 <details><summary><b>

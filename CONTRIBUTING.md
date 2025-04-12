@@ -75,19 +75,56 @@ golangci-lint run
 
 ## Development
 
-You can run the project with automatic reload if you firstly install arelo:
+### Hot Reloading Setup With Logging
+
+#### TL;DR
+
+Install [synf](https://github.com/strowk/synf?tab=readme-ov-file#installation) and mcptee:
 
 ```bash
-go install github.com/makiuchi-d/arelo@latest
+go install github.com/strowk/mcptee@latest
 ```
 
-Then simple 
+Then you can use command like this:
 
 ```bash
-arelo -p '**/*.go' -i '**/.*' -i '**/*_test.go' -- go run main.go
+mcptee dev.log.yaml synf dev .
+```
+, or if you configure this with some client, probably with full path to the project (replace `C:/work/mcp-k8s-go` with path to where project repository is cloned):
+
+```bash
+mcptee C:/work/mcp-k8s-go/dev.log.yaml synf dev C:/work/mcp-k8s-go
 ```
 
-would start the project's process, you might need to wait a bit before passing any input, as arelo would be building the project.
+This would be for Claude:
+
+```json
+{
+    "mcpServers": {
+      "mcp_k8s_dev": {
+        "command": "mcptee",
+        "args": [
+          "C:/work/mcp-k8s-go/dev.log.yaml",
+          "synf",
+          "dev",
+          "C:/work/mcp-k8s-go"
+        ]
+      }
+    }
+}
+```
+
+#### Long Version
+
+You can run the project with automatic reload if you firstly install [synf](https://github.com/strowk/synf?tab=readme-ov-file#installation) tool.
+
+Then simple command
+
+```bash
+synf dev .
+```
+
+would start the project's process, you might need to wait a bit before passing any input, as synf would be building the project.
 
 Now you could start sending requests to the server, for example this would list available tools:
 
@@ -98,31 +135,34 @@ Now you could start sending requests to the server, for example this would list 
 If you want output to be prettified, you can use `jq` and start the server like this:
 
 ```bash
-arelo -p '**/*.go' -i '**/.*' -i '**/*_test.go' -- go run main.go | jq
+synf dev . | jq
 ```
 
-Whenever you change any go files, arelo would automatically rebuild the project and restart the server, you might need to send some empty lines though to know whether it is up.
+Whenever you change any go files, synf would automatically rebuild the project and restart the server, you might need to send some empty lines though to know whether it is up.
 Once empty lines would result in error response, you would know that server is up.
 
 You can also use it with inspector, for example:
 
 ```bash
-npx @modelcontextprotocol/inspector arelo -p '**/*.go' -i '**/.*' -i '**/*_test.go' -- go run main.go 
+npx @modelcontextprotocol/inspector synf dev .
 ```
 
-, then open `http://localhost:5173/` and Connect to the server, you would have inspector UI to send requests and see responses, while at the same time having automatic reload of the server on any code changes.
+, then open url that inspector would print and Connect to the server, you would have inspector UI to send requests and see responses, while at the same time having automatic reload of the server on any code changes.
 
 Command (example path for windows) in order to use it from any location (useful for providing to any clients, which are part of another program):
 
 ```bash
-arelo -p '**/*.go' -i '**/.*' -i '**/*_test.go' -t C:/work/mcp-k8s-go -- go run -C C:/work/mcp-k8s-go main.go
+mcptee log.yaml synf dev C:/work/mcp-k8s-go
 ```
-<!-- arelo -p '**/*.go' -i '**/.*' -i '**/*_test.go' -t C:/work/mcp-k8s-go -- mcp-stdio-dev C:/work/mcp-k8s-go/dev.log.yaml go run -C C:/work/mcp-k8s-go main.go -->
-<!-- mcp-stdio-dev test.yaml mcp-k8s-go -->
 
-The only issue with this reload is that server is not aware of initialization, however at the moment it does not really preserve any state between restarts that would be depending on initialization, hence noone notices that.
+Synf would make sure that client receives list_update notification whenever the server is restarted, which should make clients that support this to pick it up automatically.
 
-It does have an effect, though, that since clients typically would cache what tools/prompts/resources are available, adding new one would require actually asking for full restart.
+If you would also like to capture communication between the server and client, you can use `mcptee` tool.
+You can install it with `go install github.com/strowk/mcptee@latest` command.
+
+`mcptee` would capture all the communication between the server and client, and write it to a YAML file to use for debugging.
+
+For example: `mcptee log.yaml synf dev .` would start server with hot reloading and logging to `log.yaml` file.
 
 ## Git Hooks
 
