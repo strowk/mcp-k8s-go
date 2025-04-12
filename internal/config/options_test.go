@@ -11,28 +11,28 @@ func TestIsContextAllowed(t *testing.T) {
 	}()
 
 	tests := []struct {
-		name           string
+		name            string
 		allowedContexts []string
-		contextName    string
-		expected       bool
+		contextName     string
+		expected        bool
 	}{
 		{
-			name:           "all contexts allowed when no restrictions",
+			name:            "all contexts allowed when no restrictions",
 			allowedContexts: []string{},
-			contextName:    "any-context",
-			expected:       true,
+			contextName:     "any-context",
+			expected:        true,
 		},
 		{
-			name:           "context explicitly allowed",
+			name:            "context explicitly allowed",
 			allowedContexts: []string{"context-1", "context-2"},
-			contextName:    "context-1",
-			expected:       true,
+			contextName:     "context-1",
+			expected:        true,
 		},
 		{
-			name:           "context not allowed",
+			name:            "context not allowed",
 			allowedContexts: []string{"context-1", "context-2"},
-			contextName:    "context-3",
-			expected:       false,
+			contextName:     "context-3",
+			expected:        false,
 		},
 	}
 
@@ -46,7 +46,7 @@ func TestIsContextAllowed(t *testing.T) {
 
 			// Verify
 			if result != tt.expected {
-				t.Errorf("IsContextAllowed(%q) = %v, want %v", 
+				t.Errorf("IsContextAllowed(%q) = %v, want %v",
 					tt.contextName, result, tt.expected)
 			}
 		})

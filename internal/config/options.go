@@ -19,7 +19,7 @@ var GlobalOptions = &Options{}
 func ParseFlags() bool {
 	var allowedContextsStr string
 	flag.StringVar(&allowedContextsStr, "allowed-contexts", "", "Comma-separated list of allowed k8s contexts. If empty, all contexts are allowed")
-	
+
 	// Add other flags here
 
 	// Parse the flags
@@ -51,12 +51,12 @@ func IsContextAllowed(contextName string) bool {
 	if len(GlobalOptions.AllowedContexts) == 0 {
 		return true
 	}
-	
+
 	for _, allowed := range GlobalOptions.AllowedContexts {
 		if allowed == contextName {
 			return true
 		}
 	}
-	
+
 	return false
 }
