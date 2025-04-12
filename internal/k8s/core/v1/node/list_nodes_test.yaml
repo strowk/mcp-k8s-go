@@ -1,0 +1,23 @@
+case: List k8s nodes using list-k8s-resources tool
+in:
+  {
+    "jsonrpc": "2.0",
+    "method": "tools/call",
+    "id": 2,
+    "params":
+      {
+        "name": "list-k8s-resources",
+        "arguments":
+          { "context": "k3d-mcp-k8s-integration-test", "kind": "node" },
+      },
+  }
+out:
+  {
+    "jsonrpc": "2.0",
+    "id": 2,
+    "result":
+      {
+        "content": ["text": '{"name":"k3d-mcp-k8s-integration-test-server-0"}'],
+        "isError": false,
+      },
+  }

@@ -1,0 +1,33 @@
+case: Get k8s node using get-k8s-resources tool
+in:
+  {
+    "jsonrpc": "2.0",
+    "method": "tools/call",
+    "id": 2,
+    "params":
+      {
+        "name": "get-k8s-resource",
+        "arguments":
+          {
+            "context": "k3d-mcp-k8s-integration-test",
+            "kind": "node",
+            "name": "k3d-mcp-k8s-integration-test-server-0",
+          },
+      },
+  }
+out:
+  {
+    "jsonrpc": "2.0",
+    "id": 2,
+    "result":
+      {
+        "content":
+          [
+            {
+              "type": "text",
+              "text": !!ere '{"apiVersion":"v1","kind":"Node","metadata":{/.*/"name":"k3d-mcp-k8s-integration-test-server-0"/.*/',
+            },
+          ],
+        "isError": false,
+      },
+  }

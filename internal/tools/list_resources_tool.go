@@ -142,7 +142,7 @@ func NewListResourcesTool(pool k8s.ClientPool) fxctx.Tool {
 
 type GenericListContent struct {
 	Name      string `json:"name"`
-	Namespace string `json:"namespace"`
+	Namespace string `json:"namespace,omitempty"`
 }
 
 func (l GenericListContent) GetName() string {

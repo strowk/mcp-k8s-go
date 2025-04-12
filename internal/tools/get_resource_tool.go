@@ -26,7 +26,7 @@ func NewGetResourceTool(pool k8s.ClientPool) fxctx.Tool {
 
 	inputSchema := toolinput.NewToolInputSchema(
 		toolinput.WithString(contextProperty, "Name of the Kubernetes context to use, defaults to current context"),
-		toolinput.WithRequiredString(namespaceProperty, "Namespace to get resource from"),
+		toolinput.WithString(namespaceProperty, "Namespace to get resource from"),
 		toolinput.WithString(groupProperty, "API Group of the resource to get"),
 		toolinput.WithString(versionProperty, "API Version of the resource to get"),
 		toolinput.WithRequiredString(kindProperty, "Kind of resource to get"),
@@ -47,10 +47,7 @@ func NewGetResourceTool(pool k8s.ClientPool) fxctx.Tool {
 			}
 
 			k8sCtx := input.StringOr(contextProperty, "")
-			namespace, err := input.String(namespaceProperty)
-			if err != nil {
-				return utils.ErrResponse(err)
-			}
+			namespace := input.StringOr(namespaceProperty, "")
 
 			kind, err := input.String(kindProperty)
 			if err != nil {
@@ -72,7 +69,14 @@ func NewGetResourceTool(pool k8s.ClientPool) fxctx.Tool {
 				return utils.ErrResponse(err)
 			}
 
-			accumulator, exist, err := informer.Informer().GetIndexer().GetByKey(fmt.Sprintf("%s/%s", namespace, name))
+			var key string
+
+			if namespace == "" {
+				key = name
+			} else {
+				key = fmt.Sprintf("%s/%s", namespace, name)
+			}
+			accumulator, exist, err := informer.Informer().GetIndexer().GetByKey(key)
 			if err != nil {
 				return utils.ErrResponse(err)
 			}
@@ -87,7 +91,7 @@ func NewGetResourceTool(pool k8s.ClientPool) fxctx.Tool {
 			object := unstructuredAcc.Object
 
 			if metadata, ok := object["metadata"]; ok {
-				if metadataMap, ok := metadata.(map[string]interface{}); ok {
+				if metadataMap, ok := metadata.(map[string]any); ok {
 					// this is too big and somewhat useless
 					delete(metadataMap, "managedFields")
 				}
@@ -118,7 +122,7 @@ func NewGetResourceTool(pool k8s.ClientPool) fxctx.Tool {
 			var contents = []any{cnt}
 
 			return &mcp.CallToolResult{
-				Meta:    map[string]interface{}{},
+				Meta:    map[string]any{},
 				Content: contents,
 				IsError: utils.Ptr(false),
 			}

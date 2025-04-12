@@ -61,6 +61,7 @@ func TestInK3dCluster(t *testing.T) {
 		"testdata/with_k3d",
 		"internal/k8s/apps/v1/deployment",
 		"internal/k8s/core/v1/pod",
+		"internal/k8s/core/v1/node",
 		"internal/k8s/core/v1/service",
 	}
 
