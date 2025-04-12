@@ -179,7 +179,7 @@ lookingForResource:
 
 				if strings.EqualFold(mapping.GroupVersionKind.Kind, lookupGvk.Kind) &&
 					// if group or version were not specified, we would ignore them when matching
-					// and this would simply match the first resource with maching kind
+					// and this would simply match the first resource with matching kind
 					(lookupGvk.Group == "" || strings.EqualFold(mapping.GroupVersionKind.Group, lookupGvk.Group)) &&
 					(lookupGvk.Version == "" || strings.EqualFold(mapping.GroupVersionKind.Version, lookupGvk.Version)) {
 
