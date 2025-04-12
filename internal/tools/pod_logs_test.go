@@ -31,7 +31,7 @@ func TestPodLogs(t *testing.T) {
 		}
 	})
 
-	t.Run("Call with boolean withing string for previousContainer", func(t *testing.T) {
+	t.Run("Call with boolean within string for previousContainer", func(t *testing.T) {
 		args := map[string]any{
 			"context":           "context",
 			"namespace":         "namespace",
