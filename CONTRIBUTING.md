@@ -8,6 +8,8 @@ I welcome any contributions to this project. Please follow the guidelines below.
 
 If you find a bug or have a feature request, please open an issue in Github. If you are able to provide test to reproduce the issue, that would be very helpful. See further testing guidelines below.
 
+If you would like to help and want ideas for what to work on, please check the issues labelled as [help wanted](https://github.com/strowk/mcp-k8s-go/issues?q=is%3Aissue%20state%3Aopen%20label%3A%22help%20wanted%22).
+
 ## Coding
 
 This project uses Go modules, so you should be able to clone the repository to any location on your machine.
