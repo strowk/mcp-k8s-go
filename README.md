@@ -1,4 +1,4 @@
-<h4 align="center">Golang-based MCP server connecting to Kubernetes</h4>
+<h4 align="center">Golang based MCP server connecting to Kubernetes</h4>
 
 <h1 align="center">
    <img src="docs/images/logo.png" width="180"/>
