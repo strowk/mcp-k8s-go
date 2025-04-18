@@ -1,0 +1,32 @@
+case: "Initialize"
+
+in:
+  {
+    "jsonrpc": "2.0",
+    "id": 1,
+    "method": "initialize",
+    "params":
+      {
+        "protocolVersion": "2024-11-05",
+        "capabilities": { "roots": { "listChanged": true } },
+        "clientInfo": { "name": "Test client", "version": "0.0.42" },
+      },
+  }
+out:
+  {
+    "jsonrpc": "2.0",
+    "result":
+      {
+        "capabilities":
+          {
+            "prompts": { "listChanged": false },
+            "resources": { "listChanged": false, "subscribe": false },
+            "tools": { "listChanged": false },
+          },
+        "protocolVersion": "2024-11-05",
+        "serverInfo": { "name": "mcp-k8s-go", "version": "0.0.1" },
+      },
+    "id": 1,
+  }
+---
+in: { "method": "notifications/initialized", "jsonrpc": "2.0" }

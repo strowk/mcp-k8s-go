@@ -42,6 +42,18 @@ func TestWithAllowedContexts(t *testing.T) {
 	ts.AssertNoErrors(cntrl)
 }
 
+func TestInitialize(t *testing.T) {
+	ts, err := foxytest.Read("testdata/initialize")
+	if err != nil {
+		t.Fatal(err)
+	}
+	ts.WithLogging()
+	ts.WithExecutable("go", []string{"run", "main.go"})
+	cntrl := foxytest.NewTestRunner(t)
+	ts.Run(cntrl)
+	ts.AssertNoErrors(cntrl)
+}
+
 func TestLists(t *testing.T) {
 	ts, err := foxytest.Read("testdata")
 	if err != nil {
