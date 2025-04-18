@@ -10,7 +10,8 @@
   <a href="#features">Features</a> ⚙
   <a href="#browse-with-inspector">Browse With Inspector</a> ⚙
   <a href="#use-with-claude">Use With Claude</a> ⚙
-  <a href="https://github.com/strowk/mcp-k8s-go/blob/main/CONTRIBUTING.md">Contributing ↗</a>
+  <a href="https://github.com/strowk/mcp-k8s-go/blob/main/CONTRIBUTING.md">Contributing ↗</a> ⚙
+  <a href="https://modelcontextprotocol.io">About MCP ↗</a>
 </p>
 
 <p align="center">
