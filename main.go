@@ -134,7 +134,7 @@ func getApp() *app.Builder {
 		WithServerCapabilities(getCapabilities()).
 		// setting up server
 		WithName("mcp-k8s-go").
-		WithVersion("0.0.1").
+		WithVersion(version).
 		WithTransport(stdio.NewTransport()).
 		// Configuring fx logging to only show errors
 		WithFxOptions(

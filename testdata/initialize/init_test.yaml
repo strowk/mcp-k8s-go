@@ -24,7 +24,7 @@ out:
             "tools": { "listChanged": false },
           },
         "protocolVersion": "2024-11-05",
-        "serverInfo": { "name": "mcp-k8s-go", "version": "0.0.1" },
+        "serverInfo": { "name": "mcp-k8s-go", "version": !!re ".*" },
       },
     "id": 1,
   }
