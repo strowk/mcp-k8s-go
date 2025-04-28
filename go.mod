@@ -6,7 +6,7 @@ require (
 	github.com/stretchr/testify v1.10.0
 	github.com/strowk/foxy-contexts v0.1.0-beta.5
 	go.uber.org/fx v1.23.0
-	go.uber.org/mock v0.5.1
+	go.uber.org/mock v0.5.2
 	go.uber.org/zap v1.27.0
 	k8s.io/api v0.32.3
 	k8s.io/apimachinery v0.32.3
