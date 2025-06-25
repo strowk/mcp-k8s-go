@@ -11,6 +11,6 @@ updates:
       interval: "weekly"
 
 groups:
-  - IDENTIFIER: k8s-client
+  k8s-client:
     patterns: 
-      - "k8s.io/*"
+        - "k8s.io/*"
