@@ -10,7 +10,7 @@ require (
 	go.uber.org/zap v1.27.0
 	k8s.io/api v0.33.2
 	k8s.io/apimachinery v0.33.2
-	k8s.io/client-go v0.33.1
+	k8s.io/client-go v0.33.2
 )
 
 // Can use this to develop a bit faster when changing the library:
