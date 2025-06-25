@@ -9,3 +9,8 @@ updates:
     directory: "/" # Location of package manifests
     schedule:
       interval: "weekly"
+
+groups:
+  - IDENTIFIER: k8s-client
+    patterns: 
+      - "k8s.io/*"
