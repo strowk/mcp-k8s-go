@@ -66,6 +66,18 @@ func TestLists(t *testing.T) {
 	ts.AssertNoErrors(cntrl)
 }
 
+func TestReadOnlyLists(t *testing.T) {
+	ts, err := foxytest.Read("testdata/readonly")
+	if err != nil {
+		t.Fatal(err)
+	}
+	ts.WithLogging()
+	ts.WithExecutable("go", []string{"run", "main.go", "--readonly"})
+	cntrl := foxytest.NewTestRunner(t)
+	ts.Run(cntrl)
+	ts.AssertNoErrors(cntrl)
+}
+
 const k3dClusterName = "mcp-k8s-integration-test"
 
 func TestInK3dCluster(t *testing.T) {

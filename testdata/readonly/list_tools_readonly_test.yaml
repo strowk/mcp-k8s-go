@@ -1,0 +1,197 @@
+in: { "jsonrpc": "2.0", "method": "tools/list", "id": 1, "params": {} }
+out:
+  {
+    "id": 1,
+    "jsonrpc": "2.0",
+    "result":
+      {
+        "tools":
+          [
+            {
+              "name": "get-k8s-pod-logs",
+              "description": "Get logs for a Kubernetes pod using specific context in a specified namespace",
+              "inputSchema":
+                {
+                  "type": "object",
+                  "properties":
+                    {
+                      "context":
+                        {
+                          "description": "Name of the Kubernetes context to use",
+                          "type": "string",
+                        },
+                      "namespace":
+                        {
+                          "description": "Name of the namespace where the pod is located",
+                          "type": "string",
+                        },
+                      "pod":
+                        {
+                          "description": "Name of the pod to get logs from",
+                          "type": "string",
+                        },
+                      "previousContainer":
+                        {
+                          "description": "Return previous terminated container logs, defaults to false.",
+                          "type": "boolean",
+                        },
+                      "sinceDuration":
+                        {
+                          "description": "Only return logs newer than a relative duration like 5s, 2m, or 3h. Only one of sinceTime or sinceDuration may be set.",
+                          "type": "string",
+                        },
+                      "sinceTime":
+                        {
+                          "description": "Only return logs after a specific date (RFC3339). Only one of sinceTime or sinceDuration may be set.",
+                          "type": "string",
+                        },
+                    },
+                  "required": ["context", "namespace", "pod"],
+                },
+            },
+            {
+              "name": "get-k8s-resource",
+              "description": "Get details of any Kubernetes resource like pod, node or service - completely as JSON or rendered using template",
+              "inputSchema":
+                {
+                  "type": "object",
+                  "properties":
+                    {
+                      "context":
+                        {
+                          "type": "string",
+                          "description": "Name of the Kubernetes context to use, defaults to current context",
+                        },
+                      "namespace":
+                        {
+                          "type": "string",
+                          "description": "Namespace to get resource from, skip for cluster resources",
+                        },
+                      "name":
+                        {
+                          "type": "string",
+                          "description": "Name of the resource to get",
+                        },
+                      "group":
+                        {
+                          "type": "string",
+                          "description": "API Group of the resource to get",
+                        },
+                      "version":
+                        {
+                          "type": "string",
+                          "description": "API Version of the resource to get",
+                        },
+                      "kind":
+                        {
+                          "type": "string",
+                          "description": "Kind of resource to get",
+                        },
+                    },
+                  "required": ["kind", "name"],
+                },
+            },
+            {
+              "name": "list-k8s-contexts",
+              "description": "List Kubernetes contexts from configuration files such as kubeconfig",
+              "inputSchema": { "type": "object" },
+            },
+            {
+              "name": "list-k8s-events",
+              "description": "List Kubernetes events using specific context in a specified namespace",
+              "inputSchema":
+                {
+                  "type": "object",
+                  "properties":
+                    {
+                      "context":
+                        {
+                          "type": "string",
+                          "description": "Name of the Kubernetes context to use",
+                        },
+                      "namespace":
+                        {
+                          "type": "string",
+                          "description": "Name of the namespace to list events from",
+                        },
+                      "limit":
+                        {
+                          "type": "number",
+                          "description": "Maximum number of events to list",
+                        },
+                    },
+                  "required": ["context", "namespace"],
+                },
+            },
+            {
+              "name": "list-k8s-namespaces",
+              "description": "List Kubernetes namespaces using specific context",
+              "inputSchema":
+                {
+                  "type": "object",
+                  "properties":
+                    {
+                      "context":
+                        {
+                          "type": "string",
+                          "description": "Name of the Kubernetes context to use, defaults to current context",
+                        },
+                    },
+                },
+            },
+            {
+              "name": "list-k8s-nodes",
+              "description": "List Kubernetes nodes using specific context",
+              "inputSchema":
+                {
+                  "type": "object",
+                  "properties":
+                    {
+                      "context":
+                        {
+                          "type": "string",
+                          "description": "Name of the Kubernetes context to use, defaults to current context",
+                        },
+                    },
+                },
+            },
+
+            {
+              "name": "list-k8s-resources",
+              "description": "List arbitrary Kubernetes resources",
+              "inputSchema":
+                {
+                  "type": "object",
+                  "properties":
+                    {
+                      "context":
+                        {
+                          "type": "string",
+                          "description": "Name of the Kubernetes context to use, defaults to current context",
+                        },
+                      "namespace":
+                        {
+                          "type": "string",
+                          "description": "Namespace to list resources from, defaults to all namespaces",
+                        },
+                      "group":
+                        {
+                          "type": "string",
+                          "description": "API Group of resources to list",
+                        },
+                      "version":
+                        {
+                          "type": "string",
+                          "description": "API Version of resources to list",
+                        },
+                      "kind":
+                        {
+                          "type": "string",
+                          "description": "Kind of resources to list",
+                        },
+                    },
+                },
+            },
+          ],
+      },
+  }
