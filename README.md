@@ -207,5 +207,6 @@ The following environment variables are used by the MCP server:
 The following command-line options are supported:
 
 - `--allowed-contexts=<ctx1,ctx2,...>`: Comma-separated list of allowed Kubernetes contexts that users can access. If not specified, all contexts are allowed.
+- `--readonly`: Disables any tool which can write changes to the cluster
 - `--help`: Display help information
 - `--version`: Display version information
