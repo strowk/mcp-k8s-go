@@ -91,10 +91,12 @@ func printHelp() {
 	println("  version: Print the version, commit and date of the server")
 	println("  --allowed-contexts=<ctx1,ctx2,...>: Comma-separated list of allowed k8s contexts")
 	println("      If not specified, all contexts are allowed")
+	println("  --readonly: Disables any tool which can write changes to the cluster")
+	println("      If not specified, all tools are available")
 }
 
 func getApp() *app.Builder {
-	return app.
+	app := app.
 		NewBuilder().
 		WithFxOptions(
 			fx.Provide(func() clientcmd.ClientConfig {
@@ -127,7 +129,6 @@ func getApp() *app.Builder {
 		WithTool(tools.NewGetResourceTool).
 		WithTool(tools.NewListNodesTool).
 		WithTool(tools.NewListEventsTool).
-		WithTool(tools.NewPodExecCommandTool).
 		WithPrompt(prompts.NewListPodsPrompt).
 		WithPrompt(prompts.NewListNamespacesPrompt).
 		WithResourceProvider(resources.NewContextsResourceProvider).
@@ -150,4 +151,12 @@ func getApp() *app.Builder {
 				},
 			)),
 		)
+
+	// Skip registering remaining tools if --readonly detected
+	if config.GlobalOptions.Readonly {
+		println("Mode=Readonly, Skipping remaining tools")
+		return app
+	}
+
+	return app.WithTool(tools.NewPodExecCommandTool)
 }
