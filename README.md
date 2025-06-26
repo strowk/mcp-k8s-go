@@ -20,7 +20,6 @@
 	  <a href="https://github.com/strowk/mcp-k8s-go/actions/workflows/golangci-lint.yaml"><img src="https://github.com/strowk/mcp-k8s-go/actions/workflows/golangci-lint.yaml/badge.svg"/></a>
     <br/>
     <a href="https://github.com/strowk/mcp-k8s-go/releases/latest"><img src="https://img.shields.io/github/v/release/strowk/mcp-k8s-go?logo=github&color=22ff22" alt="latest release badge"></a>
-    <a href="https://www.npmjs.com/package/@strowk/mcp-k8s"><img src="https://img.shields.io/npm/dw/@strowk/mcp-k8s?label=NPM downloads" alt="npm downloads badge"></a>
     <a href="https://goreportcard.com/report/github.com/strowk/mcp-k8s-go"><img src="https://goreportcard.com/badge/github.com/strowk/mcp-k8s-go" alt="Go Reference"></a>
     <a href="https://github.com/strowk/mcp-k8s-go/blob/main/LICENSE"><img src="https://img.shields.io/github/license/strowk/mcp-k8s-go" alt="license badge"></a>
 </p>
