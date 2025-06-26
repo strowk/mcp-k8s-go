@@ -210,3 +210,22 @@ The following command-line options are supported:
 - `--readonly`: Disables any tool which can write changes to the cluster
 - `--help`: Display help information
 - `--version`: Display version information
+
+For example if you are configuring Claude Desktop, you can add the following configuration to `claude_desktop_config.json` file:
+
+```json
+{
+    "mcpServers": {
+        "mcp_k8s": {
+            "command": "mcp-k8s",
+            "args": [
+                "--allowed-contexts=dev,prod",
+                "--readonly"
+            ]
+        }
+    }
+}
+```
+
+, which would allow only `dev` and `prod` contexts to be used and would disable any tool which can write changes to the cluster.
+

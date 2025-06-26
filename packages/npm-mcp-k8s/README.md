@@ -57,3 +57,34 @@ Following chat with Claude Desktop demonstrates how it looks when selected parti
 ![Claude Desktop](docs/images/claude-desktop-logs.png)
 
 
+### Environment Variables and Command-line Options
+
+The following environment variables are used by the MCP server:
+
+- `KUBECONFIG`: Path to your Kubernetes configuration file (optional, defaults to ~/.kube/config)
+
+The following command-line options are supported:
+
+- `--allowed-contexts=<ctx1,ctx2,...>`: Comma-separated list of allowed Kubernetes contexts that users can access. If not specified, all contexts are allowed.
+- `--readonly`: Disables any tool which can write changes to the cluster
+- `--help`: Display help information
+- `--version`: Display version information
+
+For example if you are configuring Claude Desktop, you can add the following configuration to `claude_desktop_config.json` file:
+
+```json
+{
+    "mcpServers": {
+        "mcp_k8s": {
+            "command": "mcp-k8s",
+            "args": [
+                "--allowed-contexts=dev,prod",
+                "--readonly"
+            ]
+        }
+    }
+}
+```
+
+, which would allow only `dev` and `prod` contexts to be used and would disable any tool which can write changes to the cluster.
+
