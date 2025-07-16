@@ -1,0 +1,104 @@
+case: create role
+in:
+  {
+    "jsonrpc": "2.0",
+    "method": "tools/call",
+    "id": 2,
+    "params": {
+      "name": "apply-k8s-resource",
+      "arguments": {
+        "context": "k3d-mcp-k8s-integration-test",
+        "namespace": "default",
+        "manifest": "apiVersion: rbac.authorization.k8s.io/v1\nkind: Role\nmetadata:\n  namespace: default\n  name: test-role-create\nrules:\n- apiGroups: [\"\"]\n  resources: [\"pods\"]\n  verbs: [\"get\", \"watch\", \"list\"]\n"
+      }
+    }
+  }
+out:
+  {
+    "jsonrpc": "2.0",
+    "id": 2,
+    "result": {
+      "content": [
+        { "type": "text", "text": "role.rbac.authorization.k8s.io/test-role-create created" }
+      ],
+    }
+  }
+
+---
+case: modify role
+in:
+  {
+    "jsonrpc": "2.0",
+    "method": "tools/call",
+    "id": 2,
+    "params": {
+      "name": "apply-k8s-resource",
+      "arguments": {
+        "context": "k3d-mcp-k8s-integration-test",
+        "namespace": "default",
+        "manifest": "apiVersion: rbac.authorization.k8s.io/v1\nkind: Role\nmetadata:\n  namespace: default\n  name: test-role-modify\nrules:\n- apiGroups: [\"\"]\n  resources: [\"pods\", \"services\"]\n  verbs: [\"get\", \"watch\", \"list\"]\n"
+      }
+    }
+  }
+out:
+  {
+    "jsonrpc": "2.0",
+    "id": 2,
+    "result": {
+      "content": [
+        { "type": "text", "text": "role.rbac.authorization.k8s.io/test-role-modify configured" }
+      ]
+    }
+  }
+
+---
+case: create cluster role
+in:
+  {
+    "jsonrpc": "2.0",
+    "method": "tools/call",
+    "id": 2,
+    "params": {
+      "name": "apply-k8s-resource",
+      "arguments": {
+        "context": "k3d-mcp-k8s-integration-test",
+        "manifest": "apiVersion: rbac.authorization.k8s.io/v1\nkind: ClusterRole\nmetadata:\n  name: test-cluster-role-create\nrules:\n- apiGroups: [\"\"]\n  resources: [\"pods\"]\n  verbs: [\"get\", \"watch\", \"list\"]\n"
+      }
+    }
+  }
+out:
+  {
+    "jsonrpc": "2.0",
+    "id": 2,
+    "result": {
+      "content": [
+        { "type": "text", "text": "clusterrole.rbac.authorization.k8s.io/test-cluster-role-create created" }
+      ]
+    }
+  }
+
+---
+case: modify cluster role
+in:
+  {
+    "jsonrpc": "2.0",
+    "method": "tools/call",
+    "id": 2,
+    "params": {
+      "name": "apply-k8s-resource",
+      "arguments": {
+        "context": "k3d-mcp-k8s-integration-test",
+        "manifest": "apiVersion: rbac.authorization.k8s.io/v1\nkind: ClusterRole\nmetadata:\n  name: test-cluster-role-modify\nrules:\n- apiGroups: [\"\"]\n  resources: [\"pods\", \"services\"]\n  verbs: [\"get\", \"watch\", \"list\"]\n"
+      }
+    }
+  }
+out:
+  {
+    "jsonrpc": "2.0",
+    "id": 2,
+    "result": {
+      "content": [
+        { "type": "text", "text": "clusterrole.rbac.authorization.k8s.io/test-cluster-role-modify configured" }
+      ]
+    }
+  }
