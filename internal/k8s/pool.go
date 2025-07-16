@@ -28,6 +28,7 @@ import (
 // to avoid creating them multiple times.
 type ClientPool interface {
 	GetClientset(k8sContext string) (kubernetes.Interface, error)
+	GetDynamicClient(k8sContext string) (dynamic.Interface, error)
 	GetInformer(
 		k8sCtx string,
 		kind string,
@@ -46,9 +47,11 @@ type resolvedResource struct {
 }
 
 type pool struct {
-	clients map[string]kubernetes.Interface
+	clients        map[string]kubernetes.Interface
+	dynamicClients map[string]dynamic.Interface
 
-	getClientsetMutex *sync.Mutex
+	getClientsetMutex     *sync.Mutex
+	getDynamicClientMutex *sync.Mutex
 
 	keyToResource map[string]*resolvedResource
 	gvkToResource map[schema.GroupVersionKind]*resolvedResource
@@ -62,6 +65,9 @@ func NewClientPool(listMappingResolvers []list_mapping.ListMappingResolver) Clie
 	return &pool{
 		clients:           make(map[string]kubernetes.Interface),
 		getClientsetMutex: &sync.Mutex{},
+
+		dynamicClients:        make(map[string]dynamic.Interface),
+		getDynamicClientMutex: &sync.Mutex{},
 
 		keyToResource:    make(map[string]*resolvedResource),
 		gvkToResource:    make(map[schema.GroupVersionKind]*resolvedResource),
@@ -272,4 +278,31 @@ func getClientset(k8sContext string) (kubernetes.Interface, error) {
 	}
 
 	return clientset, nil
+}
+
+func (p *pool) GetDynamicClient(k8sContext string) (dynamic.Interface, error) {
+	p.getDynamicClientMutex.Lock()
+	defer p.getDynamicClientMutex.Unlock()
+
+	if k8sContext == "" {
+		k8sContext = "default"
+	}
+
+	if client, ok := p.dynamicClients[k8sContext]; ok {
+		return client, nil
+	}
+	kubeConfig := GetKubeConfigForContext(k8sContext)
+
+	config, err := kubeConfig.ClientConfig()
+	if err != nil {
+		return nil, err
+	}
+
+	client, err := dynamic.NewForConfig(config)
+	if err != nil {
+		return nil, err
+	}
+
+	p.dynamicClients[k8sContext] = client
+	return client, nil
 }
