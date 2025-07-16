@@ -9,7 +9,7 @@ in:
       "arguments": {
         "context": "k3d-mcp-k8s-integration-test",
         "namespace": "default",
-        "manifest": "apiVersion: rbac.authorization.k8s.io/v1\nkind: Role\nmetadata:\n  namespace: default\n  name: test-role-create\nrules:\n- apiGroups: [\"\"]\n  resources: [\"pods\"]\n  verbs: [\"get\", \"watch\", \"list\"]\n"
+        "manifest": "apiVersion: rbac.authorization.k8s.io/v1\nkind: Role\nmetadata:\n  namespace: default\n  name: test-role\nrules:\n- apiGroups: [\"\"]\n  resources: [\"pods\"]\n  verbs: [\"get\", \"watch\", \"list\"]\n"
       }
     }
   }
@@ -19,7 +19,7 @@ out:
     "id": 2,
     "result": {
       "content": [
-        { "type": "text", "text": "roles.rbac.authorization.k8s.io/test-role-create created" }
+        { "type": "text", "text": "roles.rbac.authorization.k8s.io/test-role created" }
       ],
     }
   }
@@ -36,7 +36,7 @@ in:
       "arguments": {
         "context": "k3d-mcp-k8s-integration-test",
         "namespace": "default",
-        "manifest": "apiVersion: rbac.authorization.k8s.io/v1\nkind: Role\nmetadata:\n  namespace: default\n  name: test-role-modify\nrules:\n- apiGroups: [\"\"]\n  resources: [\"pods\", \"services\"]\n  verbs: [\"get\", \"watch\", \"list\"]\n"
+        "manifest": "apiVersion: rbac.authorization.k8s.io/v1\nkind: Role\nmetadata:\n  namespace: default\n  name: test-role\nrules:\n- apiGroups: [\"\"]\n  resources: [\"pods\", \"services\"]\n  verbs: [\"get\", \"watch\", \"list\"]\n"
       }
     }
   }
@@ -46,7 +46,7 @@ out:
     "id": 2,
     "result": {
       "content": [
-        { "type": "text", "text": "roles.rbac.authorization.k8s.io/test-role-modify configured" }
+        { "type": "text", "text": "roles.rbac.authorization.k8s.io/test-role configured" }
       ]
     }
   }
@@ -62,7 +62,7 @@ in:
       "name": "apply-k8s-resource",
       "arguments": {
         "context": "k3d-mcp-k8s-integration-test",
-        "manifest": "apiVersion: rbac.authorization.k8s.io/v1\nkind: ClusterRole\nmetadata:\n  name: test-cluster-role-create\nrules:\n- apiGroups: [\"\"]\n  resources: [\"pods\"]\n  verbs: [\"get\", \"watch\", \"list\"]\n"
+        "manifest": "apiVersion: rbac.authorization.k8s.io/v1\nkind: ClusterRole\nmetadata:\n  name: test-cluster-role\nrules:\n- apiGroups: [\"\"]\n  resources: [\"pods\"]\n  verbs: [\"get\", \"watch\", \"list\"]\n"
       }
     }
   }
@@ -72,7 +72,7 @@ out:
     "id": 2,
     "result": {
       "content": [
-        { "type": "text", "text": "clusterroles.rbac.authorization.k8s.io/test-cluster-role-create created" }
+        { "type": "text", "text": "clusterroles.rbac.authorization.k8s.io/test-cluster-role created" }
       ]
     }
   }
@@ -88,7 +88,7 @@ in:
       "name": "apply-k8s-resource",
       "arguments": {
         "context": "k3d-mcp-k8s-integration-test",
-        "manifest": "apiVersion: rbac.authorization.k8s.io/v1\nkind: ClusterRole\nmetadata:\n  name: test-cluster-role-modify\nrules:\n- apiGroups: [\"\"]\n  resources: [\"pods\", \"services\"]\n  verbs: [\"get\", \"watch\", \"list\"]\n"
+        "manifest": "apiVersion: rbac.authorization.k8s.io/v1\nkind: ClusterRole\nmetadata:\n  name: test-cluster-role\nrules:\n- apiGroups: [\"\"]\n  resources: [\"pods\", \"services\"]\n  verbs: [\"get\", \"watch\", \"list\"]\n"
       }
     }
   }
@@ -98,7 +98,7 @@ out:
     "id": 2,
     "result": {
       "content": [
-        { "type": "text", "text": "clusterroles.rbac.authorization.k8s.io/test-cluster-role-modify configured" }
+        { "type": "text", "text": "clusterroles.rbac.authorization.k8s.io/test-cluster-role configured" }
       ]
     }
   }
