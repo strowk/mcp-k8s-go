@@ -19,7 +19,7 @@ out:
     "id": 2,
     "result": {
       "content": [
-        { "type": "text", "text": "role.rbac.authorization.k8s.io/test-role-create created" }
+        { "type": "text", "text": "roles.rbac.authorization.k8s.io/test-role-create created" }
       ],
     }
   }
@@ -46,7 +46,7 @@ out:
     "id": 2,
     "result": {
       "content": [
-        { "type": "text", "text": "role.rbac.authorization.k8s.io/test-role-modify configured" }
+        { "type": "text", "text": "roles.rbac.authorization.k8s.io/test-role-modify configured" }
       ]
     }
   }
@@ -72,7 +72,7 @@ out:
     "id": 2,
     "result": {
       "content": [
-        { "type": "text", "text": "clusterrole.rbac.authorization.k8s.io/test-cluster-role-create created" }
+        { "type": "text", "text": "clusterroles.rbac.authorization.k8s.io/test-cluster-role-create created" }
       ]
     }
   }
@@ -98,7 +98,7 @@ out:
     "id": 2,
     "result": {
       "content": [
-        { "type": "text", "text": "clusterrole.rbac.authorization.k8s.io/test-cluster-role-modify configured" }
+        { "type": "text", "text": "clusterroles.rbac.authorization.k8s.io/test-cluster-role-modify configured" }
       ]
     }
   }
