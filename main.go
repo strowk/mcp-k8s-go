@@ -158,5 +158,6 @@ func getApp() *app.Builder {
 		return app
 	}
 
-	return app.WithTool(tools.NewPodExecCommandTool)
+	app = app.WithTool(tools.NewApplyK8sResourceTool).WithTool(tools.NewPodExecCommandTool)
+	return app
 }
