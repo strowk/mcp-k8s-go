@@ -2,7 +2,6 @@ package tools
 
 import (
 	"context"
-	"encoding/json"
 	"fmt"
 	"strings"
 
@@ -86,11 +85,7 @@ func NewApplyK8sResourceTool(clientPool k8s.ClientPool) fxctx.Tool {
 				action = "created"
 			}
 
-			patchBytes, err := json.Marshal(obj)
-			if err != nil {
-				return utils.ErrResponse(fmt.Errorf("failed to marshal manifest to JSON: %w", err))
-			}
-			_, err = dr.Patch(ctx, obj.GetName(), types.ApplyPatchType, patchBytes, metav1.PatchOptions{
+			_, err = dr.Patch(ctx, obj.GetName(), types.ApplyPatchType, []byte(manifest), metav1.PatchOptions{
 				FieldManager: "mcp-k8s-go",
 			})
 
@@ -98,16 +93,16 @@ func NewApplyK8sResourceTool(clientPool k8s.ClientPool) fxctx.Tool {
 				return utils.ErrResponse(fmt.Errorf("failed to patch resource: %w", err))
 			}
 
-			resourceIdentifier := fmt.Sprintf("%s.%s/%s", strings.ToLower(apiResource.Name), gvk.Group, obj.GetName())
+			resourceText := fmt.Sprintf("%s.%s/%s", strings.ToLower(apiResource.Name), gvk.Group, obj.GetName())
 			if gvk.Group == "" {
-				resourceIdentifier = fmt.Sprintf("%s/%s", strings.ToLower(apiResource.Name), obj.GetName())
+				resourceText = fmt.Sprintf("%s/%s", strings.ToLower(apiResource.Name), obj.GetName())
 			}
 
 			return &mcp.CallToolResult{
 				Content: []any{
 					mcp.TextContent{
 						Type: "text",
-						Text: fmt.Sprintf("%s %s", resourceIdentifier, action),
+						Text: fmt.Sprintf("%s %s", resourceText, action),
 					},
 				},
 			}
