@@ -1,8 +1,10 @@
 package tools
 
 import (
+	"bytes"
 	"context"
 	"fmt"
+	"io"
 	"strings"
 
 	"github.com/strowk/foxy-contexts/pkg/fxctx"
@@ -52,57 +54,74 @@ func NewApplyK8sResourceTool(clientPool k8s.ClientPool) fxctx.Tool {
 				return utils.ErrResponse(err)
 			}
 
-			obj := &unstructured.Unstructured{}
-			if err := yaml.Unmarshal([]byte(manifest), obj); err != nil {
-				return utils.ErrResponse(fmt.Errorf("failed to unmarshal manifest: %w", err))
-			}
-
-			namespace := obj.GetNamespace()
-			if namespace == "" {
-				namespace = "default"
-			}
-
-			gvk := obj.GroupVersionKind()
-			apiResource, err := findAPIResource(clientset.Discovery(), gvk)
-			if err != nil {
-				return utils.ErrResponse(fmt.Errorf("failed to find API resource: %w", err))
-			}
-
 			dynamicClient, err := clientPool.GetDynamicClient(k8sCtx)
 			if err != nil {
 				return utils.ErrResponse(fmt.Errorf("failed to retrieve dynamic client from the client pool: %w", err))
 			}
 
-			var dr dynamic.ResourceInterface
-			if apiResource.Namespaced {
-				dr = dynamicClient.Resource(gvk.GroupVersion().WithResource(apiResource.Name)).Namespace(namespace)
-			} else {
-				dr = dynamicClient.Resource(gvk.GroupVersion().WithResource(apiResource.Name))
-			}
-			action := "configured"
+			decoder := yaml.NewYAMLOrJSONDecoder(bytes.NewReader([]byte(manifest)), 4096)
+			var results []string
+			for {
+				obj := &unstructured.Unstructured{}
+				if err := decoder.Decode(obj); err != nil {
+					if err == io.EOF {
+						break
+					}
+					return utils.ErrResponse(fmt.Errorf("failed to unmarshal manifest: %w", err))
+				}
 
-			if _, err := dr.Get(ctx, obj.GetName(), metav1.GetOptions{}); errors.IsNotFound(err) {
-				action = "created"
-			}
+				if obj.Object == nil {
+					continue
+				}
 
-			_, err = dr.Patch(ctx, obj.GetName(), types.ApplyPatchType, []byte(manifest), metav1.PatchOptions{
-				FieldManager: "mcp-k8s-go",
-			})
+				namespace := obj.GetNamespace()
+				if namespace == "" {
+					namespace = "default"
+				}
 
-			if err != nil {
-				return utils.ErrResponse(fmt.Errorf("failed to patch resource: %w", err))
-			}
+				gvk := obj.GroupVersionKind()
+				apiResource, err := findAPIResource(clientset.Discovery(), gvk)
+				if err != nil {
+					return utils.ErrResponse(fmt.Errorf("failed to find API resource: %w", err))
+				}
 
-			resourceText := fmt.Sprintf("%s.%s/%s", strings.ToLower(apiResource.Name), gvk.Group, obj.GetName())
-			if gvk.Group == "" {
-				resourceText = fmt.Sprintf("%s/%s", strings.ToLower(apiResource.Name), obj.GetName())
+				var dr dynamic.ResourceInterface
+				if apiResource.Namespaced {
+					dr = dynamicClient.Resource(gvk.GroupVersion().WithResource(apiResource.Name)).Namespace(namespace)
+				} else {
+					dr = dynamicClient.Resource(gvk.GroupVersion().WithResource(apiResource.Name))
+				}
+				action := "configured"
+
+				if _, err := dr.Get(ctx, obj.GetName(), metav1.GetOptions{}); errors.IsNotFound(err) {
+					action = "created"
+				}
+
+				rawObj, err := obj.MarshalJSON()
+				if err != nil {
+					return utils.ErrResponse(fmt.Errorf("failed to marshal resource: %w", err))
+				}
+
+				_, err = dr.Patch(ctx, obj.GetName(), types.ApplyPatchType, rawObj, metav1.PatchOptions{
+					FieldManager: "mcp-k8s-go",
+				})
+
+				if err != nil {
+					return utils.ErrResponse(fmt.Errorf("failed to patch resource: %w", err))
+				}
+
+				resourceText := fmt.Sprintf("%s.%s/%s", strings.ToLower(apiResource.Name), gvk.Group, obj.GetName())
+				if gvk.Group == "" {
+					resourceText = fmt.Sprintf("%s/%s", strings.ToLower(apiResource.Name), obj.GetName())
+				}
+				results = append(results, fmt.Sprintf("%s %s", resourceText, action))
 			}
 
 			return &mcp.CallToolResult{
 				Content: []any{
 					mcp.TextContent{
 						Type: "text",
-						Text: fmt.Sprintf("%s %s", resourceText, action),
+						Text: strings.Join(results, "\n"),
 					},
 				},
 			}
