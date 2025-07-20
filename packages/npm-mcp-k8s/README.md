@@ -7,11 +7,11 @@ Currently available:
 | 💬 prompt | 🗂️ resource | 🤖 tool |
 
 - 🗂️🤖 List Kubernetes contexts
-- 💬🤖 List Kubernetes pods
 - 💬🤖 List Kubernetes namespaces
+- 🤖 List, get, create and modify any Kubernetes resources
+  - includes custom mappings for resources like pods, services, deployments
 - 🤖 List Kubernetes nodes
-- 🤖 List and get Kubernetes resources
-  - includes custom mappings for resources like pods, services, deployments, but any resource can be listed and retrieved
+- 💬 List Kubernetes pods
 - 🤖 Get Kubernetes events
 - 🤖 Get Kubernetes pod logs
 - 🤖 Run command in Kubernetes pod
