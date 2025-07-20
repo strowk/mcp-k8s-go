@@ -40,7 +40,7 @@ func NewGetResourceTool(pool k8s.ClientPool) fxctx.Tool {
 			Description: utils.Ptr("Get details of any Kubernetes resource like pod, node or service - completely as JSON or rendered using template"),
 			InputSchema: inputSchema.GetMcpToolInputSchema(),
 		},
-		func(_ context.Context, args map[string]any) *mcp.CallToolResult {
+		func(ctx context.Context, args map[string]any) *mcp.CallToolResult {
 			input, err := inputSchema.Validate(args)
 			if err != nil {
 				return utils.ErrResponse(err)
@@ -64,7 +64,7 @@ func NewGetResourceTool(pool k8s.ClientPool) fxctx.Tool {
 
 			templateStr := input.StringOr(templateProperty, "")
 
-			informer, err := pool.GetInformer(k8sCtx, kind, group, version)
+			informer, err := pool.GetInformer(ctx, namespace, k8sCtx, kind, group, version)
 			if err != nil {
 				return utils.ErrResponse(err)
 			}

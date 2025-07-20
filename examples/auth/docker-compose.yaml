@@ -1,0 +1,19 @@
+services:
+  dex:
+    image: dexidp/dex:latest
+    container_name: dex
+    ports:
+      - "5556:5556"
+    volumes:
+      - ./dex-config.yaml:/etc/dex/config.yaml
+    command: ["dex", "serve", "/etc/dex/config.yaml"]
+  caddy:
+    image: caddy:latest
+    container_name: caddy
+    ports:
+      - "5553:443"
+    volumes:
+      - ./Caddyfile:/etc/caddy/Caddyfile
+      - ./caddy-pki:/data/caddy/pki/authorities/local
+    depends_on:
+      - dex

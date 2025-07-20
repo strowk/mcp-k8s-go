@@ -38,7 +38,7 @@ func TestPodLogs(t *testing.T) {
 			"pod":               "pod",
 			"previousContainer": "true", // this is what Inspector gives us, this might be a bug
 		}
-		poolMock.EXPECT().GetClientset("context").Return(fake.NewClientset(
+		poolMock.EXPECT().GetClientset(gomock.Any(), "context").Return(fake.NewClientset(
 			&v1.Pod{
 				ObjectMeta: metav1.ObjectMeta{
 					Name:      "pod",
@@ -57,7 +57,7 @@ func TestPodLogs(t *testing.T) {
 			"pod":               "pod",
 			"previousContainer": "",
 		}
-		poolMock.EXPECT().GetClientset("context").Return(fake.NewClientset(
+		poolMock.EXPECT().GetClientset(gomock.Any(), "context").Return(fake.NewClientset(
 			&v1.Pod{
 				ObjectMeta: metav1.ObjectMeta{
 					Name:      "pod",

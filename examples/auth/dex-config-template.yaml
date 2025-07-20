@@ -1,0 +1,39 @@
+oauth2:
+  responseTypes: [ "code" ]
+
+issuer: https://host.docker.internal:5553/dex
+# issuer: https://caddy:443/dex
+# issuer: http://localhost:5556/dex
+
+storage:
+  type: memory
+web:
+  http: 0.0.0.0:5556
+staticClients:
+  - id: example-app
+    redirectURIs:
+      - 'http://localhost:8080/callback'
+    name: 'Example App'
+    secret: ZXhhbXBsZS1hcHAtc2VjcmV0
+staticPasswords:
+  - email: "admin@example.com"
+    # bcrypt hash of the string "password": $(echo password | htpasswd -BinC 10 admin | cut -d: -f2)
+    hash: "$2a$10$2b2cU8CPhOTaGrs1HRQuAueS7JTT5ZHsHSzYiFPm1leZck7Mc8T4W"
+    username: "admin"
+    userID: "08a8684b-db88-4b73-90a9-3cd1661f5466"
+enablePasswordDB: true
+
+# connectors:
+#   - type: github
+#     id: github
+#     name: GitHub
+#     config:
+#       clientID: <your-client-id> # Replace with your actual GitHub client ID
+#       clientSecret: <your-client-secret> # Replace with your actual GitHub client secret
+#       redirectURI: https://host.docker.internal:5553/dex/callback
+#       loadAllGroups: true
+#       orgs:
+#         - name: mcp-k8s
+#           teams:
+#             - test-team
+  

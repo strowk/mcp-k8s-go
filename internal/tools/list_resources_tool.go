@@ -2,6 +2,7 @@ package tools
 
 import (
 	"context"
+	"log"
 	"sort"
 
 	"github.com/strowk/foxy-contexts/pkg/fxctx"
@@ -38,6 +39,7 @@ func NewListResourcesTool(pool k8s.ClientPool) fxctx.Tool {
 			InputSchema: inputSchema.GetMcpToolInputSchema(),
 		},
 		func(ctx context.Context, args map[string]interface{}) *mcp.CallToolResult {
+			log.Printf("Listing Kubernetes resources with args: %v", args)
 			input, err := inputSchema.Validate(args)
 			if err != nil {
 				return utils.ErrResponse(err)
@@ -54,7 +56,7 @@ func NewListResourcesTool(pool k8s.ClientPool) fxctx.Tool {
 			group := input.StringOr(groupProperty, "")
 			version := input.StringOr(versionProperty, "")
 
-			informer, err := pool.GetInformer(k8sCtx, kind, group, version)
+			informer, err := pool.GetInformer(ctx, namespace, k8sCtx, kind, group, version)
 			if err != nil {
 				return utils.ErrResponse(err)
 			}

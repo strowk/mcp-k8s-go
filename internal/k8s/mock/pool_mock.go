@@ -10,6 +10,7 @@
 package mock_k8s
 
 import (
+	context "context"
 	reflect "reflect"
 
 	list_mapping "github.com/strowk/mcp-k8s-go/internal/k8s/list_mapping"
@@ -44,18 +45,18 @@ func (m *MockClientPool) EXPECT() *MockClientPoolMockRecorder {
 }
 
 // GetClientset mocks base method.
-func (m *MockClientPool) GetClientset(k8sContext string) (kubernetes.Interface, error) {
+func (m *MockClientPool) GetClientset(ctx context.Context, k8sContext string) (kubernetes.Interface, error) {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "GetClientset", k8sContext)
+	ret := m.ctrl.Call(m, "GetClientset", ctx, k8sContext)
 	ret0, _ := ret[0].(kubernetes.Interface)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
 
 // GetClientset indicates an expected call of GetClientset.
-func (mr *MockClientPoolMockRecorder) GetClientset(k8sContext any) *gomock.Call {
+func (mr *MockClientPoolMockRecorder) GetClientset(ctx, k8sContext any) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetClientset", reflect.TypeOf((*MockClientPool)(nil).GetClientset), k8sContext)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetClientset", reflect.TypeOf((*MockClientPool)(nil).GetClientset), ctx, k8sContext)
 }
 
 // GetDynamicClient mocks base method.
@@ -74,18 +75,18 @@ func (mr *MockClientPoolMockRecorder) GetDynamicClient(k8sContext any) *gomock.C
 }
 
 // GetInformer mocks base method.
-func (m *MockClientPool) GetInformer(k8sCtx, kind, group, version string) (informers.GenericInformer, error) {
+func (m *MockClientPool) GetInformer(ctx context.Context, namespace, k8sCtx, kind, group, version string) (informers.GenericInformer, error) {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "GetInformer", k8sCtx, kind, group, version)
+	ret := m.ctrl.Call(m, "GetInformer", ctx, namespace, k8sCtx, kind, group, version)
 	ret0, _ := ret[0].(informers.GenericInformer)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
 
 // GetInformer indicates an expected call of GetInformer.
-func (mr *MockClientPoolMockRecorder) GetInformer(k8sCtx, kind, group, version any) *gomock.Call {
+func (mr *MockClientPoolMockRecorder) GetInformer(ctx, namespace, k8sCtx, kind, group, version any) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetInformer", reflect.TypeOf((*MockClientPool)(nil).GetInformer), k8sCtx, kind, group, version)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetInformer", reflect.TypeOf((*MockClientPool)(nil).GetInformer), ctx, namespace, k8sCtx, kind, group, version)
 }
 
 // GetListMapping mocks base method.

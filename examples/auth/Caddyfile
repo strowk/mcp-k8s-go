@@ -1,0 +1,5 @@
+localhost:443 , caddy:443 , host.docker.internal {
+	tls internal
+	bind 0.0.0.0
+	reverse_proxy * dex:5556
+}

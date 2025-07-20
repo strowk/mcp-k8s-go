@@ -34,7 +34,7 @@ func NewListNodesTool(pool k8s.ClientPool) fxctx.Tool {
 			}
 			k8sCtx := input.StringOr(contextProperty, "")
 
-			clientset, err := pool.GetClientset(k8sCtx)
+			clientset, err := pool.GetClientset(ctx, k8sCtx)
 			if err != nil {
 				return errResponse(err)
 			}

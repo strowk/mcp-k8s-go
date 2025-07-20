@@ -41,7 +41,7 @@ func NewListEventsTool(pool k8s.ClientPool) fxctx.Tool {
 				return errResponse(err)
 			}
 
-			clientset, err := pool.GetClientset(k8sCtx)
+			clientset, err := pool.GetClientset(ctx, k8sCtx)
 			if err != nil {
 				return errResponse(err)
 			}

@@ -22,6 +22,9 @@ builds:
       - linux
       - windows
       - darwin
+    ldflags:
+    # Strip debug information from build to reduce binary size
+    - "-s -w"
 
 dockers:
   - image_templates:

@@ -33,7 +33,7 @@ func NewListNamespacesPrompt(pool k8s.ClientPool) fxctx.Prompt {
 		},
 		func(ctx context.Context, req *mcp.GetPromptRequest) (*mcp.GetPromptResult, error) {
 			k8sContext := req.Params.Arguments["context"]
-			clientset, err := pool.GetClientset(k8sContext)
+			clientset, err := pool.GetClientset(ctx, k8sContext)
 			if err != nil {
 				return nil, fmt.Errorf("failed to get k8s client: %w", err)
 			}

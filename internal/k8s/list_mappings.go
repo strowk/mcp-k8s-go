@@ -1,15 +1,13 @@
 package k8s
 
 import (
-	"fmt"
-
 	"github.com/strowk/mcp-k8s-go/internal/k8s/list_mapping"
 )
 
 func (p *pool) GetListMapping(k8sCtx, kind, group, version string) list_mapping.ListMapping {
 	p.getInformerMutex.Lock()
 	defer p.getInformerMutex.Unlock()
-	key := fmt.Sprintf("%s/%s/%s/%s", k8sCtx, kind, group, version)
+	key := getResourceKey(k8sCtx, kind, group, version)
 	res, ok := p.keyToResource[key]
 	if ok {
 		if res.listMapping == nil {

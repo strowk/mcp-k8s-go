@@ -1,6 +1,8 @@
 package main
 
 import (
+	"crypto/tls"
+	"fmt"
 	"log"
 	"os"
 
@@ -9,17 +11,19 @@ import (
 	"github.com/strowk/mcp-k8s-go/internal/k8s/apps/v1/deployment"
 	"github.com/strowk/mcp-k8s-go/internal/k8s/core/v1/service"
 	"github.com/strowk/mcp-k8s-go/internal/k8s/list_mapping"
+	"github.com/strowk/mcp-k8s-go/internal/oidc"
 	"github.com/strowk/mcp-k8s-go/internal/prompts"
 	"github.com/strowk/mcp-k8s-go/internal/resources"
 	"github.com/strowk/mcp-k8s-go/internal/tools"
 	"github.com/strowk/mcp-k8s-go/internal/utils"
 
 	"github.com/strowk/foxy-contexts/pkg/app"
+	"github.com/strowk/foxy-contexts/pkg/auth"
 	"github.com/strowk/foxy-contexts/pkg/mcp"
 	"github.com/strowk/foxy-contexts/pkg/stdio"
+	"github.com/strowk/foxy-contexts/pkg/streamable_http"
 
 	"go.uber.org/fx"
-	"go.uber.org/fx/fxevent"
 	"go.uber.org/zap"
 	"k8s.io/client-go/kubernetes"
 	_ "k8s.io/client-go/plugin/pkg/client/auth/exec"
@@ -73,8 +77,11 @@ func main() {
 		return
 	}
 
-	foxyApp := getApp()
-	err := foxyApp.Run()
+	foxyApp, err := getApp()
+	if err != nil {
+		log.Fatalf("Error creating app: %v", err)
+	}
+	err = foxyApp.Run()
 	if err != nil {
 		log.Fatalf("Error: %v", err)
 	}
@@ -95,7 +102,7 @@ func printHelp() {
 	println("      If not specified, all tools are available")
 }
 
-func getApp() *app.Builder {
+func getApp() (*app.Builder, error) {
 	app := app.
 		NewBuilder().
 		WithFxOptions(
@@ -106,9 +113,7 @@ func getApp() *app.Builder {
 				return k8s.GetKubeClientset()
 			}),
 			fx.Provide(fx.Annotate(
-				func(listMappingResolvers []list_mapping.ListMappingResolver) k8s.ClientPool {
-					return k8s.NewClientPool(listMappingResolvers)
-				},
+				k8s.NewClientPool,
 				fx.ParamTags(list_mapping.MappingResolversTag),
 			)),
 			fx.Provide(
@@ -136,28 +141,69 @@ func getApp() *app.Builder {
 		// setting up server
 		WithName("mcp-k8s-go").
 		WithVersion(version).
-		WithTransport(stdio.NewTransport()).
 		// Configuring fx logging to only show errors
-		WithFxOptions(
-			fx.Provide(func() *zap.Logger {
-				cfg := zap.NewDevelopmentConfig()
-				cfg.Level.SetLevel(zap.ErrorLevel)
-				logger, _ := cfg.Build()
-				return logger
-			}),
-			fx.Option(fx.WithLogger(
-				func(logger *zap.Logger) fxevent.Logger {
-					return &fxevent.ZapLogger{Logger: logger}
+		WithLogger(func() *zap.Logger {
+			cfg := zap.NewDevelopmentConfig()
+			cfg.Level.SetLevel(zap.ErrorLevel)
+			logger, _ := cfg.Build()
+			return logger
+		}())
+
+	if config.GlobalOptions.RemoteHostname == "" {
+		app = app.WithTransport(stdio.NewTransport())
+	} else {
+		remoteHostname := config.GlobalOptions.RemoteHostname
+		remotePort := config.GlobalOptions.RemotePort
+		remotePath := config.GlobalOptions.RemotePath
+		remoteCallbackPath := config.GlobalOptions.RemoteCallbackPath
+		oidcCfg := &config.GlobalOptions.OidcConfig
+		endpoint := streamable_http.Endpoint{
+			Hostname:   remoteHostname,
+			Port:       remotePort,
+			Path:       remotePath,
+			AuthScheme: "http",
+			AuthHost: fmt.Sprintf(
+				"%s:%d",
+				remoteHostname,
+				remotePort,
+			),
+		}
+		transportOptions := []streamable_http.TransportOption{
+			endpoint,
+			oidc.OidcEchoConfigurer(oidcCfg, remoteCallbackPath),
+		}
+		if config.GlobalOptions.TLSCertificatePath != "" ||
+			config.GlobalOptions.TLSCertificateKeyPath != "" {
+			cert, err := tls.LoadX509KeyPair(
+				config.GlobalOptions.TLSCertificatePath,
+				config.GlobalOptions.TLSCertificateKeyPath,
+			)
+			if err != nil {
+				return nil, err
+			}
+			transportOptions = append(transportOptions,
+				&streamable_http.TlsConfig{
+					TLS: &tls.Config{
+						Certificates: []tls.Certificate{cert},
+					},
 				},
-			)),
-		)
+			)
+			endpoint.AuthScheme = "https"
+		}
+		app = app.
+			WithTransport(streamable_http.NewTransport(transportOptions...)).
+			WithAuthorization(auth.Must(auth.NewOauth2Authorization(
+				auth.WithExcludedPaths(remoteCallbackPath),
+				auth.WithAuthorizationHandler(oidc.AuthorizationHandler(oidcCfg)),
+			)))
+	}
 
 	// Skip registering remaining tools if --readonly detected
 	if config.GlobalOptions.Readonly {
 		println("Mode=Readonly, Skipping remaining tools")
-		return app
+		return app, nil
 	}
 
 	app = app.WithTool(tools.NewApplyK8sResourceTool).WithTool(tools.NewPodExecCommandTool)
-	return app
+	return app, nil
 }

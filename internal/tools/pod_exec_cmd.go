@@ -105,7 +105,7 @@ func cmdExecuter(
 	ctx context.Context,
 ) (ExecResult, error) {
 	execResult := ExecResult{}
-	clientset, err := pool.GetClientset(k8sContext)
+	clientset, err := pool.GetClientset(ctx, k8sContext)
 	if err != nil {
 		return execResult, err
 	}

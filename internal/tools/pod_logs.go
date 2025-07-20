@@ -84,7 +84,7 @@ func NewPodLogsTool(pool k8s.ClientPool) fxctx.Tool {
 				options.SinceTime = &metav1.Time{Time: sinceTime}
 			}
 
-			clientset, err := pool.GetClientset(k8sCtx)
+			clientset, err := pool.GetClientset(ctx, k8sCtx)
 			if err != nil {
 				return errResponse(err)
 			}
