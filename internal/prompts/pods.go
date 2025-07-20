@@ -108,7 +108,7 @@ func NewListPodsPrompt(pool k8s.ClientPool) fxctx.Prompt {
 				Messages: messages,
 			}, nil
 		},
-	).WithCompleter(func(arg *mcp.PromptArgument, value string) (*mcp.CompleteResult, error) {
+	).WithCompleter(func(ctx context.Context, arg *mcp.PromptArgument, value string) (*mcp.CompleteResult, error) {
 		if arg.Name == "namespace" {
 
 			client, err := pool.GetClientset("")
@@ -117,7 +117,7 @@ func NewListPodsPrompt(pool k8s.ClientPool) fxctx.Prompt {
 				return nil, fmt.Errorf("failed to get k8s client: %w", err)
 			}
 
-			namespaces, err := client.CoreV1().Namespaces().List(context.Background(), metav1.ListOptions{})
+			namespaces, err := client.CoreV1().Namespaces().List(ctx, metav1.ListOptions{})
 			if err != nil {
 				return nil, fmt.Errorf("failed to get namespaces: %w", err)
 			}
