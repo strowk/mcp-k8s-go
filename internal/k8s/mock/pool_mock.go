@@ -14,6 +14,7 @@ import (
 
 	list_mapping "github.com/strowk/mcp-k8s-go/internal/k8s/list_mapping"
 	gomock "go.uber.org/mock/gomock"
+	dynamic "k8s.io/client-go/dynamic"
 	informers "k8s.io/client-go/informers"
 	kubernetes "k8s.io/client-go/kubernetes"
 )
@@ -55,6 +56,21 @@ func (m *MockClientPool) GetClientset(k8sContext string) (kubernetes.Interface, 
 func (mr *MockClientPoolMockRecorder) GetClientset(k8sContext any) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetClientset", reflect.TypeOf((*MockClientPool)(nil).GetClientset), k8sContext)
+}
+
+// GetDynamicClient mocks base method.
+func (m *MockClientPool) GetDynamicClient(k8sContext string) (dynamic.Interface, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "GetDynamicClient", k8sContext)
+	ret0, _ := ret[0].(dynamic.Interface)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// GetDynamicClient indicates an expected call of GetDynamicClient.
+func (mr *MockClientPoolMockRecorder) GetDynamicClient(k8sContext any) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetDynamicClient", reflect.TypeOf((*MockClientPool)(nil).GetDynamicClient), k8sContext)
 }
 
 // GetInformer mocks base method.
