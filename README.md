@@ -30,8 +30,8 @@ MCP 💬 prompt 🗂️ resource 🤖 tool
 
 - 🗂️🤖 List Kubernetes contexts
 - 💬🤖 List Kubernetes namespaces
-- 🤖 List and get any Kubernetes resources
-  - includes custom mappings for resources like pods, services, deployments, but any resource can be listed and retrieved
+- 🤖 List, get, create and modify any Kubernetes resources
+  - includes custom mappings for resources like pods, services, deployments
 - 🤖 List Kubernetes nodes
 - 💬 List Kubernetes pods
 - 🤖 Get Kubernetes events

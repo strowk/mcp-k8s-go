@@ -8,6 +8,28 @@ out:
         "tools":
           [
             {
+              "name": "apply-k8s-resource",
+              "description": "Create or modify a Kubernetes resource from a YAML manifest",
+              "inputSchema":
+                {
+                  "type": "object",
+                  "properties":
+                    {
+                      "context":
+                        {
+                          "type": "string",
+                          "description": "Name of the Kubernetes context to use, defaults to current context",
+                        },
+                      "manifest":
+                        {
+                          "type": "string",
+                          "description": "YAML manifest of the resource to apply",
+                        },
+                    },
+                  "required": ["manifest"],
+                },
+            },
+            {
               "name": "get-k8s-pod-logs",
               "description": "Get logs for a Kubernetes pod using specific context in a specified namespace",
               "inputSchema":
