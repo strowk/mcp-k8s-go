@@ -16,6 +16,7 @@ import (
 	"k8s.io/client-go/dynamic/dynamicinformer"
 	"k8s.io/client-go/informers"
 	"k8s.io/client-go/kubernetes"
+	"k8s.io/client-go/rest"
 	"k8s.io/client-go/restmapper"
 	"k8s.io/client-go/tools/cache"
 )
@@ -209,10 +210,14 @@ lookingForResource:
 func (res *resolvedResource) setupInformer(
 	k8sCtx string,
 ) error {
-	cfg := GetKubeConfigForContext(k8sCtx)
-	restConfig, err := cfg.ClientConfig()
+	var restConfig *rest.Config
+	restConfig, err := rest.InClusterConfig()
 	if err != nil {
-		return err
+		kubecfg := GetKubeConfigForContext(k8sCtx)
+		restConfig, err = kubecfg.ClientConfig()
+		if err != nil {
+			return err
+		}
 	}
 
 	dynClient, err := dynamic.NewForConfig(restConfig)
