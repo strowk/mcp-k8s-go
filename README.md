@@ -15,6 +15,8 @@
 </p>
 
 <p align="center">
+
+[![Trust Score](https://archestra.ai/mcp-catalog/api/badge/quality/strowk/mcp-k8s-go)](https://archestra.ai/mcp-catalog/strowk__mcp-k8s-go)
     <a href="https://github.com/strowk/mcp-k8s-go/actions/workflows/dependabot/dependabot-updates"><img src="https://github.com/strowk/mcp-k8s-go/actions/workflows/dependabot/dependabot-updates/badge.svg"></a>
     <a href="https://github.com/strowk/mcp-k8s-go/actions/workflows/test.yaml"><img src="https://github.com/strowk/mcp-k8s-go/actions/workflows/test.yaml/badge.svg"></a>
 	  <a href="https://github.com/strowk/mcp-k8s-go/actions/workflows/golangci-lint.yaml"><img src="https://github.com/strowk/mcp-k8s-go/actions/workflows/golangci-lint.yaml/badge.svg"/></a>
