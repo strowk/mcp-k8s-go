@@ -231,5 +231,3 @@ For example if you are configuring Claude Desktop, you can add the following con
 
 , which would allow only `dev` and `prod` contexts to be used and would disable any tool which can write changes to the cluster.
 
-
-
