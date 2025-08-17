@@ -22,6 +22,8 @@
     <a href="https://github.com/strowk/mcp-k8s-go/releases/latest"><img src="https://img.shields.io/github/v/release/strowk/mcp-k8s-go?logo=github&color=22ff22" alt="latest release badge"></a>
     <a href="https://goreportcard.com/report/github.com/strowk/mcp-k8s-go"><img src="https://goreportcard.com/badge/github.com/strowk/mcp-k8s-go" alt="Go Reference"></a>
     <a href="https://github.com/strowk/mcp-k8s-go/blob/main/LICENSE"><img src="https://img.shields.io/github/license/strowk/mcp-k8s-go" alt="license badge"></a>
+	<br />
+	<a href="https://archestra.ai/mcp-catalog/strowk__mcp-k8s-go"><img src="https://archestra.ai/mcp-catalog/api/badge/quality/strowk/mcp-k8s-go" alt="Archestra score"></a>
 </p>
 
 ## Features
@@ -228,4 +230,5 @@ For example if you are configuring Claude Desktop, you can add the following con
 ```
 
 , which would allow only `dev` and `prod` contexts to be used and would disable any tool which can write changes to the cluster.
+
 
