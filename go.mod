@@ -3,7 +3,7 @@ module github.com/strowk/mcp-k8s-go
 go 1.24.0
 
 require (
-	github.com/stretchr/testify v1.11.0
+	github.com/stretchr/testify v1.11.1
 	github.com/strowk/foxy-contexts v0.1.0-beta.6
 	go.uber.org/fx v1.24.0
 	go.uber.org/mock v0.6.0
