@@ -80,13 +80,20 @@ func TestReadOnlyLists(t *testing.T) {
 
 const k3dClusterName = "mcp-k8s-integration-test"
 
+type testSuite struct {
+	name string
+	args []string
+}
+
 func TestInK3dCluster(t *testing.T) {
-	testSuites := []string{
-		"testdata/with_k3d",
-		"internal/k8s/apps/v1/deployment",
-		"internal/k8s/core/v1/pod",
-		"internal/k8s/core/v1/node",
-		"internal/k8s/core/v1/service",
+	testSuites := []testSuite{
+		{name: "testdata/with_k3d"},
+		{name: "internal/k8s/apps/v1/deployment"},
+		{name: "internal/k8s/core/v1/pod"},
+		{name: "internal/k8s/core/v1/node"},
+		{name: "internal/k8s/core/v1/service"},
+		{name: "internal/k8s/core/v1/secret"},
+		{name: "internal/k8s/core/v1/secret-masked", args: []string{"--mask-secrets"}},
 	}
 
 	withK3dCluster(t, k3dClusterName, func() {
@@ -111,16 +118,16 @@ func TestInK3dCluster(t *testing.T) {
 		time.Sleep(2 * time.Second)
 
 		for _, suite := range testSuites {
-			ts, err := foxytest.Read(suite)
+			ts, err := foxytest.Read(suite.name)
 			if err != nil {
 				t.Fatal(err)
 			}
 
-			manifestsFolder := fmt.Sprintf("%s/test_manifests", suite)
+			manifestsFolder := fmt.Sprintf("%s/test_manifests", suite.name)
 
 			// if exists, apply manifests specific to particular testsuite
 			if _, err := os.Stat(manifestsFolder); err == nil {
-				namespaceName := fmt.Sprintf("test-%s", path.Base(suite))
+				namespaceName := fmt.Sprintf("test-%s", path.Base(suite.name))
 				createTestNamespace(t, namespaceName)
 				cmd := exec.Command("kubectl", "apply", "-f", manifestsFolder)
 				cmd.Stderr = os.Stderr
@@ -131,7 +138,7 @@ func TestInK3dCluster(t *testing.T) {
 			}
 
 			ts.WithLogging()
-			ts.WithExecutable("go", []string{"run", "main.go"})
+			ts.WithExecutable("go", append([]string{"run", "main.go"}, suite.args...))
 			cntrl := foxytest.NewTestRunner(t)
 			ts.Run(cntrl)
 			ts.AssertNoErrors(cntrl)
