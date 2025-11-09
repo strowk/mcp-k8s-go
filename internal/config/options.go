@@ -28,7 +28,7 @@ func ParseFlags() bool {
 	var allowedContextsStr string
 	flag.StringVar(&allowedContextsStr, "allowed-contexts", "", "Comma-separated list of allowed k8s contexts. If empty, all contexts are allowed")
 	flag.BoolVar(&GlobalOptions.Readonly, "readonly", false, "Disables any tool which can write changes to the cluster. If not specified, all tools are allowed")
-	flag.BoolVar(&GlobalOptions.MaskSecrets, "mask-secrets", true, "Mask secrets in the output. If not specified, secrets would be masked, provide false to opt-out")
+	flag.BoolVar(&GlobalOptions.MaskSecrets, "mask-secrets", true, "Mask secrets in the output. Defaults to true; use --mask-secrets=false to disable")
 
 	// Add other flags here
 
