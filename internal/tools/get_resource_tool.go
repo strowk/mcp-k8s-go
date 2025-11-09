@@ -167,7 +167,7 @@ func dropSensitiveAnnotationsForSecrets(object map[string]interface{}) {
 	}
 
 	sensitiveAnnotations := []string{
-		// last applied configuration can contain secret data from f.e stringData
+		// last applied configuration can contain secret data from e.g. stringData
 		"kubectl.kubernetes.io/last-applied-configuration",
 	}
 
