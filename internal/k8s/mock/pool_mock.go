@@ -60,18 +60,18 @@ func (mr *MockClientPoolMockRecorder) GetClientset(ctx, k8sContext any) *gomock.
 }
 
 // GetDynamicClient mocks base method.
-func (m *MockClientPool) GetDynamicClient(k8sContext string) (dynamic.Interface, error) {
+func (m *MockClientPool) GetDynamicClient(ctx context.Context, k8sContext string) (dynamic.Interface, error) {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "GetDynamicClient", k8sContext)
+	ret := m.ctrl.Call(m, "GetDynamicClient", ctx, k8sContext)
 	ret0, _ := ret[0].(dynamic.Interface)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
 
 // GetDynamicClient indicates an expected call of GetDynamicClient.
-func (mr *MockClientPoolMockRecorder) GetDynamicClient(k8sContext any) *gomock.Call {
+func (mr *MockClientPoolMockRecorder) GetDynamicClient(ctx, k8sContext any) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetDynamicClient", reflect.TypeOf((*MockClientPool)(nil).GetDynamicClient), k8sContext)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetDynamicClient", reflect.TypeOf((*MockClientPool)(nil).GetDynamicClient), ctx, k8sContext)
 }
 
 // GetInformer mocks base method.

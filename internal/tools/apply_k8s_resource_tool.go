@@ -44,7 +44,7 @@ func NewApplyK8sResourceTool(clientPool k8s.ClientPool) fxctx.Tool {
 			}
 
 			k8sCtx := input.StringOr(contextProperty, "")
-			clientset, err := clientPool.GetClientset(k8sCtx)
+			clientset, err := clientPool.GetClientset(ctx, k8sCtx)
 			if err != nil {
 				return utils.ErrResponse(err)
 			}
@@ -54,7 +54,7 @@ func NewApplyK8sResourceTool(clientPool k8s.ClientPool) fxctx.Tool {
 				return utils.ErrResponse(err)
 			}
 
-			dynamicClient, err := clientPool.GetDynamicClient(k8sCtx)
+			dynamicClient, err := clientPool.GetDynamicClient(ctx, k8sCtx)
 			if err != nil {
 				return utils.ErrResponse(fmt.Errorf("failed to retrieve dynamic client from the client pool: %w", err))
 			}

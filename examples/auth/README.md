@@ -11,6 +11,8 @@ rm examples/auth/caddy-pki/*.key
 
 Go to Github, create new OAuth app, get client ID and secret.
 
+<!-- TODO: clean up this, most likely not needed part about github, since example does not include teams support anymore -->
+
 Then create `dex-config.yaml` file in `examples/auth/` directory based on `dex-config-template.yaml`:
 
 ```bash

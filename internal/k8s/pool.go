@@ -4,6 +4,7 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"io"
 	"log"
 	"strings"
 	"sync"
@@ -37,7 +38,7 @@ var (
 // to avoid creating them multiple times.
 type ClientPool interface {
 	GetClientset(ctx context.Context, k8sContext string) (kubernetes.Interface, error)
-	GetDynamicClient(k8sContext string) (dynamic.Interface, error)
+	GetDynamicClient(ctx context.Context, k8sContext string) (dynamic.Interface, error)
 	GetInformer(
 		ctx context.Context,
 		namespace string,
@@ -77,6 +78,8 @@ type pool struct {
 
 	stopChan chan struct{}
 }
+
+var _ ClientPool = (*pool)(nil)
 
 func NewClientPool(
 	listMappingResolvers []list_mapping.ListMappingResolver,
@@ -259,6 +262,34 @@ lookingForResource:
 	}, nil
 }
 
+type informerErrHandler struct {
+	isInformerStarted bool
+	syncErr           error
+	syncErrWriteMux   *sync.Mutex
+	gvk               schema.GroupVersionKind
+}
+
+func (h *informerErrHandler) OnError(r *cache.Reflector, err error) {
+	if h.isInformerStarted {
+		switch err {
+		case io.EOF:
+			// watch closed normally, see here:
+			// https://github.com/kubernetes/client-go/blob/f6ce18ae578c8cca64d14ab9687824d9e1305a67/tools/cache/reflector.go#L125-L140
+		default:
+			log.Printf("Informer for resource %s/%s/%s encountered an error: %v",
+				h.gvk.Group,
+				h.gvk.Version,
+				h.gvk.Kind,
+				err,
+			)
+		}
+	} else {
+		h.syncErrWriteMux.Lock()
+		defer h.syncErrWriteMux.Unlock()
+		h.syncErr = err
+	}
+}
+
 func (res *resolvedResource) setupInformer(
 	k8sCtx string,
 	namespace string,
@@ -299,10 +330,27 @@ func (res *resolvedResource) setupInformer(
 	)
 	informer := factory.ForResource(res.mapping.Resource)
 
-	var syncErr error
-	syncErrWriteMux := &sync.Mutex{}
+	errEventHandler := &informerErrHandler{
+		isInformerStarted: false,
+		syncErr:           nil,
+		syncErrWriteMux:   &sync.Mutex{},
+		gvk:               res.mapping.GroupVersionKind,
+	}
 
 	localStopChan := make(chan struct{})
+	// ensure that we close the channel at the end of this function regardless of what happens
+	defer func() {
+		// check if the channel is already closed
+		select {
+		case <-localStopChan:
+			// already closed, nothing to do
+			return
+		default:
+			// not closed, we can close it
+			close(localStopChan)
+		}
+	}()
+
 	go func() {
 		select {
 		case <-stopChan:
@@ -310,6 +358,17 @@ func (res *resolvedResource) setupInformer(
 		case <-localStopChan:
 			// already closed, nothing to do
 			return
+		case <-time.After(500 * time.Millisecond):
+			if errEventHandler.syncErr != nil {
+				log.Printf(
+					"Informer for resource %s/%s/%s encountered an error when starting the sync, exiting early: %v",
+					res.mapping.GroupVersionKind.Group,
+					res.mapping.GroupVersionKind.Version,
+					res.mapping.GroupVersionKind.Kind,
+					errEventHandler.syncErr,
+				)
+				close(localStopChan)
+			}
 		case <-time.After(5 * time.Second):
 			log.Printf(
 				"Informer for resource %s/%s/%s is taking too long to start, stopping it",
@@ -317,21 +376,16 @@ func (res *resolvedResource) setupInformer(
 				res.mapping.GroupVersionKind.Version,
 				res.mapping.GroupVersionKind.Kind,
 			)
-			syncErrWriteMux.Lock()
-			defer syncErrWriteMux.Unlock()
-			if syncErr == nil {
-				syncErr = ErrInformerSyncTimeout
+			errEventHandler.syncErrWriteMux.Lock()
+			defer errEventHandler.syncErrWriteMux.Unlock()
+			if errEventHandler.syncErr == nil {
+				errEventHandler.syncErr = ErrInformerSyncTimeout
 			}
 			close(localStopChan)
 		}
 	}()
 
-	err = informer.Informer().SetWatchErrorHandler(func(r *cache.Reflector, err error) {
-		syncErrWriteMux.Lock()
-		defer syncErrWriteMux.Unlock()
-		syncErr = err
-	})
-
+	err = informer.Informer().SetWatchErrorHandler(errEventHandler.OnError)
 	if err != nil {
 		return nil, fmt.Errorf("failed to set watch error handler for informer: %w", err)
 	}
@@ -339,31 +393,40 @@ func (res *resolvedResource) setupInformer(
 	go informer.Informer().Run(localStopChan)
 	isSynced := cache.WaitForCacheSync(localStopChan, informer.Informer().HasSynced)
 	if !isSynced {
-		if syncErr == nil {
-			syncErr = ErrUnknownSyncError
+		errToLog := errEventHandler.syncErr
+		if errToLog == nil {
+			errToLog = ErrUnknownSyncError
 		}
 		return nil, fmt.Errorf(
 			"informer for resource %s/%s/%s could not sync: %w",
 			res.mapping.GroupVersionKind.Group,
 			res.mapping.GroupVersionKind.Version,
 			res.mapping.GroupVersionKind.Kind,
-			syncErr,
+			errToLog,
 		)
-	} else {
-		err = informer.Informer().SetWatchErrorHandler(func(r *cache.Reflector, err error) {
-			log.Printf("Informer for resource %s/%s/%s encountered an error: %v",
-				res.mapping.GroupVersionKind.Group,
-				res.mapping.GroupVersionKind.Version,
-				res.mapping.GroupVersionKind.Kind,
-				err,
-			)
-		})
-		if err != nil {
-			return nil, fmt.Errorf("failed to set watch error handler for informer: %w", err)
-		}
 	}
+	errEventHandler.isInformerStarted = true
+
 	res.namespaceToInformer[namespace] = informer
 	return informer, nil
+}
+
+func resolveContext(k8sCtx string) (string, error) {
+	var effectiveContext string
+	if k8sCtx == "" {
+		var err error
+		effectiveContext, err = GetCurrentContext()
+		if err != nil {
+			return "", err
+		}
+	} else {
+		effectiveContext = k8sCtx
+	}
+
+	if !IsContextAllowed(effectiveContext) {
+		return "", fmt.Errorf("context %s is not allowed", effectiveContext)
+	}
+	return effectiveContext, nil
 }
 
 func (p *pool) GetClientset(
@@ -373,29 +436,22 @@ func (p *pool) GetClientset(
 	p.getClientsetMutex.Lock()
 	defer p.getClientsetMutex.Unlock()
 
-	var effectiveContext string
-	if k8sContext == "" {
-		var err error
-		effectiveContext, err = GetCurrentContext()
-		if err != nil {
-			return nil, err
-		}
-	} else {
-		effectiveContext = k8sContext
+	effectiveContext, err := resolveContext(k8sContext)
+	if err != nil {
+		return nil, err
 	}
 
-	if !IsContextAllowed(effectiveContext) {
-		return nil, fmt.Errorf("context %s is not allowed", effectiveContext)
+	k8sContext = effectiveContext
+	key := k8sContext
+	session, _ := p.fcSessionManager.GetSessionFromContext(ctx)
+	if session != nil && session.AuthUserId != "" {
+		key = fmt.Sprintf("%s/%s", k8sContext, session.SessionID.String())
 	}
-
-	key := effectiveContext
 	if client, ok := p.clients[key]; ok {
 		return client, nil
 	}
 
-	session, _ := p.fcSessionManager.GetSessionFromContext(ctx)
 	var client kubernetes.Interface
-	var err error
 	if session == nil || session.AuthUserId == "" {
 		client, err = getClientset(k8sContext)
 		if err != nil {
@@ -404,7 +460,6 @@ func (p *pool) GetClientset(
 	} else {
 		log.Printf("Using OIDC token to setup client set for context %s", k8sContext)
 		client, err = getOIDCAuthenticatedClientSet(k8sContext, session.AuthUserId)
-		key = fmt.Sprintf("%s/%s", effectiveContext, session.SessionID.String())
 		if err != nil {
 			return nil, fmt.Errorf("failed to get OIDC authenticated clientset: %w", err)
 		}
@@ -458,17 +513,9 @@ func getClientset(
 	return clientset, nil
 }
 
-func (p *pool) GetDynamicClient(k8sContext string) (dynamic.Interface, error) {
-	p.getDynamicClientMutex.Lock()
-	defer p.getDynamicClientMutex.Unlock()
-
-	if k8sContext == "" {
-		k8sContext = "default"
-	}
-
-	if client, ok := p.dynamicClients[k8sContext]; ok {
-		return client, nil
-	}
+func getDynamicClient(
+	k8sContext string,
+) (*dynamic.DynamicClient, error) {
 	kubeConfig := GetKubeConfigForContext(k8sContext)
 
 	config, err := kubeConfig.ClientConfig()
@@ -481,6 +528,45 @@ func (p *pool) GetDynamicClient(k8sContext string) (dynamic.Interface, error) {
 		return nil, err
 	}
 
-	p.dynamicClients[k8sContext] = client
+	return client, nil
+}
+
+func (p *pool) GetDynamicClient(ctx context.Context, k8sContext string) (dynamic.Interface, error) {
+	p.getDynamicClientMutex.Lock()
+	defer p.getDynamicClientMutex.Unlock()
+
+	effectiveContext, err := resolveContext(k8sContext)
+	if err != nil {
+		return nil, fmt.Errorf("failed to resolve context: %w", err)
+	}
+	k8sContext = effectiveContext
+
+	key := k8sContext
+	session, _ := p.fcSessionManager.GetSessionFromContext(ctx)
+	if session != nil && session.AuthUserId != "" {
+		key = fmt.Sprintf("%s/%s", k8sContext, session.SessionID.String())
+	}
+	if client, ok := p.dynamicClients[key]; ok {
+		return client, nil
+	}
+
+	var client *dynamic.DynamicClient
+	if session == nil || session.AuthUserId == "" {
+		client, err = getDynamicClient(k8sContext)
+		if err != nil {
+			return nil, fmt.Errorf("failed to get dynamic client for context %s: %w", k8sContext, err)
+		}
+	} else {
+		panic("OIDC authenticated dynamic client not implemented yet")
+		// TODO: implement OIDC authenticated dynamic client
+		// log.Printf("Using OIDC token to setup client set for context %s", k8sContext)
+		// 	client, err = getOIDCAuthenticatedClientSet(k8sContext, session.AuthUserId)
+		// 	key = fmt.Sprintf("%s/%s", k8sContext, session.SessionID.String())
+		// 	if err != nil {
+		// 		return nil, fmt.Errorf("failed to get OIDC authenticated clientset: %w", err)
+		// 	}
+	}
+
+	p.dynamicClients[key] = client
 	return client, nil
 }
