@@ -9,6 +9,7 @@ import (
 	"github.com/strowk/foxy-contexts/pkg/fxctx"
 	"github.com/strowk/foxy-contexts/pkg/mcp"
 	"github.com/strowk/foxy-contexts/pkg/toolinput"
+	"github.com/strowk/mcp-k8s-go/internal/config"
 	"github.com/strowk/mcp-k8s-go/internal/content"
 	"github.com/strowk/mcp-k8s-go/internal/k8s"
 	"github.com/strowk/mcp-k8s-go/internal/utils"
@@ -97,6 +98,13 @@ func NewGetResourceTool(pool k8s.ClientPool) fxctx.Tool {
 				}
 			}
 
+			if config.GlobalOptions.MaskSecrets &&
+				strings.ToLower(kind) == "secret" && group == "" && (version == "v1" || version == "") {
+				maskSecrets(object, "data")
+				maskSecrets(object, "stringData")
+				dropSensitiveAnnotationsForSecrets(object)
+			}
+
 			var cnt any
 			if templateStr != "" {
 				tmpl, err := template.New("template").Parse(templateStr)
@@ -128,4 +136,42 @@ func NewGetResourceTool(pool k8s.ClientPool) fxctx.Tool {
 			}
 		},
 	)
+}
+
+func maskSecrets(object map[string]interface{}, key string) {
+	if data, ok := object[key]; ok {
+		if dataMap, ok := data.(map[string]any); ok {
+			for secretKey := range dataMap {
+				dataMap[secretKey] = "MASKED"
+			}
+		}
+	}
+}
+
+func dropSensitiveAnnotationsForSecrets(object map[string]interface{}) {
+	metadata, ok := object["metadata"]
+	if !ok {
+		return
+	}
+	metadataMap, ok := metadata.(map[string]any)
+	if !ok {
+		return
+	}
+	annotations, ok := metadataMap["annotations"]
+	if !ok {
+		return
+	}
+	annotationsMap, ok := annotations.(map[string]any)
+	if !ok {
+		return
+	}
+
+	sensitiveAnnotations := []string{
+		// last applied configuration can contain secret data from e.g. stringData
+		"kubectl.kubernetes.io/last-applied-configuration",
+	}
+
+	for _, annKey := range sensitiveAnnotations {
+		delete(annotationsMap, annKey)
+	}
 }

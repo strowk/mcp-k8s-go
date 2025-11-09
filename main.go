@@ -93,6 +93,8 @@ func printHelp() {
 	println("      If not specified, all contexts are allowed")
 	println("  --readonly: Disables any tool which can write changes to the cluster")
 	println("      If not specified, all tools are available")
+	println("  --mask-secrets: Mask secrets in the output")
+	println("      If not specified, secrets are masked by default. Use --mask-secrets=false to disable masking")
 }
 
 func getApp() *app.Builder {
@@ -152,9 +154,13 @@ func getApp() *app.Builder {
 			)),
 		)
 
+	if config.GlobalOptions.MaskSecrets {
+		log.Printf("Masking secrets in the output is enabled")
+	}
+
 	// Skip registering remaining tools if --readonly detected
 	if config.GlobalOptions.Readonly {
-		println("Mode=Readonly, Skipping remaining tools")
+		log.Println("Read only mode: skipping writing tools")
 		return app
 	}
 

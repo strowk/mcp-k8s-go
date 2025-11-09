@@ -15,6 +15,9 @@ type Options struct {
 	// Readonly determine if tools that 'write' to the cluster are
 	// registered and advertised to clients.
 	Readonly bool
+
+	// MaskSecrets determines if secrets should be masked in the output
+	MaskSecrets bool
 }
 
 // GlobalOptions contains the parsed command line options
@@ -25,6 +28,7 @@ func ParseFlags() bool {
 	var allowedContextsStr string
 	flag.StringVar(&allowedContextsStr, "allowed-contexts", "", "Comma-separated list of allowed k8s contexts. If empty, all contexts are allowed")
 	flag.BoolVar(&GlobalOptions.Readonly, "readonly", false, "Disables any tool which can write changes to the cluster. If not specified, all tools are allowed")
+	flag.BoolVar(&GlobalOptions.MaskSecrets, "mask-secrets", true, "Mask secrets in the output. Defaults to true; use --mask-secrets=false to disable")
 
 	// Add other flags here
 
