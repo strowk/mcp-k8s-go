@@ -93,7 +93,7 @@ func TestInK3dCluster(t *testing.T) {
 		{name: "internal/k8s/core/v1/node"},
 		{name: "internal/k8s/core/v1/service"},
 		{name: "internal/k8s/core/v1/secret"},
-		{name: "internal/k8s/core/v1/secret-masked", args: []string{"--mask-secrets"}},
+		{name: "internal/k8s/core/v1/secret-not-masked", args: []string{"--mask-secrets=false"}},
 	}
 
 	withK3dCluster(t, k3dClusterName, func() {
