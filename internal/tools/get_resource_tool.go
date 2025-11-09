@@ -141,7 +141,7 @@ func maskSecrets(object map[string]interface{}, key string) {
 	if data, ok := object[key]; ok {
 		if dataMap, ok := data.(map[string]any); ok {
 			for key := range dataMap {
-				dataMap[key] = "********"
+				dataMap[key] = "MASKED"
 			}
 		}
 	}
