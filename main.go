@@ -155,12 +155,12 @@ func getApp() *app.Builder {
 		)
 
 	if config.GlobalOptions.MaskSecrets {
-		println("Masking Secrets")
+		log.Printf("Masking secrets in the output is enabled")
 	}
 
 	// Skip registering remaining tools if --readonly detected
 	if config.GlobalOptions.Readonly {
-		println("Mode=Readonly, Skipping remaining tools")
+		log.Println("Read only mode: skipping writing tools")
 		return app
 	}
 
