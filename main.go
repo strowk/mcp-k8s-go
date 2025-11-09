@@ -94,7 +94,7 @@ func printHelp() {
 	println("  --readonly: Disables any tool which can write changes to the cluster")
 	println("      If not specified, all tools are available")
 	println("  --mask-secrets: Mask secrets in the output")
-	println("      If not specified, secrets are returned unchanged")
+	println("      If not specified, secrets would be masked, provide false to opt-out")
 }
 
 func getApp() *app.Builder {
