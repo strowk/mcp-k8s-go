@@ -102,6 +102,7 @@ func NewGetResourceTool(pool k8s.ClientPool) fxctx.Tool {
 				strings.ToLower(kind) == "secret" && group == "" && (version == "v1" || version == "") {
 				maskSecrets(object, "data")
 				maskSecrets(object, "stringData")
+				dropSensitiveAnnotationsForSecrets(object)
 			}
 
 			var cnt any
@@ -144,5 +145,33 @@ func maskSecrets(object map[string]interface{}, key string) {
 				dataMap[key] = "MASKED"
 			}
 		}
+	}
+}
+
+func dropSensitiveAnnotationsForSecrets(object map[string]interface{}) {
+	metadata, ok := object["metadata"]
+	if !ok {
+		return
+	}
+	metadataMap, ok := metadata.(map[string]any)
+	if !ok {
+		return
+	}
+	annotations, ok := metadataMap["annotations"]
+	if !ok {
+		return
+	}
+	annotationsMap, ok := annotations.(map[string]any)
+	if !ok {
+		return
+	}
+
+	sensitiveAnnotations := []string{
+		// last applied configuration can contain secret data from f.e stringData
+		"kubectl.kubernetes.io/last-applied-configuration",
+	}
+
+	for _, annKey := range sensitiveAnnotations {
+		delete(annotationsMap, annKey)
 	}
 }
