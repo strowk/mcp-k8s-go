@@ -1,6 +1,6 @@
 {
   "name": "@strowk/mcp-k8s-linux-arm64",
-  "version": "0.5.0",
+  "version": "0.6.0",
   "os": [
     "linux",
     "freebsd"
