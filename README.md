@@ -210,7 +210,7 @@ The following command-line options are supported:
 - `--readonly`: Disables any tool which can write changes to the cluster
 - `--help`: Display help information
 - `--version`: Display version information
-- `--mask-secrets`: Mask secrets in the output
+- `--mask-secrets`: Mask secrets in the output (default: true). Use `--mask-secrets=false` to disable masking
 
 For example if you are configuring Claude Desktop, you can add the following configuration to `claude_desktop_config.json` file:
 
