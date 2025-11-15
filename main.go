@@ -3,6 +3,7 @@ package main
 import (
 	"log"
 	"os"
+	"time"
 
 	"github.com/strowk/mcp-k8s-go/internal/config"
 	"github.com/strowk/mcp-k8s-go/internal/k8s"
@@ -43,7 +44,7 @@ func getCapabilities() *mcp.ServerCapabilities {
 }
 
 var (
-	version = "dev"
+	version = "dev" + time.Now().Format("20060102")
 	commit  = "none"
 	date    = "unknown"
 )
