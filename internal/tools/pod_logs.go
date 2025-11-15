@@ -24,6 +24,7 @@ func NewPodLogsTool(pool k8s.ClientPool) fxctx.Tool {
 		toolinput.WithRequiredString("pod", "Name of the pod to get logs from"),
 		toolinput.WithString("sinceDuration", "Only return logs newer than a relative duration like 5s, 2m, or 3h. Only one of sinceTime or sinceDuration may be set."),
 		toolinput.WithString("sinceTime", "Only return logs after a specific date (RFC3339). Only one of sinceTime or sinceDuration may be set."),
+		toolinput.WithNumber("limitBytes", "Maximum bytes of logs to return. Defaults to no limit."),
 		toolinput.WithBoolean("previousContainer", "Return previous terminated container logs, defaults to false."),
 	)
 	return fxctx.NewTool(
@@ -53,6 +54,10 @@ func NewPodLogsTool(pool k8s.ClientPool) fxctx.Tool {
 				return errResponse(fmt.Errorf("invalid input: %w", err))
 			}
 
+			var noLimit int64 = -1
+			limitBytesF64 := input.NumberOr("limitBytes", float64(noLimit))
+			limitBytes := int64(limitBytesF64)
+
 			sinceDurationStr := input.StringOr("sinceDuration", "")
 
 			sinceTimeStr := ""
@@ -67,6 +72,9 @@ func NewPodLogsTool(pool k8s.ClientPool) fxctx.Tool {
 
 			options := &v1.PodLogOptions{
 				Previous: previousContainer,
+			}
+			if limitBytes != noLimit {
+				options.LimitBytes = &limitBytes
 			}
 			if sinceDurationStr != "" {
 				sinceDuration, err := time.ParseDuration(sinceDurationStr)
