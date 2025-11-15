@@ -1,6 +1,6 @@
 {
   "name": "@strowk/mcp-k8s-win32-arm64",
-  "version": "0.6.0",
+  "version": "0.6.1",
   "os": [
     "win32"
   ],
