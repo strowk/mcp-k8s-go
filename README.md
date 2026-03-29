@@ -24,6 +24,10 @@
     <a href="https://github.com/strowk/mcp-k8s-go/blob/main/LICENSE"><img src="https://img.shields.io/github/license/strowk/mcp-k8s-go" alt="license badge"></a>
 </p>
 
+## Hosted deployment
+
+A hosted deployment is available on [Fronteir AI](https://fronteir.ai/mcp/strowk-mcp-k8s-go).
+
 ## Features
 
 MCP 💬 prompt 🗂️ resource 🤖 tool 
