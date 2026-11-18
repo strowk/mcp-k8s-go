@@ -71,11 +71,11 @@ jobs:
           retention-days: 1
 
   # Collects the versions that passed and writes them into the README's
-  # auto-updated section. Runs only on main, after test legs settle (always, so a
-  # single failing leg does not hide the versions that did pass).
+  # auto-updated section. Runs only on main and only when every test leg
+  # succeeded, so one failing version does not refresh the list.
   update-readme:
     needs: run-tests
-    if: always() && github.event_name == 'push' && github.ref == 'refs/heads/main'
+    if: success() && github.event_name == 'push' && github.ref == 'refs/heads/main'
     runs-on: ubuntu-latest
     permissions:
       contents: write
