@@ -211,7 +211,17 @@ func createPodService(t *testing.T, podName string, serviceName string, clusterI
 
 func createK3dCluster(t *testing.T, name string) {
 	t.Helper()
-	cmd := exec.Command("k3d", "cluster", "create", name, "--wait", "--no-lb", "--timeout", "5m")
+	args := []string{"cluster", "create", name, "--wait", "--no-lb", "--timeout", "5m"}
+
+	// K3S_IMAGE pins the Kubernetes version the test runs against, e.g.
+	// "rancher/k3s:v1.31.2-k3s1". When unset, k3d uses its own default image,
+	// which is whatever it considers latest.
+	if image := os.Getenv("K3S_IMAGE"); image != "" {
+		t.Log("using k3s image", image)
+		args = append(args, "--image", image)
+	}
+
+	cmd := exec.Command("k3d", args...)
 	cmd.Stderr = os.Stderr
 	err := cmd.Run()
 	if err != nil {

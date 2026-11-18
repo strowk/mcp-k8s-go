@@ -6,10 +6,45 @@ on:
   workflow_dispatch:
   workflow_call:
   pull_request:
-  
+
 jobs:
-  run-tests:
+  # Resolves which Kubernetes versions the tests run against: the fixed set from
+  # .github/tested-k8s-versions.json plus whatever k3d currently considers latest
+  # (unless that already falls into the fixed set, to avoid a redundant run).
+  resolve-versions:
     runs-on: ubuntu-latest
+    outputs:
+      matrix: ${{ steps.resolve.outputs.matrix }}
+    steps:
+      - uses: actions/checkout@v4
+      # Install k3d so we can ask it what its default (latest) k3s version is
+      - run: 'curl -s https://raw.githubusercontent.com/k3d-io/k3d/main/install.sh | bash'
+      - id: resolve
+        run: |
+          set -euo pipefail
+
+          # The default k3s version baked into the installed k3d, reported as e.g.
+          # "k3s version v1.31.5-k3s1 (default)".
+          latest="$(k3d version | sed -n 's/^k3s version \(v[^ ]*\).*/\1/p')"
+          echo "k3d default k3s version: $latest"
+
+          fixed="$(jq -c '.' .github/tested-k8s-versions.json)"
+          echo "fixed versions: $fixed"
+
+          # Append latest only when it is not already part of the fixed set.
+          versions="$(jq -c --arg l "$latest" 'if index($l) then . else . + [$l] end' .github/tested-k8s-versions.json)"
+          echo "versions to test: $versions"
+
+          # Build a matrix with an "image" per version plus an "is_latest" marker.
+          matrix="$(jq -c --arg l "$latest" '{include: map({version: ., image: ("rancher/k3s:" + .), is_latest: (. == $l)})}' <<< "$versions")"
+          echo "matrix=$matrix" >> "$GITHUB_OUTPUT"
+
+  run-tests:
+    needs: resolve-versions
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix: ${{ fromJson(needs.resolve-versions.outputs.matrix) }}
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-go@v5
@@ -19,5 +54,80 @@ jobs:
       - run: 'curl -LO "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl"'
       # Install k3d
       - run: 'curl -s https://raw.githubusercontent.com/k3d-io/k3d/main/install.sh | bash'
-      # Run tests
+      # Run tests against the Kubernetes version for this matrix leg
       - run: go test -v ./...
+        env:
+          K3S_IMAGE: ${{ matrix.image }}
+      # Record this version as successfully tested for the README update job.
+      # Only reached when the tests above pass, so the artifact's presence means success.
+      - name: Record tested version
+        run: |
+          mkdir -p tested
+          echo '${{ matrix.version }}' > "tested/${{ matrix.version }}"
+      - uses: actions/upload-artifact@v4
+        with:
+          name: tested-${{ matrix.version }}
+          path: tested/${{ matrix.version }}
+          retention-days: 1
+
+  # Collects the versions that passed and writes them into the README's
+  # auto-updated section. Runs only on main, after test legs settle (always, so a
+  # single failing leg does not hide the versions that did pass).
+  update-readme:
+    needs: run-tests
+    if: always() && github.event_name == 'push' && github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/download-artifact@v4
+        with:
+          pattern: tested-*
+          path: tested
+          merge-multiple: true
+      - name: Update tested versions in README
+        run: |
+          set -euo pipefail
+
+          if [ ! -d tested ] || [ -z "$(ls -A tested 2>/dev/null)" ]; then
+            echo "No successfully tested versions recorded, skipping README update"
+            exit 0
+          fi
+
+          # Sorted, de-duplicated list of the k3s versions that passed.
+          versions="$(cat tested/* | sort -u -V)"
+          echo "tested versions:"
+          echo "$versions"
+
+          # Render a Markdown bullet list, stripping the k3s suffix for display.
+          block="$(printf '%s\n' "$versions" | sed 's/-k3s[0-9]*$//' | sed 's/^/- /')"
+
+          python3 - "$block" <<'PY'
+          import re, sys
+          block = sys.argv[1]
+          start = "<!-- TESTED_VERSIONS_START -->"
+          end = "<!-- TESTED_VERSIONS_END -->"
+          with open("README.md", encoding="utf-8") as f:
+              readme = f.read()
+          replacement = f"{start}\n{block}\n{end}"
+          new = re.sub(
+              re.escape(start) + r".*?" + re.escape(end),
+              lambda _: replacement,
+              readme,
+              flags=re.DOTALL,
+          )
+          with open("README.md", "w", encoding="utf-8") as f:
+              f.write(new)
+          PY
+
+          if git diff --quiet -- README.md; then
+            echo "README already up to date"
+            exit 0
+          fi
+
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add README.md
+          git commit -m "docs: update tested Kubernetes versions"
+          git push

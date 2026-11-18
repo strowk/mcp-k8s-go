@@ -37,6 +37,14 @@ MCP 💬 prompt 🗂️ resource 🤖 tool
 - 🤖 Get Kubernetes pod logs
 - 🤖 Run command in Kubernetes pod
 
+## Tested Kubernetes Versions
+
+Integration tests run against the following Kubernetes versions (the list below is
+updated automatically by CI after a successful run on `main`):
+
+<!-- TESTED_VERSIONS_START -->
+<!-- TESTED_VERSIONS_END -->
+
 ## Browse With Inspector
 
 To use latest published version with Inspector you can run this:
