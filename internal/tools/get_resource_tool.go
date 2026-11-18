@@ -98,8 +98,7 @@ func NewGetResourceTool(pool k8s.ClientPool) fxctx.Tool {
 				}
 			}
 
-			if config.GlobalOptions.MaskSecrets &&
-				strings.ToLower(kind) == "secret" && group == "" && (version == "v1" || version == "") {
+			if config.GlobalOptions.MaskSecrets && isCoreSecret(object, kind, group, version) {
 				maskSecrets(object, "data")
 				maskSecrets(object, "stringData")
 				dropSensitiveAnnotationsForSecrets(object)
@@ -136,6 +135,19 @@ func NewGetResourceTool(pool k8s.ClientPool) fxctx.Tool {
 			}
 		},
 	)
+}
+
+// isCoreSecret reports whether the requested resource is a core v1 Secret.
+// The pool resolves kind and version case-insensitively, so the requested
+// strings are compared the same way, and the returned object itself is
+// checked too, so that masking does not depend on how the caller spelled them.
+func isCoreSecret(object map[string]any, kind, group, version string) bool {
+	if strings.EqualFold(kind, "secret") && group == "" && (version == "" || strings.EqualFold(version, "v1")) {
+		return true
+	}
+	apiVersion, _ := object["apiVersion"].(string)
+	objectKind, _ := object["kind"].(string)
+	return apiVersion == "v1" && objectKind == "Secret"
 }
 
 func maskSecrets(object map[string]interface{}, key string) {
