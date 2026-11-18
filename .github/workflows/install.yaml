@@ -22,7 +22,53 @@ on:
         type: string
 
 jobs:
+  # Absorb artifact-propagation lag on a single cheap runner instead of making
+  # every (billed) platform runner in the matrix idle through it. This polls
+  # registry metadata only (a few bytes, no downloads) until the published
+  # version is actually visible, so the install matrix starts against artifacts
+  # that already exist and finishes fast. The matrix keeps its own retry as a
+  # safety net for residual per-package propagation lag.
+  wait-for-artifacts:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Wait for npm and Docker artifacts to propagate
+        shell: bash
+        env:
+          INPUT_VERSION: ${{ inputs.version }}
+        run: |
+          set -u
+          bare="${INPUT_VERSION#v}"
+          if [ -z "$bare" ]; then
+            echo "No version pinned (installing latest); nothing to wait for."
+            exit 0
+          fi
+          echo "Waiting up to 10 minutes for $bare to appear on npm and Docker Hub"
+          deadline=$(( $(date +%s) + 600 ))
+
+          # npm registry metadata lists the published version
+          until npm view "@strowk/mcp-k8s@$bare" version >/dev/null 2>&1; do
+            if [ "$(date +%s)" -ge "$deadline" ]; then
+              echo "::error::Timed out after 10 minutes waiting for @strowk/mcp-k8s@$bare on npm"
+              exit 1
+            fi
+            echo "npm not ready yet; retrying in 20s..."
+            sleep 20
+          done
+          echo "npm: @strowk/mcp-k8s@$bare is live"
+
+          # Docker Hub manifest for the tagged image exists (public, no login)
+          until docker manifest inspect "mcpk8s/server:v$bare" >/dev/null 2>&1; do
+            if [ "$(date +%s)" -ge "$deadline" ]; then
+              echo "::error::Timed out after 10 minutes waiting for mcpk8s/server:v$bare on Docker Hub"
+              exit 1
+            fi
+            echo "docker image not ready yet; retrying in 20s..."
+            sleep 20
+          done
+          echo "docker: mcpk8s/server:v$bare is live"
+
   install:
+    needs: wait-for-artifacts
     strategy:
       fail-fast: false
       matrix:
