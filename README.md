@@ -39,10 +39,13 @@ MCP 💬 prompt 🗂️ resource 🤖 tool
 
 ## Tested Kubernetes Versions
 
-Integration tests run against the following Kubernetes versions (the list below is
-updated automatically by CI after a successful run on `main`):
+Integration tests run against these Kubernetes versions:
 
 <!-- TESTED_VERSIONS_START -->
+- v1.34.13
+- v1.35.10
+- v1.36.6
+- v1.37.2
 <!-- TESTED_VERSIONS_END -->
 
 ## Browse With Inspector
