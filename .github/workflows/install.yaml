@@ -51,8 +51,10 @@ jobs:
           INPUT_VERSION: ${{ inputs.version }}
         run: |
           set -u
-          target="${INPUT_VERSION#v}"
-          if [ -n "$target" ]; then tag="$target"; else tag="latest"; fi
+          # Docker tags keep the git tag's leading "v" (e.g. v0.6.3), unlike npm
+          # versions which are bare. Normalize the input either way.
+          bare="${INPUT_VERSION#v}"
+          if [ -n "$bare" ]; then tag="v$bare"; else tag="latest"; fi
           image="mcpk8s/server:$tag"
           echo "Pulling $image (waiting up to 5 minutes for availability)"
           deadline=$(( $(date +%s) + 300 ))
