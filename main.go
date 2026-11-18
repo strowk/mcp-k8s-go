@@ -43,21 +43,30 @@ func getCapabilities() *mcp.ServerCapabilities {
 	}
 }
 
+// version is "dev" by default and overridden at release time via the linker
+// (-X main.version=...).
 var (
-	version = "dev" + time.Now().Format("20060102")
+	version = "dev"
 	commit  = "none"
 	date    = "unknown"
 )
+
+func versionString() string {
+	if version == "dev" {
+		return "dev" + time.Now().Format("20060102")
+	}
+	return version
+}
 
 func main() {
 	if len(os.Args) > 1 {
 		arg := os.Args[1]
 		if arg == "--version" {
-			println(version)
+			println(versionString())
 			return
 		}
 		if arg == "version" {
-			println("Version: ", version)
+			println("Version: ", versionString())
 			println("Commit: ", commit)
 			println("Date: ", date)
 			return
@@ -138,7 +147,7 @@ func getApp() *app.Builder {
 		WithServerCapabilities(getCapabilities()).
 		// setting up server
 		WithName("mcp-k8s-go").
-		WithVersion(version).
+		WithVersion(versionString()).
 		WithTransport(stdio.NewTransport()).
 		// Configuring fx logging to only show errors
 		WithFxOptions(
