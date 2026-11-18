@@ -4,30 +4,106 @@ name: Install mcp-k8s
 
 on:
   schedule:
-    # check that the install works periodically 
+    # check that the install works periodically
     - cron: '0 0 * * 5'
   workflow_dispatch:
+    inputs:
+      version:
+        description: 'Version to install (e.g. 0.6.3). Leave empty for latest.'
+        required: false
+        default: ''
+        type: string
+  workflow_call:
+    inputs:
+      version:
+        description: 'Version to install (e.g. 0.6.3). Leave empty for latest.'
+        required: false
+        default: ''
+        type: string
 
 jobs:
   install:
     strategy:
+      fail-fast: false
       matrix:
-        os: 
-          - windows-latest
-          - ubuntu-latest
-          - macos-latest
-        arch: 
-          - x64
-          - arm64
+        # Each entry maps an os/arch to the runner label that actually provides
+        # that architecture, so every platform binary is exercised on real
+        # hardware. runs-on only reads matrix.os, so matrix.os must be the label.
+        include:
+          - os: windows-latest
+            arch: x64
+          - os: windows-11-arm
+            arch: arm64
+          - os: ubuntu-latest
+            arch: x64
+          - os: ubuntu-24.04-arm
+            arch: arm64
+          - os: macos-13
+            arch: x64
+          - os: macos-latest
+            arch: arm64
     runs-on: ${{ matrix.os }}
     steps:
       - name: Install mcp-k8s from docker
-        if: ${{ matrix.os == 'ubuntu-latest' }}
+        if: ${{ startsWith(matrix.os, 'ubuntu') }}
+        shell: bash
+        env:
+          INPUT_VERSION: ${{ inputs.version }}
         run: |
-          docker pull mcpk8s/server:latest
-          docker run --rm mcpk8s/server:latest version
+          set -u
+          target="${INPUT_VERSION#v}"
+          if [ -n "$target" ]; then tag="$target"; else tag="latest"; fi
+          image="mcpk8s/server:$tag"
+          echo "Pulling $image (waiting up to 5 minutes for availability)"
+          deadline=$(( $(date +%s) + 300 ))
+          until docker pull "$image" >/dev/null 2>&1; do
+            if [ "$(date +%s)" -ge "$deadline" ]; then
+              echo "::error::Timed out after 5 minutes waiting for $image"
+              exit 1
+            fi
+            echo "Image not available yet; retrying in 15s..."
+            sleep 15
+          done
+          docker run --rm "$image" version
 
       - name: Install mcp-k8s from npm
+        shell: bash
+        env:
+          INPUT_VERSION: ${{ inputs.version }}
         run: |
-          npm install -g @strowk/mcp-k8s
-          mcp-k8s version
+          set -u
+          target="${INPUT_VERSION#v}"
+          if [ -n "$target" ]; then
+            spec="@strowk/mcp-k8s@$target"
+          else
+            spec="@strowk/mcp-k8s@latest"
+          fi
+          echo "Installing $spec (waiting up to 5 minutes for availability)"
+
+          # Retry until the package is installable AND the platform binary
+          # actually runs. The platform binary is an optionalDependency, so a
+          # bare `npm install` can succeed while silently skipping a not-yet-
+          # published binary - hence we verify `mcp-k8s version` as well, and
+          # assert the exact version when one was requested.
+          attempt() {
+            npm install -g "$spec" --prefer-online >/dev/null 2>&1 || return 1
+            local out
+            out="$(mcp-k8s version 2>/dev/null)" || return 1
+            if [ -n "$target" ] && ! printf '%s' "$out" | grep -q "$target"; then
+              return 1
+            fi
+            printf '%s\n' "$out"
+          }
+
+          deadline=$(( $(date +%s) + 300 ))
+          until out="$(attempt)"; do
+            if [ "$(date +%s)" -ge "$deadline" ]; then
+              echo "::error::Timed out after 5 minutes waiting for $spec to be installable"
+              exit 1
+            fi
+            echo "Not ready yet; retrying in 15s..."
+            sleep 15
+          done
+
+          echo "Installed and verified:"
+          echo "$out"
