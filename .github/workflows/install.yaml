@@ -87,10 +87,13 @@ jobs:
           # bare `npm install` can succeed while silently skipping a not-yet-
           # published binary - hence we verify `mcp-k8s version` as well, and
           # assert the exact version when one was requested.
+          # Note: `mcp-k8s version` prints via Go's println, which writes to
+          # stderr, so we must capture 2>&1 - otherwise the output is empty and
+          # the version assertion can never match.
           attempt() {
             npm install -g "$spec" --prefer-online >/dev/null 2>&1 || return 1
             local out
-            out="$(mcp-k8s version 2>/dev/null)" || return 1
+            out="$(mcp-k8s version 2>&1)" || return 1
             if [ -n "$target" ] && ! printf '%s' "$out" | grep -q "$target"; then
               return 1
             fi
