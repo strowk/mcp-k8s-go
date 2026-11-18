@@ -37,8 +37,10 @@ jobs:
             arch: x64
           - os: ubuntu-24.04-arm
             arch: arm64
-          - os: macos-13
-            arch: x64
+          # macos-13 is the last Intel (x64) image; its runners are scarce and
+          # on GitHub's deprecation path. Re-enable if native x64 macOS matters.
+          # - os: macos-13
+          #   arch: x64
           - os: macos-latest
             arch: arm64
     runs-on: ${{ matrix.os }}
