@@ -1,6 +1,6 @@
 module github.com/strowk/mcp-k8s-go
 
-go 1.24.10
+go 1.25.14
 
 require (
 	github.com/stretchr/testify v1.11.1
